@@ -1,0 +1,236 @@
+diff -u3 a/display.cpp b/display.cpp
+--- a/display.cpp	2013-11-17 12:02:48.809784086 +0100
++++ b/display.cpp	2013-11-17 12:01:01.318102274 +0100
+@@ -1,5 +1,5 @@
+ 
+-#include "wlcpp.hpp"
++#include "display.hpp"
+ 
+ using namespace std;
+ using namespace wlcpp;
+@@ -26,19 +26,79 @@
+     2, wl_display_events
+ };
+ 
+-const display::listener_t display::listener = {
+-    &error_handler,
+-    &delete_id_handler,
+-};
+-
+ display::display(wl_proxy* obj)
+     : proxy(obj) {
+-    add_listener(listener);
+ }
+ 
+-display::display(proxy& factory)
+-    : proxy(factory, interface) {
+-    add_listener(listener);
++display::display(const string& name)
++    : proxy(reinterpret_cast<wl_proxy*>(name.empty() ? wl_display_connect(nullptr) : wl_display_connect(name.c_str()))) {
++}
++
++display::display(int fd)
++    : proxy(reinterpret_cast<wl_proxy*>(wl_display_connect_to_fd(fd))) {
++}
++
++display::~display() {
++    if(valid()) {
++        wl_display_disconnect(wl_obj());
++        invalidate();
++    }
++}
++
++wl_display* display::wl_obj() const {
++    return reinterpret_cast<wl_display*>(proxy::wl_obj());
++}
++
++int display::get_fd() const {
++    return wl_display_get_fd(wl_obj());
++}
++
++int display::dispatch() {
++    return wl_display_dispatch(wl_obj());
++}
++
++int display::dispatch_queue(event_queue& queue) {
++    return wl_display_dispatch_queue(wl_obj(), queue.wl_obj());
++}
++
++int display::dispatch_queue_pending(event_queue& queue) {
++    return wl_display_dispatch_queue_pending(wl_obj(), queue.wl_obj());
++}
++
++int display::dispatch_pending() {
++    return wl_display_dispatch_pending(wl_obj());
++}
++
++int display::get_error() {
++    return wl_display_get_error(wl_obj());
++}
++
++int display::flush() {
++    return wl_display_flush(wl_obj());
++}
++
++int display::roundtrip() {
++    return wl_display_roundtrip(wl_obj());
++}
++
++event_queue display::create_queue() {
++    return event_queue(wl_display_create_queue(wl_obj()));
++}
++
++int display::prepare_read_queue(event_queue& queue) {
++    return wl_display_prepare_read_queue(wl_obj(), queue.wl_obj());
++}
++
++int display::prepare_read() {
++    return wl_display_prepare_read(wl_obj());
++}
++
++void display::cancel_read() {
++    wl_display_cancel_read(wl_obj());
++}
++
++int display::read_events() {
++    return wl_display_read_events(wl_obj());
+ }
+ 
+ callback display::sync() {
+@@ -53,17 +113,3 @@
+     return callback;
+ }
+ 
+-void display::error_handler(void* data, wl_proxy* wl_obj, wl_proxy* object_id, uint32_t code, const char* message) {
+-    auto& handler = proxy::user_data_to_wrapper_cast<display>(data)->_error_handler;
+-    if(handler) {
+-        handler(*proxy::wrapper_cast<class proxy>(object_id), code, message);
+-    }
+-}
+-
+-void display::delete_id_handler(void* data, wl_proxy* wl_obj, uint32_t id) {
+-    auto& handler = proxy::user_data_to_wrapper_cast<display>(data)->_delete_id_handler;
+-    if(handler) {
+-        handler(id);
+-    }
+-}
+-
+diff -u3 a/display.hpp b/display.hpp
+--- a/display.hpp	2013-11-17 12:02:48.809784086 +0100
++++ b/display.hpp	2013-11-17 12:01:01.318102274 +0100
+@@ -2,10 +2,8 @@
+ #ifndef _WLCPP_DISPLAY_
+ #define _WLCPP_DISPLAY_
+ 
+-#include <functional>
+-#include <string>
+-#include <utility>
+-#include "proxy.hpp"
++#include "wlcpp.hpp"
++#include "event_queue.hpp"
+ 
+ namespace wlcpp {
+ 
+@@ -43,20 +41,34 @@
+      */
+     display(wl_proxy* obj = nullptr);
+ 
+-    /** Create new display from factory
+-     *  @param factory Object which acts as the factory
+-     */
+-    explicit display(proxy& factory);
++    explicit display(const std::string& name);
++
++    explicit display(int fd);
+ 
+     /** Default move constructor */
+     display(display&& rhs) = default;
+ 
+     /** Default destructor */
+-    virtual ~display() = default;
++    virtual ~display();
+ 
+     /** Default move assignment operator */
+     display& operator=(display&& rhs) = default;
+ 
++    wl_display* wl_obj() const;
++    int get_fd() const;
++    int dispatch();
++    int dispatch_queue(event_queue& queue);
++    int dispatch_queue_pending(event_queue& queue);
++    int dispatch_pending();
++    int get_error();
++    int flush();
++    int roundtrip();
++    event_queue create_queue();
++    int prepare_read_queue(event_queue& queue);
++    int prepare_read();
++    void cancel_read();
++    int read_events();
++
+     /** asynchronous roundtrip
+      *
+      *  The sync request asks the server to emit the 'done' event on the returned
+@@ -80,62 +92,6 @@
+      *  @return
+      */
+     registry get_registry();
+-
+-    /** fatal error event
+-     *
+-     *  The error event is sent out when a fatal (non-recoverable) error has
+-     *  occurred. The object_id argument is the object where the error occurred,
+-     *  most often in response to a request to that object. The code identifies the
+-     *  error and is defined by the object interface. As such, each interface
+-     *  defines its own set of error codes. The message is an brief description of
+-     *  the error, for (debugging) convenience.
+-     *
+-     *  Parameter object_id:
+-     *  Parameter code:
+-     *  Parameter message:
+-     */
+-    using error_handler_sig = void (proxy& object_id, std::uint32_t code, const std::string& message);
+-
+-    /** Set a handler for the error event
+-     *  @param handler Callable of signature @ref error_handler_sig
+-     */
+-    template <typename T>
+-    void set_error_handler(T&& handler) {
+-        _error_handler = std::function<error_handler_sig>(std::forward<T>(handler));
+-    }
+-
+-    /** acknowledge object ID deletion
+-     *
+-     *  This event is used internally by the object ID management logic. When a
+-     *  client deletes an object, the server will send this event to acknowledge
+-     *  that it has seen the delete request. When the client receive this event, it
+-     *  will know that it can safely reuse the object ID.
+-     *
+-     *  Parameter id:
+-     */
+-    using delete_id_handler_sig = void (std::uint32_t id);
+-
+-    /** Set a handler for the delete_id event
+-     *  @param handler Callable of signature @ref delete_id_handler_sig
+-     */
+-    template <typename T>
+-    void set_delete_id_handler(T&& handler) {
+-        _delete_id_handler = std::function<delete_id_handler_sig>(std::forward<T>(handler));
+-    }
+-
+-private:
+-    struct listener_t {
+-        void (*error_handler) (void*, wl_proxy*, wl_proxy*, std::uint32_t, const char*);
+-        void (*delete_id_handler) (void*, wl_proxy*, std::uint32_t);
+-    };
+-
+-    static void error_handler(void* data, wl_proxy* wl_obj, wl_proxy* object_id, std::uint32_t code, const char* message);
+-    static void delete_id_handler(void* data, wl_proxy* wl_obj, std::uint32_t id);
+-
+-    static const listener_t listener;
+-
+-    std::function<error_handler_sig> _error_handler;
+-    std::function<delete_id_handler_sig> _delete_id_handler;
+ };
+ 
+ } // namespace wlcpp

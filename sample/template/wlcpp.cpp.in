@@ -1,0 +1,8 @@
+
+#include "wlcpp.hpp"
+
+using namespace std;
+// wlcpp <hook id="namespace.using"/>
+
+// wlcpp <hook id="spec.cpp"/>
+

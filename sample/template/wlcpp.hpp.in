@@ -1,0 +1,19 @@
+
+// wlcpp <hook id="includeguard.ifndef"/>
+// wlcpp <hook id="includeguard.define"/>
+
+#include <functional>
+#include <string>
+#include <utility>
+#include "proxy.hpp"
+
+// wlcpp <hook id="namespace.open"/>
+
+// wlcpp <hook id="spec.hpp.prototypes"/>
+
+// wlcpp <hook id="spec.hpp.classes"/>
+
+// wlcpp <hook id="namespace.close"/>
+
+// wlcpp <hook id="includeguard.endif"/>
+
