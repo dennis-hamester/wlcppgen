@@ -20,7 +20,7 @@ public:
     bool valid() const;
     void invalidate();
     wl_proxy* wl_obj() const;
-    uint32_t get_id() const;
+    std::uint32_t get_id() const;
     std::string get_class() const;
     void set_queue(event_queue& queue);
     void reset_queue();
@@ -62,7 +62,7 @@ protected:
     }
 
     template <typename... T>
-    void marshal(uint32_t opcode, T&&... args) {
+    void marshal(std::uint32_t opcode, T&&... args) {
         wl_proxy_marshal(_proxy, opcode, std::forward<T>(args)...);
     }
 
