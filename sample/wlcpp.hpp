@@ -301,8 +301,8 @@ public:
     /** Default move constructor */
     shm_pool(shm_pool&& rhs) = default;
 
-    /** Default destructor */
-    virtual ~shm_pool() = default;
+    /** Destructor */
+    virtual ~shm_pool();
 
     /** Default move assignment operator */
     shm_pool& operator=(shm_pool&& rhs) = default;
@@ -340,7 +340,7 @@ public:
     void resize(std::int32_t size);
 
 protected:
-    virtual void destroy() override;
+    void destroy() override;
 };
 
 #define WLCPP_SHM_VERSION 1
@@ -536,8 +536,8 @@ public:
     /** Default move constructor */
     buffer(buffer&& rhs) = default;
 
-    /** Default destructor */
-    virtual ~buffer() = default;
+    /** Destructor */
+    virtual ~buffer();
 
     /** Default move assignment operator */
     buffer& operator=(buffer&& rhs) = default;
@@ -566,7 +566,7 @@ public:
     }
 
 protected:
-    virtual void destroy() override;
+    void destroy() override;
 
 private:
     struct listener_t {
@@ -612,8 +612,8 @@ public:
     /** Default move constructor */
     data_offer(data_offer&& rhs) = default;
 
-    /** Default destructor */
-    virtual ~data_offer() = default;
+    /** Destructor */
+    virtual ~data_offer();
 
     /** Default move assignment operator */
     data_offer& operator=(data_offer&& rhs) = default;
@@ -664,7 +664,7 @@ public:
     }
 
 protected:
-    virtual void destroy() override;
+    void destroy() override;
 
 private:
     struct listener_t {
@@ -709,8 +709,8 @@ public:
     /** Default move constructor */
     data_source(data_source&& rhs) = default;
 
-    /** Default destructor */
-    virtual ~data_source() = default;
+    /** Destructor */
+    virtual ~data_source();
 
     /** Default move assignment operator */
     data_source& operator=(data_source&& rhs) = default;
@@ -777,7 +777,7 @@ public:
     }
 
 protected:
-    virtual void destroy() override;
+    void destroy() override;
 
 private:
     struct listener_t {
@@ -1504,8 +1504,8 @@ public:
     /** Default move constructor */
     surface(surface&& rhs) = default;
 
-    /** Default destructor */
-    virtual ~surface() = default;
+    /** Destructor */
+    virtual ~surface();
 
     /** Default move assignment operator */
     surface& operator=(surface&& rhs) = default;
@@ -1770,7 +1770,7 @@ public:
     }
 
 protected:
-    virtual void destroy() override;
+    void destroy() override;
 
 private:
     struct listener_t {
@@ -1969,8 +1969,8 @@ public:
     /** Default move constructor */
     pointer(pointer&& rhs) = default;
 
-    /** Default destructor */
-    virtual ~pointer() = default;
+    /** Destructor */
+    virtual ~pointer();
 
     /** Default move assignment operator */
     pointer& operator=(pointer&& rhs) = default;
@@ -2128,7 +2128,7 @@ public:
     }
 
 protected:
-    virtual void destroy() override;
+    void destroy() override;
 
 private:
     struct listener_t {
@@ -2202,8 +2202,8 @@ public:
     /** Default move constructor */
     keyboard(keyboard&& rhs) = default;
 
-    /** Default destructor */
-    virtual ~keyboard() = default;
+    /** Destructor */
+    virtual ~keyboard();
 
     /** Default move assignment operator */
     keyboard& operator=(keyboard&& rhs) = default;
@@ -2308,7 +2308,7 @@ public:
     }
 
 protected:
-    virtual void destroy() override;
+    void destroy() override;
 
 private:
     struct listener_t {
@@ -2367,8 +2367,8 @@ public:
     /** Default move constructor */
     touch(touch&& rhs) = default;
 
-    /** Default destructor */
-    virtual ~touch() = default;
+    /** Destructor */
+    virtual ~touch();
 
     /** Default move assignment operator */
     touch& operator=(touch&& rhs) = default;
@@ -2468,7 +2468,7 @@ public:
     }
 
 protected:
-    virtual void destroy() override;
+    void destroy() override;
 
 private:
     struct listener_t {
@@ -2731,8 +2731,8 @@ public:
     /** Default move constructor */
     region(region&& rhs) = default;
 
-    /** Default destructor */
-    virtual ~region() = default;
+    /** Destructor */
+    virtual ~region();
 
     /** Default move assignment operator */
     region& operator=(region&& rhs) = default;
@@ -2760,7 +2760,7 @@ public:
     void subtract(std::int32_t x, std::int32_t y, std::int32_t width, std::int32_t height);
 
 protected:
-    virtual void destroy() override;
+    void destroy() override;
 };
 
 } // namespace wlcpp

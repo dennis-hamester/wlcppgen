@@ -144,6 +144,10 @@ shm_pool::shm_pool(proxy& factory)
     : proxy(factory, interface) {
 }
 
+shm_pool::~shm_pool(){
+    destroy();
+}
+
 buffer shm_pool::create_buffer(int32_t offset, int32_t width, int32_t height, int32_t stride, uint32_t format) {
     buffer id(*this);
     marshal(0, id.wl_obj(), offset, width, height, stride, format);
@@ -238,6 +242,10 @@ buffer::buffer(proxy& factory)
     add_listener(listener);
 }
 
+buffer::~buffer(){
+    destroy();
+}
+
 void buffer::destroy() {
     if(valid()) {
         marshal(0);
@@ -286,6 +294,10 @@ data_offer::data_offer(wl_proxy* obj)
 data_offer::data_offer(proxy& factory)
     : proxy(factory, interface) {
     add_listener(listener);
+}
+
+data_offer::~data_offer(){
+    destroy();
 }
 
 void data_offer::accept(uint32_t serial, const string* mime_type) {
@@ -348,6 +360,10 @@ data_source::data_source(wl_proxy* obj)
 data_source::data_source(proxy& factory)
     : proxy(factory, interface) {
     add_listener(listener);
+}
+
+data_source::~data_source(){
+    destroy();
 }
 
 void data_source::offer(const string& mime_type) {
@@ -710,6 +726,10 @@ surface::surface(proxy& factory)
     add_listener(listener);
 }
 
+surface::~surface(){
+    destroy();
+}
+
 void surface::attach(buffer* buffer, int32_t x, int32_t y) {
     marshal(1, buffer ? buffer->wl_obj() : nullptr, x, y);
 }
@@ -882,6 +902,10 @@ pointer::pointer(proxy& factory)
     add_listener(listener);
 }
 
+pointer::~pointer(){
+    destroy();
+}
+
 void pointer::set_cursor(uint32_t serial, surface* surface, int32_t hotspot_x, int32_t hotspot_y) {
     marshal(0, serial, surface ? surface->wl_obj() : nullptr, hotspot_x, hotspot_y);
 }
@@ -972,6 +996,10 @@ keyboard::keyboard(proxy& factory)
     add_listener(listener);
 }
 
+keyboard::~keyboard(){
+    destroy();
+}
+
 void keyboard::destroy() {
     if(valid()) {
         marshal(0);
@@ -1056,6 +1084,10 @@ touch::touch(wl_proxy* obj)
 touch::touch(proxy& factory)
     : proxy(factory, interface) {
     add_listener(listener);
+}
+
+touch::~touch(){
+    destroy();
 }
 
 void touch::destroy() {
@@ -1185,6 +1217,10 @@ region::region(wl_proxy* obj)
 
 region::region(proxy& factory)
     : proxy(factory, interface) {
+}
+
+region::~region(){
+    destroy();
 }
 
 void region::add(int32_t x, int32_t y, int32_t width, int32_t height) {

@@ -634,9 +634,11 @@ class Interface:
         return result
 
     def generate_dtor(self, options, impl):
-        result = 'virtual '
+        result = str()
         if impl:
             result += mangle_interface_name(self.name) + '::'
+        else:
+            result += 'virtual '
         result += '~' + mangle_interface_name(self.name) + '()'
         return result
 
@@ -687,10 +689,7 @@ class Interface:
         return result
 
     def generate_destroy_method(self, options, impl):
-        result = str()
-        if not impl:
-            result += 'virtual '
-        result += 'void '
+        result = 'void '
         if impl:
             result += mangle_interface_name(self.name) + '::'
         result += 'destroy()'
@@ -751,11 +750,18 @@ class Interface:
             self.generate_move_ctor(options, impl=False) + ' = default;'
         ])
 
-        public_part.extend([
-            '',
-            '/** Default destructor */',
-            self.generate_dtor(options, impl=False) + ' = default;'
-        ])
+        if self.destructor is None:
+            public_part.extend([
+                '',
+                '/** Default destructor */',
+                self.generate_dtor(options, impl=False) + ' = default;'
+            ])
+        else:
+            public_part.extend([
+                '',
+                '/** Destructor */',
+                self.generate_dtor(options, impl=False) + ';'
+            ])
 
         public_part.extend([
             '',
@@ -906,6 +912,15 @@ class Interface:
             factory_ctor.append(': ' + options.proxy + '(factory, interface) {')
         result.append(factory_ctor)
         result.append('}')
+
+        if self.destructor is not None:
+            result.extend([
+                '',
+                self.generate_dtor(options, impl=True) + '{', [
+                    'destroy();'
+                ],
+                '}'
+            ])
 
         for request in self.requests:
             if request != self.destructor and not request.is_template:

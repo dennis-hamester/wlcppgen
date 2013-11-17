@@ -45,15 +45,11 @@ string proxy::get_class() const {
 }
 
 void proxy::set_queue(event_queue& queue) {
-    if(valid()) {
-        wl_proxy_set_queue(_proxy, queue.wl_obj());
-    }
+    wl_proxy_set_queue(_proxy, queue.wl_obj());
 }
 
 void proxy::reset_queue() {
-    if(valid()) {
-        wl_proxy_set_queue(_proxy, nullptr);
-    }
+    wl_proxy_set_queue(_proxy, nullptr);
 }
 
 proxy& proxy::operator=(proxy&& rhs) {
@@ -79,6 +75,7 @@ bool proxy::operator!=(const proxy& rhs) const {
 void proxy::destroy() {
     if(valid()) {
         wl_proxy_destroy(_proxy);
+        invalidate();
     }
 }
 

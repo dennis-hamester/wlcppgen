@@ -1,6 +1,6 @@
 diff -u3 a/display.cpp b/display.cpp
---- a/display.cpp	2013-11-17 12:02:48.809784086 +0100
-+++ b/display.cpp	2013-11-17 12:01:01.318102274 +0100
+--- a/display.cpp	2013-11-17 19:22:21.377025193 +0100
++++ b/display.cpp	2013-11-17 19:19:54.281309198 +0100
 @@ -1,5 +1,5 @@
  
 -#include "wlcpp.hpp"
@@ -8,7 +8,7 @@ diff -u3 a/display.cpp b/display.cpp
  
  using namespace std;
  using namespace wlcpp;
-@@ -26,19 +26,79 @@
+@@ -26,19 +26,76 @@
      2, wl_display_events
  };
  
@@ -34,10 +34,7 @@ diff -u3 a/display.cpp b/display.cpp
 +}
 +
 +display::~display() {
-+    if(valid()) {
-+        wl_display_disconnect(wl_obj());
-+        invalidate();
-+    }
++    destroy();
 +}
 +
 +wl_display* display::wl_obj() const {
@@ -97,7 +94,7 @@ diff -u3 a/display.cpp b/display.cpp
  }
  
  callback display::sync() {
-@@ -53,17 +113,3 @@
+@@ -53,17 +110,10 @@
      return callback;
  }
  
@@ -112,12 +109,16 @@ diff -u3 a/display.cpp b/display.cpp
 -    auto& handler = proxy::user_data_to_wrapper_cast<display>(data)->_delete_id_handler;
 -    if(handler) {
 -        handler(id);
--    }
--}
--
++void display::destroy() {
++    if(valid()) {
++        wl_display_disconnect(wl_obj());
++        invalidate();
+     }
+ }
+ 
 diff -u3 a/display.hpp b/display.hpp
---- a/display.hpp	2013-11-17 12:02:48.809784086 +0100
-+++ b/display.hpp	2013-11-17 12:01:01.318102274 +0100
+--- a/display.hpp	2013-11-17 19:22:21.290357122 +0100
++++ b/display.hpp	2013-11-17 19:20:55.432299596 +0100
 @@ -2,10 +2,8 @@
  #ifndef _WLCPP_DISPLAY_
  #define _WLCPP_DISPLAY_
@@ -146,8 +147,9 @@ diff -u3 a/display.hpp b/display.hpp
      /** Default move constructor */
      display(display&& rhs) = default;
  
-     /** Default destructor */
+-    /** Default destructor */
 -    virtual ~display() = default;
++    /** Destructor */
 +    virtual ~display();
  
      /** Default move assignment operator */
@@ -171,11 +173,10 @@ diff -u3 a/display.hpp b/display.hpp
      /** asynchronous roundtrip
       *
       *  The sync request asks the server to emit the 'done' event on the returned
-@@ -80,62 +92,6 @@
-      *  @return
+@@ -81,61 +93,8 @@
       */
      registry get_registry();
--
+ 
 -    /** fatal error event
 -     *
 -     *  The error event is sent out when a fatal (non-recoverable) error has
@@ -231,6 +232,8 @@ diff -u3 a/display.hpp b/display.hpp
 -
 -    std::function<error_handler_sig> _error_handler;
 -    std::function<delete_id_handler_sig> _delete_id_handler;
++protected:
++    void destroy() override;
  };
  
  } // namespace wlcpp

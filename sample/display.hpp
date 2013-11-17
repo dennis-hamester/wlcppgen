@@ -48,7 +48,7 @@ public:
     /** Default move constructor */
     display(display&& rhs) = default;
 
-    /** Default destructor */
+    /** Destructor */
     virtual ~display();
 
     /** Default move assignment operator */
@@ -92,6 +92,9 @@ public:
      *  @return
      */
     registry get_registry();
+
+protected:
+    void destroy() override;
 };
 
 } // namespace wlcpp

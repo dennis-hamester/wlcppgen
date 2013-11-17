@@ -39,10 +39,7 @@ display::display(int fd)
 }
 
 display::~display() {
-    if(valid()) {
-        wl_display_disconnect(wl_obj());
-        invalidate();
-    }
+    destroy();
 }
 
 wl_display* display::wl_obj() const {
@@ -111,5 +108,12 @@ registry display::get_registry() {
     registry callback(*this);
     marshal(1, callback.wl_obj());
     return callback;
+}
+
+void display::destroy() {
+    if(valid()) {
+        wl_display_disconnect(wl_obj());
+        invalidate();
+    }
 }
 
