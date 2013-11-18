@@ -1156,7 +1156,7 @@ def print_usage():
     print('                                   written wrapper is more useful.')
     print('      --include-guard (=_WLCPP_)   Name of the include guard.')
     print('      --indent (=4)                Number of spaces or tabs to indent.')
-    print('      --indent_tabs                Indent using tabs instead of spaces.')
+    print('      --indent-tabs                Indent using tabs instead of spaces.')
     print('      --linewidth (=80)            Maximum linewidth. Currently not very useful, because')
     print('                                   it is only respected')
     print('                                   for comments and indentation is not taken into account.')

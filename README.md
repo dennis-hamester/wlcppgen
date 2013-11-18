@@ -33,7 +33,7 @@ These are optional:
                                    written wrapper is more useful.
       --include-guard (=_WLCPP_)   Name of the include guard.
       --indent (=4)                Number of spaces or tabs to indent.
-      --indent_tabs                Indent using tabs instead of spaces.
+      --indent-tabs                Indent using tabs instead of spaces.
       --linewidth (=80)            Maximum linewidth. Currently not very useful, because
                                    it is only respected
                                    for comments and indentation is not taken into account.
