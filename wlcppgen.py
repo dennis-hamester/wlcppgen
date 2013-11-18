@@ -879,7 +879,7 @@ class Interface:
 
         result.extend(self.generate_interface(options))
 
-        if have_events:
+        if not options.ignore_events and have_events:
             result.append('')
             result.append(self.generate_listener(options, impl=True) + ' = {')
             handlers = list()
@@ -891,7 +891,7 @@ class Interface:
         result.append('')
         result.append(self.generate_wl_obj_ctor(options, impl=True))
         wl_obj_ctor = list()
-        if have_events:
+        if not options.ignore_events and have_events:
             wl_obj_ctor.extend([
                 ': ' + options.proxy + '(obj) {',
                 'add_listener(listener);'
@@ -904,7 +904,7 @@ class Interface:
         result.append('')
         result.append(self.generate_factory_ctor(options, impl=True))
         factory_ctor = list()
-        if have_events:
+        if not options.ignore_events and have_events:
             factory_ctor.extend([
                 ': ' + options.proxy + '(factory, interface) {',
                 'add_listener(listener);'

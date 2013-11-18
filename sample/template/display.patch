@@ -1,6 +1,6 @@
 diff -u3 a/display.cpp b/display.cpp
---- a/display.cpp	2013-11-18 12:49:00.372058536 +0100
-+++ b/display.cpp	2013-11-18 12:49:38.536047969 +0100
+--- a/display.cpp	2013-11-18 15:59:51.216252894 +0100
++++ b/display.cpp	2013-11-18 16:00:03.329785526 +0100
 @@ -1,5 +1,5 @@
  
 -#include "wlcpp.hpp"
@@ -8,23 +8,12 @@ diff -u3 a/display.cpp b/display.cpp
  
  using namespace std;
  using namespace wlcpp;
-@@ -26,19 +26,76 @@
-     2, wl_display_events
- };
- 
--const display::listener_t display::listener = {
--    &error_handler,
--    &delete_id_handler,
--};
--
- display::display(wl_proxy* obj)
+@@ -30,8 +30,72 @@
      : proxy(obj) {
--    add_listener(listener);
  }
  
 -display::display(proxy& factory)
 -    : proxy(factory, interface) {
--    add_listener(listener);
 +display::display(const string& name)
 +    : proxy(reinterpret_cast<wl_proxy*>(name.empty() ? wl_display_connect(nullptr) : wl_display_connect(name.c_str()))) {
 +}
@@ -94,7 +83,7 @@ diff -u3 a/display.cpp b/display.cpp
  }
  
  callback display::sync() {
-@@ -53,3 +110,10 @@
+@@ -46,3 +110,10 @@
      return callback;
  }
  
@@ -106,8 +95,8 @@ diff -u3 a/display.cpp b/display.cpp
 +}
 +
 diff -u3 a/display.hpp b/display.hpp
---- a/display.hpp	2013-11-18 12:49:00.285390379 +0100
-+++ b/display.hpp	2013-11-18 12:49:38.556048280 +0100
+--- a/display.hpp	2013-11-18 15:59:51.122918027 +0100
++++ b/display.hpp	2013-11-18 16:00:03.329785526 +0100
 @@ -2,10 +2,8 @@
  #ifndef _WLCPP_DISPLAY_
  #define _WLCPP_DISPLAY_
