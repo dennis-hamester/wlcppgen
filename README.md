@@ -31,6 +31,7 @@ These are optional:
       --exclude                    Comma-separated list of interfaces to exclude. This is
                                    especially useful for wl_display, because a manually
                                    written wrapper is more useful.
+      --ignore-events              Do not generate code for events.
       --include-guard (=_WLCPP_)   Name of the include guard.
       --indent (=4)                Number of spaces or tabs to indent.
       --indent-tabs                Indent using tabs instead of spaces.

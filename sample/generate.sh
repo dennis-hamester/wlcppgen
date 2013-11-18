@@ -11,12 +11,15 @@
 
 ../wlcppgen.py --src template/wlcpp.hpp.in --dst display.hpp \
     --only wl_display \
+    --ignore-events \
     --include-guard=_WLCPP_DISPLAY_ \
     --qualify-std-namespace \
     /usr/share/wayland/wayland.xml
 
 ../wlcppgen.py --src template/wlcpp.cpp.in --dst display.cpp \
     --only wl_display \
+    --ignore-events \
     /usr/share/wayland/wayland.xml
 
 patch -p1 < template/display.patch
+

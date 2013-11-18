@@ -777,11 +777,12 @@ class Interface:
                 else:
                     public_part.extend(request.generate_decl(options))
 
-        for event in self.events:
-            public_part.append('')
-            public_part.extend(event.generate_handler_sig(options))
-            public_part.append('')
-            public_part.extend(event.generate_set_handler_method(options))
+        if not options.ignore_events:
+            for event in self.events:
+                public_part.append('')
+                public_part.extend(event.generate_handler_sig(options))
+                public_part.append('')
+                public_part.extend(event.generate_set_handler_method(options))
 
         result.append(public_part)
 
@@ -794,7 +795,7 @@ class Interface:
 
             result.append(protected_part)
 
-        if len(self.events) > 0:
+        if not options.ignore_events and len(self.events) > 0:
             result.append('')
             result.append('private:')
             private_part = list()
@@ -940,9 +941,10 @@ class Interface:
                 '}'
             ])
 
-        for event in self.events:
-            result.append('')
-            result.extend(event.generate_handler(options, self))
+        if not options.ignore_events:
+            for event in self.events:
+                result.append('')
+                result.extend(event.generate_handler(options, self))
 
         return result
 
@@ -1066,6 +1068,7 @@ class HookHandlerSpec:
 class GeneratorOptions:
     def __init__(self):
         self.exclude = list()
+        self.ignore_events = False
         self.include_guard = '_WLCPP_'
         self.indent = 4
         self.indent_tabs = False
@@ -1154,6 +1157,7 @@ def print_usage():
     print('      --exclude                    Comma-separated list of interfaces to exclude. This is')
     print('                                   especially useful for wl_display, because a manually')
     print('                                   written wrapper is more useful.')
+    print('      --ignore-events              Do not generate code for events.')
     print('      --include-guard (=_WLCPP_)   Name of the include guard.')
     print('      --indent (=4)                Number of spaces or tabs to indent.')
     print('      --indent-tabs                Indent using tabs instead of spaces.')
@@ -1189,6 +1193,7 @@ def main(argv=None):
                 'version',
                 'src=', 'dst=',
                 'exclude=',
+                'ignore-events',
                 'include-guard=',
                 'indent=',
                 'indent-tabs',
@@ -1213,6 +1218,8 @@ def main(argv=None):
                     dst_file = val
                 elif opt == '--exclude':
                     options.exclude = val.split(',')
+                elif opt == '--ignore-events':
+                    options.ignore_events = True
                 elif opt == '--include-guard':
                     options.include_guard = val
                 elif opt == '--indent':
