@@ -10,19 +10,21 @@ class event_queue {
 public:
     event_queue(wl_event_queue* queue = nullptr);
     event_queue(const event_queue&) = delete;
-    event_queue(event_queue&&) = default;
+    event_queue(event_queue&& rhs);
     ~event_queue();
 
     bool valid() const;
     wl_event_queue* wl_obj() const;
 
     event_queue& operator=(const event_queue&) = delete;
-    event_queue& operator=(event_queue&&) = default;
+    event_queue& operator=(event_queue&& rhs);
     operator bool() const;
     bool operator==(const event_queue& rhs) const;
     bool operator!=(const event_queue& rhs) const;
 
 private:
+    void destroy();
+
     wl_event_queue* _queue;
 };
 
