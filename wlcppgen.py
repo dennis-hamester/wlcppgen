@@ -950,12 +950,11 @@ class Interface:
         return result
 
 class Specification:
-    def __init__(self):
+    def __init__(self, proto_str):
+        self.root = xml.etree.ElementTree.fromstring(proto_str)
         self.interfaces = list()
 
-    def add_protocol(self, proto_str):
-        root = xml.etree.ElementTree.fromstring(proto_str)
-        for interface in root.iter('interface'):
+        for interface in self.root.iter('interface'):
             self.interfaces.append(Interface(interface))
 
     def generate(self, hook, options):
@@ -1024,7 +1023,7 @@ class HookHandlerIncludeGuard:
     def __init__(self):
         self.id = 'includeguard'
 
-    def generate(self, hook, spec, options):
+    def generate(self, hook, specs, options):
         target = hook.id_path[1]
         if len(options.include_guard) == 0:
             return list()
@@ -1041,7 +1040,7 @@ class HookHandlerNamespace:
     def __init__(self):
         self.id = 'namespace'
 
-    def generate(self, hook, spec, options):
+    def generate(self, hook, specs, options):
         target = hook.id_path[1]
         namespaces = options.namespace.split('::')
         result = list()
@@ -1063,8 +1062,13 @@ class HookHandlerSpec:
     def __init__(self):
         self.id = 'spec'
 
-    def generate(self, hook, spec, options):
-        return spec.generate(hook, options)
+    def generate(self, hook, specs, options):
+        result = list()
+        for spec in specs:
+            result.extend(spec.generate(hook, options))
+            if spec is not specs[-1]:
+                result.append('')
+        return result
 
 class GeneratorOptions:
     def __init__(self):
@@ -1099,7 +1103,7 @@ class SourceTemplate:
             else:
                 self.template.append(line)
 
-    def generate(self, spec, options=GeneratorOptions()):
+    def generate(self, specs, options=GeneratorOptions()):
         result = list()
         for item in self.template:
             generated = None
@@ -1107,7 +1111,7 @@ class SourceTemplate:
                 result.append(item)
             elif item.id in self.hookhandlers:
                 handler = self.hookhandlers[item.id]
-                generated = handler.generate(item, spec, options)
+                generated = handler.generate(item, specs, options)
                 for line in generated:
                     if line is None:
                         continue
@@ -1257,15 +1261,15 @@ def main(argv=None):
         print('Use --help to display usage information')
         return 1
 
-    spec = Specification()
+    specs = list()
     for spec_file in spec_files:
         with open(spec_file) as f:
-            spec.add_protocol(f.read())
+            specs.append(Specification(f.read()))
 
     with open(src_file) as f:
         src_hpp_template = SourceTemplate(f.read())
 
-    result = src_hpp_template.generate(spec, options)
+    result = src_hpp_template.generate(specs, options)
 
     with open(dst_file, 'w') as f:
         for line in result:
