@@ -380,7 +380,7 @@ void data_source::destroy() {
 void data_source::target_handler(void* data, wl_proxy* wl_obj, const char* mime_type) {
     auto& handler = proxy::user_data_to_wrapper_cast<data_source>(data)->_target_handler;
     if(handler) {
-    string mime_type_ = mime_type ? mime_type : string();
+        string mime_type_ = mime_type ? mime_type : string();
         handler(mime_type ? &mime_type_ : nullptr);
     }
 }

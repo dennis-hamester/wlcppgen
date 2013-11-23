@@ -469,10 +469,11 @@ class Event:
         body.append('if(handler) {')
         for argument in self.arguments:
             if argument.argument_type == 'new_id' and argument.allow_null:
-                body.append(mangle_interface_name(argument.interface) + ' ' + argument.name + '_(' + argument.name + ');')
+                new_id_var = mangle_interface_name(argument.interface) + ' ' + argument.name + '_(' + argument.name + ');'
+                body.append([new_id_var])
             elif argument.argument_type == 'string' and argument.allow_null:
                 string_var = std_namespace + 'string ' + argument.name + '_ = ' + argument.name + ' ? ' + argument.name + ' : ' + std_namespace + 'string();'
-                body.append(string_var)
+                body.append([string_var])
 
         handler_call = 'handler('
         for argument in self.arguments:
