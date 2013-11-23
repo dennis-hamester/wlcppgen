@@ -1,14 +1,14 @@
 diff -u3 a/display.cpp b/display.cpp
---- a/display.cpp	2013-11-18 15:59:51.216252894 +0100
-+++ b/display.cpp	2013-11-18 16:00:03.329785526 +0100
+--- a/display.cpp	2013-11-23 10:00:39.113749696 +0100
++++ b/display.cpp	2013-11-23 10:00:39.117082936 +0100
 @@ -1,5 +1,5 @@
  
 -#include "wlcpp.hpp"
 +#include "display.hpp"
  
- using namespace std;
- using namespace wlcpp;
-@@ -30,8 +30,72 @@
+ /* The following code was generated from the "wayland" protocol specification.
+  *
+@@ -57,8 +57,72 @@
      : proxy(obj) {
  }
  
@@ -83,7 +83,7 @@ diff -u3 a/display.cpp b/display.cpp
  }
  
  callback display::sync() {
-@@ -46,3 +110,10 @@
+@@ -73,3 +137,10 @@
      return callback;
  }
  
@@ -95,8 +95,8 @@ diff -u3 a/display.cpp b/display.cpp
 +}
 +
 diff -u3 a/display.hpp b/display.hpp
---- a/display.hpp	2013-11-18 15:59:51.122918027 +0100
-+++ b/display.hpp	2013-11-18 16:00:03.329785526 +0100
+--- a/display.hpp	2013-11-23 10:00:39.113749696 +0100
++++ b/display.hpp	2013-11-23 10:00:39.117082936 +0100
 @@ -2,10 +2,8 @@
  #ifndef _WLCPP_DISPLAY_
  #define _WLCPP_DISPLAY_
@@ -108,9 +108,9 @@ diff -u3 a/display.hpp b/display.hpp
 +#include "wlcpp.hpp"
 +#include "event_queue.hpp"
  
- namespace wlcpp {
- 
-@@ -43,20 +41,34 @@
+ /* The following code was generated from the "wayland" protocol specification.
+  *
+@@ -70,20 +68,34 @@
       */
      display(wl_proxy* obj = nullptr);
  
@@ -151,7 +151,7 @@ diff -u3 a/display.hpp b/display.hpp
      /** asynchronous roundtrip
       *
       *  The sync request asks the server to emit the 'done' event on the returned
-@@ -80,6 +92,9 @@
+@@ -107,6 +119,9 @@
       *  @return
       */
      registry get_registry();

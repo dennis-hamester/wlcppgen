@@ -1,6 +1,8 @@
 
 #include "wlcpp.hpp"
 
+// wlcpp <hook id="spec.copyright"/>
+
 using namespace std;
 // wlcpp <hook id="namespace.using"/>
 

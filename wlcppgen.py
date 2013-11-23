@@ -952,7 +952,14 @@ class Interface:
 class Specification:
     def __init__(self, proto_str):
         self.root = xml.etree.ElementTree.fromstring(proto_str)
+        self.name = self.root.get("name")
         self.interfaces = list()
+
+        copyright_root = self.root.find("copyright")
+        if copyright_root is not None:
+            self.copyright = copyright_root.text
+        else:
+            self.copyright = None
 
         for interface in self.root.iter('interface'):
             self.interfaces.append(Interface(interface))
@@ -964,6 +971,8 @@ class Specification:
             return self.generate_classes(options)
         elif hook.id_str == 'spec.cpp':
             return self.generate_cpp(options)
+        elif hook.id_str == 'spec.copyright':
+            return self.generate_copyright(options)
         else:
             return ['// Specification target "' + hook.id_str + '" unknown']
 
@@ -1005,6 +1014,22 @@ class Specification:
             result.extend(interface.generate_cpp(options))
             if interface != filtered_interfaces[-1]:
                 result.append('')
+        return result
+
+    def generate_copyright(self, options):
+        result = ['/* The following code was generated from the "' + self.name + '" protocol specification.']
+        if self.copyright is not None:
+            result.append(' *')
+            copyright_lines = self.copyright.strip().splitlines()
+            for line in copyright_lines:
+                line_stripped = line.strip()
+                if line_stripped != '':
+                    result.append(' * ' + line_stripped)
+                else:
+                    result.append(' *')
+        else:
+            result.append(' * No copyright information was given.')
+        result.append(' */')
         return result
 
 class Hook:
