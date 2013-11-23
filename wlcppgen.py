@@ -38,7 +38,7 @@ class Description:
                 found_first = False
                 prev_has_text = False
                 for line in text_lines:
-                    stripped = line.strip(' \t')
+                    stripped = line.strip()
                     if stripped == '':
                         prev_has_text = False
                     else:
