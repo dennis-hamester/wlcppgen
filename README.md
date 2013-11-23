@@ -23,6 +23,8 @@ Available commands:
   --generate                   Generate wrappers. This is the default command.
                                Requires --src, --dst and at least one protocol.
   --help, -h                   Display this help.
+  --list-interfaces            List interfaces in every protocol.
+                               Requires at least one protocol.
   --version                    Display version.
 
 Available options:

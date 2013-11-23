@@ -1179,6 +1179,8 @@ def print_usage():
     print('  --generate                   Generate wrappers. This is the default command.')
     print('                               Requires --src, --dst and at least one protocol.')
     print('  --help, -h                   Display this help.')
+    print('  --list-interfaces            List interfaces in every protocol.')
+    print('                               Requires at least one protocol.')
     print('  --version                    Display version.')
     print()
     print('Available options:')
@@ -1203,6 +1205,15 @@ def print_usage():
     print('                               when generating the header')
     print('  --src                        Source template filename.')
 
+def list_interfaces(specs, options):
+    for spec in specs:
+        for interface in spec.interfaces:
+            if len(options.only) > 0:
+                if interface.name in options.only:
+                    print(interface.name)
+            elif interface.name not in options.exclude:
+                print(interface.name)
+
 def print_version():
     print('wlcppgen ', end='')
     print(wlcppgen_version[0], wlcppgen_version[1], wlcppgen_version[2], sep='.')
@@ -1223,6 +1234,7 @@ def main(argv=None):
                 # Commands
                 'generate',
                 'help',
+                'list-interfaces',
                 'version',
                 # Options
                 'src=', 'dst=',
@@ -1245,6 +1257,8 @@ def main(argv=None):
                     commands.add('generate')
                 elif opt in ['-h', '--help']:
                     commands.add('help')
+                elif opt == '--list-interfaces':
+                    commands.add('list-interfaces')
                 elif opt == '--version':
                     commands.add('version')
                 # Options
@@ -1289,23 +1303,27 @@ def main(argv=None):
                 if dst_file is None:
                     raise UsageError('--dst must be specified')
 
+            if commands.intersection(['generate', 'list-interfaces']):
                 if len(args) == 0:
                     raise UsageError('Path to at least one protocol specification must be given')
                 else:
                     spec_files = args
 
-            # Execute specified command
+            # Read source template
             if 'generate' in commands:
+                with open(src_file) as f:
+                    src_hpp_template = SourceTemplate(f.read())
+
+            # Read protocols
+            if commands.intersection(['generate', 'list-interfaces']):
                 specs = list()
                 for spec_file in spec_files:
                     with open(spec_file) as f:
                         specs.append(Specification(f.read()))
 
-                with open(src_file) as f:
-                    src_hpp_template = SourceTemplate(f.read())
-
+            # Execute specified command
+            if 'generate' in commands:
                 result = src_hpp_template.generate(specs, options)
-
                 with open(dst_file, 'w') as f:
                     for line in result:
                         f.write(line)
@@ -1313,6 +1331,9 @@ def main(argv=None):
 
             if 'help' in commands:
                 print_usage()
+
+            if 'list-interfaces' in commands:
+                list_interfaces(specs, options)
 
             if 'version' in commands:
                 print_version()
