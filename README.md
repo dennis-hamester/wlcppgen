@@ -17,35 +17,35 @@ Features
 Usage
 -----
 <pre>
-wlcppgen [OPTIONS] protocol-specifications
+wlcppgen [command] [options] [protocols]
 
-At least one protocol specification must be given.
+Available commands:
+  --generate                   Generate wrappers. This is the default command.
+                               Requires --src, --dst and at least one protocol.
+  --help, -h                   Display this help.
+  --version                    Display version.
 
-The following options are mandatory:
-      --src                        Source template.
-      --dst                        Output file name.
-
-These are optional:
-  -h, --help                       Display this help.
-      --version                    Display version.
-      --exclude                    Comma-separated list of interfaces to exclude. This is
-                                   especially useful for wl_display, because a manually
-                                   written wrapper is more useful.
-      --ignore-events              Do not generate code for events.
-      --include-guard (=_WLCPP_)   Name of the include guard.
-      --indent (=4)                Number of spaces or tabs to indent.
-      --indent-tabs                Indent using tabs instead of spaces.
-      --linewidth (=80)            Maximum linewidth. Currently not very useful, because
-                                   it is only respected
-                                   for comments and indentation is not taken into account.
-      --macro-prefix (=WLCPP_)     Prefix for preprocessor macros (default: "WLCPP_").
-      --namespace (=wlcpp)         The generated code is put into the specified namespace.
-                                   Can be empty or an arbitrary namespace (e.g. foo::bar).
-      --only                       Comma-separated list of interfaces to generate wrappers
-                                   for. This option takes precedence over --exclude.
-      --proxy (=proxy)             Name of the proxy class.
-      --qualify-std-namespace      Prefix std types with "std::". Should be specified
-                                   when generating the header
+Available options:
+  --dst                        Output filename.
+  --exclude                    Comma-separated list of interfaces to exclude. This is
+                               especially useful for wl_display, because a manually
+                               written wrapper is more useful.
+  --ignore-events              Do not generate code for events.
+  --include-guard (=_WLCPP_)   Name of the include guard.
+  --indent (=4)                Number of spaces or tabs to indent.
+  --indent-tabs                Indent using tabs instead of spaces.
+  --linewidth (=80)            Maximum linewidth. Currently not very useful, because
+                               it is only respected
+                               for comments and indentation is not taken into account.
+  --macro-prefix (=WLCPP_)     Prefix for preprocessor macros (default: "WLCPP_").
+  --namespace (=wlcpp)         The generated code is put into the specified namespace.
+                               Can be empty or an arbitrary namespace (e.g. foo::bar).
+  --only                       Comma-separated list of interfaces to generate wrappers
+                               for. This option takes precedence over --exclude.
+  --proxy (=proxy)             Name of the proxy class.
+  --qualify-std-namespace      Prefix std types with "std::". Should be specified
+                               when generating the header
+  --src                        Source template filename.
 </pre>
 
 wlcppgen comes with a small pre-generated sample [here](https://github.com/dennishamester/wlcppgen/tree/master/sample). See [generate.sh](https://github.com/dennishamester/wlcppgen/blob/master/sample/generate.sh) on how that specific wrapper was generated. It's a good place to start.

@@ -1173,35 +1173,35 @@ class UsageError(Exception):
         self.msg = msg
 
 def print_usage():
-    print('wlcppgen [OPTIONS] protocol-specifications')
+    print('wlcppgen [command] [options] [protocols]')
     print()
-    print('At least one protocol specification must be given.')
+    print('Available commands:')
+    print('  --generate                   Generate wrappers. This is the default command.')
+    print('                               Requires --src, --dst and at least one protocol.')
+    print('  --help, -h                   Display this help.')
+    print('  --version                    Display version.')
     print()
-    print('The following options are mandatory:')
-    print('      --src                        Source template.')
-    print('      --dst                        Output file name.')
-    print()
-    print('These are optional:')
-    print('  -h, --help                       Display this help.')
-    print('      --version                    Display version.')
-    print('      --exclude                    Comma-separated list of interfaces to exclude. This is')
-    print('                                   especially useful for wl_display, because a manually')
-    print('                                   written wrapper is more useful.')
-    print('      --ignore-events              Do not generate code for events.')
-    print('      --include-guard (=_WLCPP_)   Name of the include guard.')
-    print('      --indent (=4)                Number of spaces or tabs to indent.')
-    print('      --indent-tabs                Indent using tabs instead of spaces.')
-    print('      --linewidth (=80)            Maximum linewidth. Currently not very useful, because')
-    print('                                   it is only respected')
-    print('                                   for comments and indentation is not taken into account.')
-    print('      --macro-prefix (=WLCPP_)     Prefix for preprocessor macros (default: "WLCPP_").')
-    print('      --namespace (=wlcpp)         The generated code is put into the specified namespace.')
-    print('                                   Can be empty or an arbitrary namespace (e.g. foo::bar).')
-    print('      --only                       Comma-separated list of interfaces to generate wrappers')
-    print('                                   for. This option takes precedence over --exclude.')
-    print('      --proxy (=proxy)             Name of the proxy class.')
-    print('      --qualify-std-namespace      Prefix std types with "std::". Should be specified')
-    print('                                   when generating the header')
+    print('Available options:')
+    print('  --dst                        Output filename.')
+    print('  --exclude                    Comma-separated list of interfaces to exclude. This is')
+    print('                               especially useful for wl_display, because a manually')
+    print('                               written wrapper is more useful.')
+    print('  --ignore-events              Do not generate code for events.')
+    print('  --include-guard (=_WLCPP_)   Name of the include guard.')
+    print('  --indent (=4)                Number of spaces or tabs to indent.')
+    print('  --indent-tabs                Indent using tabs instead of spaces.')
+    print('  --linewidth (=80)            Maximum linewidth. Currently not very useful, because')
+    print('                               it is only respected')
+    print('                               for comments and indentation is not taken into account.')
+    print('  --macro-prefix (=WLCPP_)     Prefix for preprocessor macros (default: "WLCPP_").')
+    print('  --namespace (=wlcpp)         The generated code is put into the specified namespace.')
+    print('                               Can be empty or an arbitrary namespace (e.g. foo::bar).')
+    print('  --only                       Comma-separated list of interfaces to generate wrappers')
+    print('                               for. This option takes precedence over --exclude.')
+    print('  --proxy (=proxy)             Name of the proxy class.')
+    print('  --qualify-std-namespace      Prefix std types with "std::". Should be specified')
+    print('                               when generating the header')
+    print('  --src                        Source template filename.')
 
 def print_version():
     print('wlcppgen ', end='')
@@ -1211,6 +1211,7 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv
 
+    commands = set()
     spec_files = list()
     src_file = None
     dst_file = None
@@ -1219,8 +1220,11 @@ def main(argv=None):
     try:
         try:
             opts, args = getopt.getopt(argv[1:], 'h', [
+                # Commands
+                'generate',
                 'help',
                 'version',
+                # Options
                 'src=', 'dst=',
                 'exclude=',
                 'ignore-events',
@@ -1236,12 +1240,14 @@ def main(argv=None):
             ])
 
             for opt, val in opts:
-                if opt in ['-h', '--help']:
-                    print_usage()
-                    return 0
+                # Commands
+                if opt == '--generate':
+                    commands.add('generate')
+                elif opt in ['-h', '--help']:
+                    commands.add('help')
                 elif opt == '--version':
-                    print_version()
-                    return 0
+                    commands.add('version')
+                # Options
                 elif opt == '--src':
                     src_file = val
                 elif opt == '--dst':
@@ -1269,15 +1275,47 @@ def main(argv=None):
                 elif opt == '--qualify-std-namespace':
                     options.qualify_std_namespace = True
 
-            if len(args) == 0:
-                raise UsageError('Path to at least one protocol specification must be given')
-            else:
-                spec_files = args
+            # Check that only one command is given and default to generate
+            if len(commands) == 0:
+                commands.add('generate')
 
-            if src_file is None:
-                raise UsageError('--src must be specified')
-            if dst_file is None:
-                raise UsageError('--dst must be specified')
+            if len(commands) > 1:
+                raise UsageError('More than one command was given')
+
+            # Check required options for each command
+            if 'generate' in commands:
+                if src_file is None:
+                    raise UsageError('--src must be specified')
+                if dst_file is None:
+                    raise UsageError('--dst must be specified')
+
+                if len(args) == 0:
+                    raise UsageError('Path to at least one protocol specification must be given')
+                else:
+                    spec_files = args
+
+            # Execute specified command
+            if 'generate' in commands:
+                specs = list()
+                for spec_file in spec_files:
+                    with open(spec_file) as f:
+                        specs.append(Specification(f.read()))
+
+                with open(src_file) as f:
+                    src_hpp_template = SourceTemplate(f.read())
+
+                result = src_hpp_template.generate(specs, options)
+
+                with open(dst_file, 'w') as f:
+                    for line in result:
+                        f.write(line)
+                        f.write('\n')
+
+            if 'help' in commands:
+                print_usage()
+
+            if 'version' in commands:
+                print_version()
 
         except getopt.error as msg:
             raise UsageError(msg)
@@ -1285,21 +1323,6 @@ def main(argv=None):
         print(err.msg)
         print('Use --help to display usage information')
         return 1
-
-    specs = list()
-    for spec_file in spec_files:
-        with open(spec_file) as f:
-            specs.append(Specification(f.read()))
-
-    with open(src_file) as f:
-        src_hpp_template = SourceTemplate(f.read())
-
-    result = src_hpp_template.generate(specs, options)
-
-    with open(dst_file, 'w') as f:
-        for line in result:
-            f.write(line)
-            f.write('\n')
 
     return 0
 
