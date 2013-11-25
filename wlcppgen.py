@@ -20,8 +20,11 @@ import sys
 import getopt
 import xml.etree.ElementTree
 
-def mangle_interface_name(name):
-    return name.lstrip('wl_')
+def mangle_interface_name(name, options):
+    for prefix in options.interface_strip:
+        if name.startswith(prefix):
+            return name.lstrip(prefix)
+    return name
 
 class ProtocolError(Exception):
     def __init__(self, msg):
@@ -175,9 +178,9 @@ class Argument:
                 return 'const ' + std_namespace + 'string&'
         elif self.argument_type == 'object':
             if self.interface is not None and not self.allow_null:
-                return mangle_interface_name(self.interface) + '&'
+                return mangle_interface_name(self.interface, options) + '&'
             elif self.interface is not None and self.allow_null:
-                return mangle_interface_name(self.interface) + '*'
+                return mangle_interface_name(self.interface, options) + '*'
             elif self.interface is None and not self.allow_null:
                 return options.proxy + '&'
             elif self.interface is None and self.allow_null:
@@ -195,14 +198,14 @@ class Argument:
             if self.interface is None:
                 return options.proxy
             else:
-                return mangle_interface_name(self.interface)
+                return mangle_interface_name(self.interface, options)
 
     def generate_request_parameter(self, options):
         return self.generate_request_parameter_type(options) + ' ' + self.name
 
     def generate_event_parameter_type(self, options):
         if self.argument_type == 'new_id':
-            result = mangle_interface_name(self.interface)
+            result = mangle_interface_name(self.interface, options)
             if self.allow_null:
                 result += '*'
             else:
@@ -311,7 +314,7 @@ class Request:
         if self.return_argument is not None:
             return_var = str()
             if self.return_argument.interface is not None:
-                return_var += mangle_interface_name(self.return_argument.interface) + ' ' + self.return_argument.name + '(*this);'
+                return_var += mangle_interface_name(self.return_argument.interface, options) + ' ' + self.return_argument.name + '(*this);'
             else:
                 return_var += 'T ' + self.return_argument.name + '(*this);'
             body.append(return_var)
@@ -349,7 +352,7 @@ class Request:
             if argument.argument_type == 'new_id' and argument.interface is None:
                 result += 'nullptr, nullptr, nullptr'
             elif (argument.interface is not None) and (argument.argument_type == 'new_id' or argument.argument_type == 'object'):
-                result += '&' + mangle_interface_name(argument.interface) + '::interface'
+                result += '&' + mangle_interface_name(argument.interface, options) + '::interface'
             else:
                 result += 'nullptr'
 
@@ -450,7 +453,7 @@ class Event:
             result += 'static '
         result += 'void '
         if impl:
-            result += mangle_interface_name(interface.name) + '::'
+            result += mangle_interface_name(interface.name, options) + '::'
         result += self.name + '_handler(void* data, wl_proxy* wl_obj'
         for argument in self.arguments:
             result += ', ' + argument.generate_native_type(options) + ' ' + argument.name
@@ -465,11 +468,11 @@ class Event:
 
         result = [self.generate_handler_decl(options, interface, impl=True) + ' {']
         body = list()
-        body.append('auto& handler = ' + options.proxy + '::user_data_to_wrapper_cast<' + mangle_interface_name(interface.name) + '>(data)->_' + self .name + '_handler;')
+        body.append('auto& handler = ' + options.proxy + '::user_data_to_wrapper_cast<' + mangle_interface_name(interface.name, options) + '>(data)->_' + self .name + '_handler;')
         body.append('if(handler) {')
         for argument in self.arguments:
             if argument.argument_type == 'new_id' and argument.allow_null:
-                new_id_var = mangle_interface_name(argument.interface) + ' ' + argument.name + '_(' + argument.name + ');'
+                new_id_var = mangle_interface_name(argument.interface, options) + ' ' + argument.name + '_(' + argument.name + ');'
                 body.append([new_id_var])
             elif argument.argument_type == 'string' and argument.allow_null:
                 string_var = std_namespace + 'string ' + argument.name + '_ = ' + argument.name + ' ? ' + argument.name + ' : ' + std_namespace + 'string();'
@@ -484,13 +487,13 @@ class Event:
                 if argument.interface is None:
                     handler_call += options.proxy
                 else:
-                    handler_call += mangle_interface_name(argument.interface)
+                    handler_call += mangle_interface_name(argument.interface, options)
                 handler_call += '>(' + argument.name + ')'
             elif argument.argument_type == 'new_id':
                 if argument.allow_null:
                     handler_call += argument.name + ' ? &' + argument.name + '_ : nullptr'
                 else:
-                    handler_call += mangle_interface_name(argument.interface) + '(' + argument.name + ')'
+                    handler_call += mangle_interface_name(argument.interface, options) + '(' + argument.name + ')'
             elif argument.argument_type == 'string' and argument.allow_null:
                 handler_call += argument.name + ' ? &' + argument.name + '_' + ' : nullptr'
             elif argument.argument_type == 'array' and not argument.allow_null:
@@ -510,7 +513,7 @@ class Event:
         result = 'static const wl_interface* ' + interface.name + '_event_' + self.name + '_types[] = { '
         for argument in self.arguments:
             if (argument.interface is not None) and (argument.argument_type == 'new_id' or argument.argument_type == 'object'):
-                result += '&' + mangle_interface_name(argument.interface) + '::interface'
+                result += '&' + mangle_interface_name(argument.interface, options) + '::interface'
             else:
                 result += 'nullptr'
 
@@ -555,7 +558,7 @@ class EnumEntry:
         self.summary = self.root.get('summary')
 
     def generate(self, options, interface, enum):
-        result = mangle_interface_name(interface.name) + '_' + enum.name + '_' + self.name
+        result = mangle_interface_name(interface.name, options) + '_' + enum.name + '_' + self.name
         result = result.upper()
         result += ' = ' + self.value + ','
         if self.summary is not None:
@@ -575,7 +578,7 @@ class Enum:
     def generate(self, options, interface):
         result = list()
         result.extend(self.description.generate(options))
-        result.append('enum ' + mangle_interface_name(interface.name) + '_' + self.name + ' {')
+        result.append('enum ' + mangle_interface_name(interface.name, options) + '_' + self.name + ' {')
         entries = list()
         for entry in self.entries:
             entries.append(entry.generate(options, interface, self))
@@ -613,13 +616,13 @@ class Interface:
             self.enums.append(Enum(enum))
 
     def generate_prototype(self, options):
-        return 'class ' + mangle_interface_name(self.name) + ';'
+        return 'class ' + mangle_interface_name(self.name, options) + ';'
 
     def generate_wl_obj_ctor(self, options, impl):
         result = str()
         if impl:
-            result += mangle_interface_name(self.name) + '::'
-        result += mangle_interface_name(self.name) + '(wl_proxy* obj'
+            result += mangle_interface_name(self.name, options) + '::'
+        result += mangle_interface_name(self.name, options) + '(wl_proxy* obj'
         if not impl:
             result += ' = nullptr'
         result += ')'
@@ -630,24 +633,24 @@ class Interface:
         if not impl:
             result += 'explicit '
         else:
-            result += mangle_interface_name(self.name) + '::'
-        result += mangle_interface_name(self.name) + '(' + options.proxy + '& factory)'
+            result += mangle_interface_name(self.name, options) + '::'
+        result += mangle_interface_name(self.name, options) + '(' + options.proxy + '& factory)'
         return result
 
     def generate_dtor(self, options, impl):
         result = str()
         if impl:
-            result += mangle_interface_name(self.name) + '::'
+            result += mangle_interface_name(self.name, options) + '::'
         else:
             result += 'virtual '
-        result += '~' + mangle_interface_name(self.name) + '()'
+        result += '~' + mangle_interface_name(self.name, options) + '()'
         return result
 
     def generate_move_operator(self, options, impl):
-        result = mangle_interface_name(self.name) + '& '
+        result = mangle_interface_name(self.name, options) + '& '
         if impl:
-            result += mangle_interface_name(self.name) + '::'
-        result += 'operator=(' + mangle_interface_name(self.name) + '&& rhs)'
+            result += mangle_interface_name(self.name, options) + '::'
+        result += 'operator=(' + mangle_interface_name(self.name, options) + '&& rhs)'
         return result
 
     def generate_interface_decl(self, options, impl):
@@ -656,7 +659,7 @@ class Interface:
             result += 'static '
         result += 'const wl_interface '
         if impl:
-            result += mangle_interface_name(self.name) + '::'
+            result += mangle_interface_name(self.name, options) + '::'
         result += 'interface'
         return result
 
@@ -675,34 +678,34 @@ class Interface:
             result += 'static '
         result += 'const '
         if impl:
-            result += mangle_interface_name(self.name) + '::'
+            result += mangle_interface_name(self.name, options) + '::'
         result += 'listener_t '
         if impl:
-            result += mangle_interface_name(self.name) + '::'
+            result += mangle_interface_name(self.name, options) + '::'
         result += 'listener'
         return result
 
     def generate_move_ctor(self, options, impl):
         result = str()
         if impl:
-            result += mangle_interface_name(self.name) + '::'
-        result += mangle_interface_name(self.name) + '(' + mangle_interface_name(self.name) + '&& rhs)'
+            result += mangle_interface_name(self.name, options) + '::'
+        result += mangle_interface_name(self.name, options) + '(' + mangle_interface_name(self.name, options) + '&& rhs)'
         return result
 
     def generate_destroy_method(self, options, impl):
         result = 'void '
         if impl:
-            result += mangle_interface_name(self.name) + '::'
+            result += mangle_interface_name(self.name, options) + '::'
         result += 'destroy()'
         if not impl:
             result += ' override'
         return result
 
     def generate_version_define(self, options):
-        return '#define ' + options.macro_prefix + mangle_interface_name(self.name).upper() + '_VERSION ' + str(self.version)
+        return '#define ' + options.macro_prefix + mangle_interface_name(self.name, options).upper() + '_VERSION ' + str(self.version)
 
     def generate_class(self, options):
-        class_name = mangle_interface_name(self.name)
+        class_name = mangle_interface_name(self.name, options)
 
         result = list()
         result.extend(self.description.generate(options))
@@ -875,7 +878,7 @@ class Interface:
 
     def generate_cpp(self, options):
         result = list()
-        class_name = mangle_interface_name(self.name)
+        class_name = mangle_interface_name(self.name, options)
         have_events = len(self.events) > 0
 
         result.extend(self.generate_interface(options))
@@ -927,7 +930,7 @@ class Interface:
         for request in self.requests:
             if request != self.destructor and not request.is_template:
                 result.append('')
-                result.extend(request.generate_impl(options, mangle_interface_name(self.name)))
+                result.extend(request.generate_impl(options, mangle_interface_name(self.name, options)))
 
         if self.destructor is not None:
             result.append('')
@@ -1102,6 +1105,7 @@ class GeneratorOptions:
         self.include_guard = '_WLCPP_'
         self.indent = 4
         self.indent_tabs = False
+        self.interface_strip = ['wl_']
         self.linewidth = 80
         self.macro_prefix = 'WLCPP_'
         self.namespace = 'wlcpp'
@@ -1192,6 +1196,9 @@ def print_usage():
     print('  --include-guard (=_WLCPP_)   Name of the include guard.')
     print('  --indent (=4)                Number of spaces or tabs to indent.')
     print('  --indent-tabs                Indent using tabs instead of spaces.')
+    print('  --interface-strip (=wl_)     Comma-separated list of prefixes to srtip from')
+    print('                               interface names to generate class names. Only the first')
+    print('                               prefix found is stripped.')
     print('  --linewidth (=80)            Maximum linewidth. Currently not very useful, because')
     print('                               it is only respected')
     print('                               for comments and indentation is not taken into account.')
@@ -1243,6 +1250,7 @@ def main(argv=None):
                 'include-guard=',
                 'indent=',
                 'indent-tabs',
+                'interface-strip=',
                 'linewidth=',
                 'macro-prefix=',
                 'namespace=',
@@ -1276,6 +1284,8 @@ def main(argv=None):
                     options.indent = int(val)
                 elif opt == '--indent-tabs':
                     options.indent_tabs = True
+                elif opt == '--interface-strip':
+                    options.interface_strip = val.split(',')
                 elif opt == '--linewidth':
                     options.linewidth = int(val)
                 elif opt == '--macro-prefix':

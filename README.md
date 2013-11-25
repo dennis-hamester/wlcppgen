@@ -36,6 +36,9 @@ Available options:
   --include-guard (=_WLCPP_)   Name of the include guard.
   --indent (=4)                Number of spaces or tabs to indent.
   --indent-tabs                Indent using tabs instead of spaces.
+  --interface-strip (=wl_)     Comma-separated list of prefixes to srtip from
+                               interface names to generate class names. Only the first
+                               prefix found is stripped.
   --linewidth (=80)            Maximum linewidth. Currently not very useful, because
                                it is only respected
                                for comments and indentation is not taken into account.
