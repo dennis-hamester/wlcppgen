@@ -21,10 +21,12 @@ import getopt
 import xml.etree.ElementTree
 
 def mangle_interface_name(name, options):
+    stripped = name
     for prefix in options.interface_strip:
         if name.startswith(prefix):
-            return name.lstrip(prefix)
-    return name
+            stripped = name.lstrip(prefix)
+            break
+    return options.interface_prefix + stripped
 
 class ProtocolError(Exception):
     def __init__(self, msg):
@@ -1105,6 +1107,7 @@ class GeneratorOptions:
         self.include_guard = '_WLCPP_'
         self.indent = 4
         self.indent_tabs = False
+        self.interface_prefix = ''
         self.interface_strip = ['wl_']
         self.linewidth = 80
         self.macro_prefix = 'WLCPP_'
@@ -1196,6 +1199,8 @@ def print_usage():
     print('  --include-guard (=_WLCPP_)   Name of the include guard.')
     print('  --indent (=4)                Number of spaces or tabs to indent.')
     print('  --indent-tabs                Indent using tabs instead of spaces.')
+    print('  --interface-prefix           Prefix for generated class names. This options applies')
+    print('                               after stripping.')
     print('  --interface-strip (=wl_)     Comma-separated list of prefixes to srtip from')
     print('                               interface names to generate class names. Only the first')
     print('                               prefix found is stripped.')
@@ -1250,6 +1255,7 @@ def main(argv=None):
                 'include-guard=',
                 'indent=',
                 'indent-tabs',
+                'interface-prefix=',
                 'interface-strip=',
                 'linewidth=',
                 'macro-prefix=',
@@ -1284,6 +1290,8 @@ def main(argv=None):
                     options.indent = int(val)
                 elif opt == '--indent-tabs':
                     options.indent_tabs = True
+                elif opt == '--interface-prefix':
+                    options.interface_prefix = val
                 elif opt == '--interface-strip':
                     options.interface_strip = val.split(',')
                 elif opt == '--linewidth':
