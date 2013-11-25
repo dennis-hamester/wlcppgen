@@ -28,6 +28,9 @@ def mangle_interface_name(name, options):
             break
     return options.interface_prefix + stripped
 
+def mangle_argument_name(name):
+    return name + '_'
+
 class ProtocolError(Exception):
     def __init__(self, msg):
         self.msg = msg
@@ -106,7 +109,7 @@ class Description:
             result.append(' *')
 
         for argument in filtered_arguments:
-            param_doc = ' *  @param ' + argument.name
+            param_doc = ' *  @param ' + mangle_argument_name(argument.name)
             if argument.summary is not None:
                 param_doc += ' ' + argument.summary
             result.append(param_doc)
@@ -125,7 +128,7 @@ class Description:
         if len(event.arguments) > 0:
             result.append(' *')
         for argument in event.arguments:
-            param_doc = ' *  Parameter ' + argument.name + ':'
+            param_doc = ' *  Parameter ' + mangle_argument_name(argument.name) + ':'
             if argument.summary is not None:
                 param_doc += ' ' + argument.summary
             result.append(param_doc)
@@ -203,7 +206,7 @@ class Argument:
                 return mangle_interface_name(self.interface, options)
 
     def generate_request_parameter(self, options):
-        return self.generate_request_parameter_type(options) + ' ' + self.name
+        return self.generate_request_parameter_type(options) + ' ' + mangle_argument_name(self.name)
 
     def generate_event_parameter_type(self, options):
         if self.argument_type == 'new_id':
@@ -217,7 +220,7 @@ class Argument:
             return self.generate_request_parameter_type(options)
 
     def generate_event_parameter(self, options):
-        return self.generate_event_parameter_type(options) + ' ' + self.name
+        return self.generate_event_parameter_type(options) + ' ' + mangle_argument_name(self.name)
 
     def generate_native_type(self, options):
         if options.qualify_std_namespace:
@@ -292,7 +295,7 @@ class Request:
             if argument != self.return_argument:
                 sig += argument.generate_request_parameter(options)
             elif argument.argument_type == 'new_id' and argument.interface is None:
-                sig += std_namespace + 'uint32_t version'
+                sig += std_namespace + 'uint32_t version_'
             if argument != self.arguments[-1]:
                 sig += ', '
 
@@ -316,33 +319,33 @@ class Request:
         if self.return_argument is not None:
             return_var = str()
             if self.return_argument.interface is not None:
-                return_var += mangle_interface_name(self.return_argument.interface, options) + ' ' + self.return_argument.name + '(*this);'
+                return_var += mangle_interface_name(self.return_argument.interface, options) + ' ' + mangle_argument_name(self.return_argument.name) + '(*this);'
             else:
-                return_var += 'T ' + self.return_argument.name + '(*this);'
+                return_var += 'T ' + mangle_argument_name(self.return_argument.name) + '(*this);'
             body.append(return_var)
 
         marshal_call = 'marshal(' + str(self.opcode)
         for argument in self.arguments:
             marshal_call += ', '
             if argument.argument_type == 'new_id' and argument.interface is None:
-                marshal_call += 'T::interface.name, version, '
+                marshal_call += 'T::interface.name, version_, '
             if argument.argument_type == 'new_id':
-                marshal_call += argument.name + '.wl_obj()'
+                marshal_call += mangle_argument_name(argument.name) + '.wl_obj()'
             elif argument.argument_type == 'string' and argument.allow_null:
-                marshal_call += argument.name + ' ? ' + argument.name + '->c_str() : nullptr'
+                marshal_call += mangle_argument_name(argument.name) + ' ? ' + mangle_argument_name(argument.name) + '->c_str() : nullptr'
             elif argument.argument_type == 'string' and not argument.allow_null:
-                marshal_call += argument.name + '.c_str()'
+                marshal_call += mangle_argument_name(argument.name) + '.c_str()'
             elif argument.argument_type == 'object' and argument.allow_null:
-                marshal_call += argument.name + ' ? ' + argument.name + '->wl_obj() : nullptr'
+                marshal_call += mangle_argument_name(argument.name) + ' ? ' + mangle_argument_name(argument.name) + '->wl_obj() : nullptr'
             elif argument.argument_type == 'object' and not argument.allow_null:
-                marshal_call += argument.name + '.wl_obj()'
+                marshal_call += mangle_argument_name(argument.name) + '.wl_obj()'
             else:
-                marshal_call += argument.name
+                marshal_call += mangle_argument_name(argument.name)
         marshal_call += ');'
         body.append(marshal_call)
 
         if self.return_argument is not None:
-            body.append('return ' + self.return_argument.name + ';')
+            body.append('return ' + mangle_argument_name(self.return_argument.name) + ';')
 
         result.append(body)
         result.append('}')
@@ -458,7 +461,7 @@ class Event:
             result += mangle_interface_name(interface.name, options) + '::'
         result += self.name + '_handler(void* data, wl_proxy* wl_obj'
         for argument in self.arguments:
-            result += ', ' + argument.generate_native_type(options) + ' ' + argument.name
+            result += ', ' + argument.generate_native_type(options) + ' ' + mangle_argument_name(argument.name)
         result += ')'
         return result
 
@@ -474,10 +477,10 @@ class Event:
         body.append('if(handler) {')
         for argument in self.arguments:
             if argument.argument_type == 'new_id' and argument.allow_null:
-                new_id_var = mangle_interface_name(argument.interface, options) + ' ' + argument.name + '_(' + argument.name + ');'
+                new_id_var = mangle_interface_name(argument.interface, options) + ' ' + argument.name + '_new_id(' + mangle_argument_name(argument.name) + ');'
                 body.append([new_id_var])
             elif argument.argument_type == 'string' and argument.allow_null:
-                string_var = std_namespace + 'string ' + argument.name + '_ = ' + argument.name + ' ? ' + argument.name + ' : ' + std_namespace + 'string();'
+                string_var = std_namespace + 'string ' + argument.name + '_str = ' + mangle_argument_name(argument.name) + ' ? ' + mangle_argument_name(argument.name) + ' : ' + std_namespace + 'string();'
                 body.append([string_var])
 
         handler_call = 'handler('
@@ -485,23 +488,23 @@ class Event:
             if argument.argument_type == 'object':
                 if not argument.allow_null:
                     handler_call += '*'
-                handler_call += options.proxy + '::wrapper_cast<class '
+                handler_call += options.proxy + '::wrapper_cast<'
                 if argument.interface is None:
                     handler_call += options.proxy
                 else:
                     handler_call += mangle_interface_name(argument.interface, options)
-                handler_call += '>(' + argument.name + ')'
+                handler_call += '>(' + mangle_argument_name(argument.name) + ')'
             elif argument.argument_type == 'new_id':
                 if argument.allow_null:
-                    handler_call += argument.name + ' ? &' + argument.name + '_ : nullptr'
+                    handler_call += mangle_argument_name(argument.name) + ' ? &' + argument.name + '_new_id : nullptr'
                 else:
-                    handler_call += mangle_interface_name(argument.interface, options) + '(' + argument.name + ')'
+                    handler_call += mangle_interface_name(argument.interface, options) + '(' + mangle_argument_name(argument.name) + ')'
             elif argument.argument_type == 'string' and argument.allow_null:
-                handler_call += argument.name + ' ? &' + argument.name + '_' + ' : nullptr'
+                handler_call += mangle_argument_name(argument.name) + ' ? &' + argument.name + '_str' + ' : nullptr'
             elif argument.argument_type == 'array' and not argument.allow_null:
-                handler_call += '*' + argument.name
+                handler_call += '*' + mangle_argument_name(argument.name)
             else:
-                handler_call += argument.name
+                handler_call += mangle_argument_name(argument.name)
             if argument != self.arguments[-1]:
                 handler_call += ', '
         handler_call += ');'

@@ -126,15 +126,15 @@ int display::read_events() {
 }
 
 callback display::sync() {
-    callback callback(*this);
-    marshal(0, callback.wl_obj());
-    return callback;
+    callback callback_(*this);
+    marshal(0, callback_.wl_obj());
+    return callback_;
 }
 
 registry display::get_registry() {
-    registry callback(*this);
-    marshal(1, callback.wl_obj());
-    return callback;
+    registry callback_(*this);
+    marshal(1, callback_.wl_obj());
+    return callback_;
 }
 
 void display::destroy() {

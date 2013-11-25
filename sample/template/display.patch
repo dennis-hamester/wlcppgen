@@ -1,6 +1,6 @@
-diff -u3 a/display.cpp b/display.cpp
---- a/display.cpp	2013-11-23 10:00:39.113749696 +0100
-+++ b/display.cpp	2013-11-23 10:00:39.117082936 +0100
+diff -Naur a/display.cpp b/display.cpp
+--- a/display.cpp	2013-11-25 11:28:34.791769920 +0100
++++ b/display.cpp	2013-11-25 11:28:34.791769920 +0100
 @@ -1,5 +1,5 @@
  
 -#include "wlcpp.hpp"
@@ -84,7 +84,7 @@ diff -u3 a/display.cpp b/display.cpp
  
  callback display::sync() {
 @@ -73,3 +137,10 @@
-     return callback;
+     return callback_;
  }
  
 +void display::destroy() {
@@ -94,9 +94,9 @@ diff -u3 a/display.cpp b/display.cpp
 +    }
 +}
 +
-diff -u3 a/display.hpp b/display.hpp
---- a/display.hpp	2013-11-23 10:00:39.113749696 +0100
-+++ b/display.hpp	2013-11-23 10:00:39.117082936 +0100
+diff -Naur a/display.hpp b/display.hpp
+--- a/display.hpp	2013-11-25 11:28:34.791769920 +0100
++++ b/display.hpp	2013-11-25 11:28:34.791769920 +0100
 @@ -2,10 +2,8 @@
  #ifndef _WLCPP_DISPLAY_
  #define _WLCPP_DISPLAY_

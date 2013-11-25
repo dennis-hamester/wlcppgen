@@ -66,17 +66,17 @@ registry::registry(proxy& factory)
     add_listener(listener);
 }
 
-void registry::global_handler(void* data, wl_proxy* wl_obj, uint32_t name, const char* interface, uint32_t version) {
+void registry::global_handler(void* data, wl_proxy* wl_obj, uint32_t name_, const char* interface_, uint32_t version_) {
     auto& handler = proxy::user_data_to_wrapper_cast<registry>(data)->_global_handler;
     if(handler) {
-        handler(name, interface, version);
+        handler(name_, interface_, version_);
     }
 }
 
-void registry::global_remove_handler(void* data, wl_proxy* wl_obj, uint32_t name) {
+void registry::global_remove_handler(void* data, wl_proxy* wl_obj, uint32_t name_) {
     auto& handler = proxy::user_data_to_wrapper_cast<registry>(data)->_global_remove_handler;
     if(handler) {
-        handler(name);
+        handler(name_);
     }
 }
 
@@ -106,10 +106,10 @@ callback::callback(proxy& factory)
     add_listener(listener);
 }
 
-void callback::done_handler(void* data, wl_proxy* wl_obj, uint32_t serial) {
+void callback::done_handler(void* data, wl_proxy* wl_obj, uint32_t serial_) {
     auto& handler = proxy::user_data_to_wrapper_cast<callback>(data)->_done_handler;
     if(handler) {
-        handler(serial);
+        handler(serial_);
     }
 }
 
@@ -136,15 +136,15 @@ compositor::compositor(proxy& factory)
 }
 
 surface compositor::create_surface() {
-    surface id(*this);
-    marshal(0, id.wl_obj());
-    return id;
+    surface id_(*this);
+    marshal(0, id_.wl_obj());
+    return id_;
 }
 
 region compositor::create_region() {
-    region id(*this);
-    marshal(1, id.wl_obj());
-    return id;
+    region id_(*this);
+    marshal(1, id_.wl_obj());
+    return id_;
 }
 
 static const wl_interface* wl_shm_pool_request_create_buffer_types[] = { &buffer::interface, nullptr, nullptr, nullptr, nullptr, nullptr };
@@ -175,14 +175,14 @@ shm_pool::~shm_pool(){
     destroy();
 }
 
-buffer shm_pool::create_buffer(int32_t offset, int32_t width, int32_t height, int32_t stride, uint32_t format) {
-    buffer id(*this);
-    marshal(0, id.wl_obj(), offset, width, height, stride, format);
-    return id;
+buffer shm_pool::create_buffer(int32_t offset_, int32_t width_, int32_t height_, int32_t stride_, uint32_t format_) {
+    buffer id_(*this);
+    marshal(0, id_.wl_obj(), offset_, width_, height_, stride_, format_);
+    return id_;
 }
 
-void shm_pool::resize(int32_t size) {
-    marshal(2, size);
+void shm_pool::resize(int32_t size_) {
+    marshal(2, size_);
 }
 
 void shm_pool::destroy() {
@@ -224,16 +224,16 @@ shm::shm(proxy& factory)
     add_listener(listener);
 }
 
-shm_pool shm::create_pool(int32_t fd, int32_t size) {
-    shm_pool id(*this);
-    marshal(0, id.wl_obj(), fd, size);
-    return id;
+shm_pool shm::create_pool(int32_t fd_, int32_t size_) {
+    shm_pool id_(*this);
+    marshal(0, id_.wl_obj(), fd_, size_);
+    return id_;
 }
 
-void shm::format_handler(void* data, wl_proxy* wl_obj, uint32_t format) {
+void shm::format_handler(void* data, wl_proxy* wl_obj, uint32_t format_) {
     auto& handler = proxy::user_data_to_wrapper_cast<shm>(data)->_format_handler;
     if(handler) {
-        handler(format);
+        handler(format_);
     }
 }
 
@@ -327,12 +327,12 @@ data_offer::~data_offer(){
     destroy();
 }
 
-void data_offer::accept(uint32_t serial, const string* mime_type) {
-    marshal(0, serial, mime_type ? mime_type->c_str() : nullptr);
+void data_offer::accept(uint32_t serial_, const string* mime_type_) {
+    marshal(0, serial_, mime_type_ ? mime_type_->c_str() : nullptr);
 }
 
-void data_offer::receive(const string& mime_type, int32_t fd) {
-    marshal(1, mime_type.c_str(), fd);
+void data_offer::receive(const string& mime_type_, int32_t fd_) {
+    marshal(1, mime_type_.c_str(), fd_);
 }
 
 void data_offer::destroy() {
@@ -342,10 +342,10 @@ void data_offer::destroy() {
     proxy::destroy();
 }
 
-void data_offer::offer_handler(void* data, wl_proxy* wl_obj, const char* mime_type) {
+void data_offer::offer_handler(void* data, wl_proxy* wl_obj, const char* mime_type_) {
     auto& handler = proxy::user_data_to_wrapper_cast<data_offer>(data)->_offer_handler;
     if(handler) {
-        handler(mime_type);
+        handler(mime_type_);
     }
 }
 
@@ -393,8 +393,8 @@ data_source::~data_source(){
     destroy();
 }
 
-void data_source::offer(const string& mime_type) {
-    marshal(0, mime_type.c_str());
+void data_source::offer(const string& mime_type_) {
+    marshal(0, mime_type_.c_str());
 }
 
 void data_source::destroy() {
@@ -404,18 +404,18 @@ void data_source::destroy() {
     proxy::destroy();
 }
 
-void data_source::target_handler(void* data, wl_proxy* wl_obj, const char* mime_type) {
+void data_source::target_handler(void* data, wl_proxy* wl_obj, const char* mime_type_) {
     auto& handler = proxy::user_data_to_wrapper_cast<data_source>(data)->_target_handler;
     if(handler) {
-        string mime_type_ = mime_type ? mime_type : string();
-        handler(mime_type ? &mime_type_ : nullptr);
+        string mime_type_str = mime_type_ ? mime_type_ : string();
+        handler(mime_type_ ? &mime_type_str : nullptr);
     }
 }
 
-void data_source::send_handler(void* data, wl_proxy* wl_obj, const char* mime_type, int32_t fd) {
+void data_source::send_handler(void* data, wl_proxy* wl_obj, const char* mime_type_, int32_t fd_) {
     auto& handler = proxy::user_data_to_wrapper_cast<data_source>(data)->_send_handler;
     if(handler) {
-        handler(mime_type, fd);
+        handler(mime_type_, fd_);
     }
 }
 
@@ -475,25 +475,25 @@ data_device::data_device(proxy& factory)
     add_listener(listener);
 }
 
-void data_device::start_drag(data_source* source, surface& origin, surface* icon, uint32_t serial) {
-    marshal(0, source ? source->wl_obj() : nullptr, origin.wl_obj(), icon ? icon->wl_obj() : nullptr, serial);
+void data_device::start_drag(data_source* source_, surface& origin_, surface* icon_, uint32_t serial_) {
+    marshal(0, source_ ? source_->wl_obj() : nullptr, origin_.wl_obj(), icon_ ? icon_->wl_obj() : nullptr, serial_);
 }
 
-void data_device::set_selection(data_source* source, uint32_t serial) {
-    marshal(1, source ? source->wl_obj() : nullptr, serial);
+void data_device::set_selection(data_source* source_, uint32_t serial_) {
+    marshal(1, source_ ? source_->wl_obj() : nullptr, serial_);
 }
 
-void data_device::data_offer_handler(void* data, wl_proxy* wl_obj, wl_proxy* id) {
+void data_device::data_offer_handler(void* data, wl_proxy* wl_obj, wl_proxy* id_) {
     auto& handler = proxy::user_data_to_wrapper_cast<data_device>(data)->_data_offer_handler;
     if(handler) {
-        handler(data_offer(id));
+        handler(data_offer(id_));
     }
 }
 
-void data_device::enter_handler(void* data, wl_proxy* wl_obj, uint32_t serial, wl_proxy* surface, wl_fixed_t x, wl_fixed_t y, wl_proxy* id) {
+void data_device::enter_handler(void* data, wl_proxy* wl_obj, uint32_t serial_, wl_proxy* surface_, wl_fixed_t x_, wl_fixed_t y_, wl_proxy* id_) {
     auto& handler = proxy::user_data_to_wrapper_cast<data_device>(data)->_enter_handler;
     if(handler) {
-        handler(serial, *proxy::wrapper_cast<class surface>(surface), x, y, proxy::wrapper_cast<class data_offer>(id));
+        handler(serial_, *proxy::wrapper_cast<surface>(surface_), x_, y_, proxy::wrapper_cast<data_offer>(id_));
     }
 }
 
@@ -504,10 +504,10 @@ void data_device::leave_handler(void* data, wl_proxy* wl_obj) {
     }
 }
 
-void data_device::motion_handler(void* data, wl_proxy* wl_obj, uint32_t time, wl_fixed_t x, wl_fixed_t y) {
+void data_device::motion_handler(void* data, wl_proxy* wl_obj, uint32_t time_, wl_fixed_t x_, wl_fixed_t y_) {
     auto& handler = proxy::user_data_to_wrapper_cast<data_device>(data)->_motion_handler;
     if(handler) {
-        handler(time, x, y);
+        handler(time_, x_, y_);
     }
 }
 
@@ -518,10 +518,10 @@ void data_device::drop_handler(void* data, wl_proxy* wl_obj) {
     }
 }
 
-void data_device::selection_handler(void* data, wl_proxy* wl_obj, wl_proxy* id) {
+void data_device::selection_handler(void* data, wl_proxy* wl_obj, wl_proxy* id_) {
     auto& handler = proxy::user_data_to_wrapper_cast<data_device>(data)->_selection_handler;
     if(handler) {
-        handler(proxy::wrapper_cast<class data_offer>(id));
+        handler(proxy::wrapper_cast<data_offer>(id_));
     }
 }
 
@@ -548,15 +548,15 @@ data_device_manager::data_device_manager(proxy& factory)
 }
 
 data_source data_device_manager::create_data_source() {
-    data_source id(*this);
-    marshal(0, id.wl_obj());
-    return id;
+    data_source id_(*this);
+    marshal(0, id_.wl_obj());
+    return id_;
 }
 
-data_device data_device_manager::get_data_device(seat& seat) {
-    data_device id(*this);
-    marshal(1, id.wl_obj(), seat.wl_obj());
-    return id;
+data_device data_device_manager::get_data_device(seat& seat_) {
+    data_device id_(*this);
+    marshal(1, id_.wl_obj(), seat_.wl_obj());
+    return id_;
 }
 
 static const wl_interface* wl_shell_request_get_shell_surface_types[] = { &shell_surface::interface, &surface::interface };
@@ -579,10 +579,10 @@ shell::shell(proxy& factory)
     : proxy(factory, interface) {
 }
 
-shell_surface shell::get_shell_surface(surface& surface) {
-    shell_surface id(*this);
-    marshal(0, id.wl_obj(), surface.wl_obj());
-    return id;
+shell_surface shell::get_shell_surface(surface& surface_) {
+    shell_surface id_(*this);
+    marshal(0, id_.wl_obj(), surface_.wl_obj());
+    return id_;
 }
 
 static const wl_interface* wl_shell_surface_request_pong_types[] = { nullptr };
@@ -641,57 +641,57 @@ shell_surface::shell_surface(proxy& factory)
     add_listener(listener);
 }
 
-void shell_surface::pong(uint32_t serial) {
-    marshal(0, serial);
+void shell_surface::pong(uint32_t serial_) {
+    marshal(0, serial_);
 }
 
-void shell_surface::move(seat& seat, uint32_t serial) {
-    marshal(1, seat.wl_obj(), serial);
+void shell_surface::move(seat& seat_, uint32_t serial_) {
+    marshal(1, seat_.wl_obj(), serial_);
 }
 
-void shell_surface::resize(seat& seat, uint32_t serial, uint32_t edges) {
-    marshal(2, seat.wl_obj(), serial, edges);
+void shell_surface::resize(seat& seat_, uint32_t serial_, uint32_t edges_) {
+    marshal(2, seat_.wl_obj(), serial_, edges_);
 }
 
 void shell_surface::set_toplevel() {
     marshal(3);
 }
 
-void shell_surface::set_transient(surface& parent, int32_t x, int32_t y, uint32_t flags) {
-    marshal(4, parent.wl_obj(), x, y, flags);
+void shell_surface::set_transient(surface& parent_, int32_t x_, int32_t y_, uint32_t flags_) {
+    marshal(4, parent_.wl_obj(), x_, y_, flags_);
 }
 
-void shell_surface::set_fullscreen(uint32_t method, uint32_t framerate, output* output) {
-    marshal(5, method, framerate, output ? output->wl_obj() : nullptr);
+void shell_surface::set_fullscreen(uint32_t method_, uint32_t framerate_, output* output_) {
+    marshal(5, method_, framerate_, output_ ? output_->wl_obj() : nullptr);
 }
 
-void shell_surface::set_popup(seat& seat, uint32_t serial, surface& parent, int32_t x, int32_t y, uint32_t flags) {
-    marshal(6, seat.wl_obj(), serial, parent.wl_obj(), x, y, flags);
+void shell_surface::set_popup(seat& seat_, uint32_t serial_, surface& parent_, int32_t x_, int32_t y_, uint32_t flags_) {
+    marshal(6, seat_.wl_obj(), serial_, parent_.wl_obj(), x_, y_, flags_);
 }
 
-void shell_surface::set_maximized(output* output) {
-    marshal(7, output ? output->wl_obj() : nullptr);
+void shell_surface::set_maximized(output* output_) {
+    marshal(7, output_ ? output_->wl_obj() : nullptr);
 }
 
-void shell_surface::set_title(const string& title) {
-    marshal(8, title.c_str());
+void shell_surface::set_title(const string& title_) {
+    marshal(8, title_.c_str());
 }
 
-void shell_surface::set_class(const string& class_) {
-    marshal(9, class_.c_str());
+void shell_surface::set_class(const string& class__) {
+    marshal(9, class__.c_str());
 }
 
-void shell_surface::ping_handler(void* data, wl_proxy* wl_obj, uint32_t serial) {
+void shell_surface::ping_handler(void* data, wl_proxy* wl_obj, uint32_t serial_) {
     auto& handler = proxy::user_data_to_wrapper_cast<shell_surface>(data)->_ping_handler;
     if(handler) {
-        handler(serial);
+        handler(serial_);
     }
 }
 
-void shell_surface::configure_handler(void* data, wl_proxy* wl_obj, uint32_t edges, int32_t width, int32_t height) {
+void shell_surface::configure_handler(void* data, wl_proxy* wl_obj, uint32_t edges_, int32_t width_, int32_t height_) {
     auto& handler = proxy::user_data_to_wrapper_cast<shell_surface>(data)->_configure_handler;
     if(handler) {
-        handler(edges, width, height);
+        handler(edges_, width_, height_);
     }
 }
 
@@ -757,38 +757,38 @@ surface::~surface(){
     destroy();
 }
 
-void surface::attach(buffer* buffer, int32_t x, int32_t y) {
-    marshal(1, buffer ? buffer->wl_obj() : nullptr, x, y);
+void surface::attach(buffer* buffer_, int32_t x_, int32_t y_) {
+    marshal(1, buffer_ ? buffer_->wl_obj() : nullptr, x_, y_);
 }
 
-void surface::damage(int32_t x, int32_t y, int32_t width, int32_t height) {
-    marshal(2, x, y, width, height);
+void surface::damage(int32_t x_, int32_t y_, int32_t width_, int32_t height_) {
+    marshal(2, x_, y_, width_, height_);
 }
 
 callback surface::frame() {
-    callback callback(*this);
-    marshal(3, callback.wl_obj());
-    return callback;
+    callback callback_(*this);
+    marshal(3, callback_.wl_obj());
+    return callback_;
 }
 
-void surface::set_opaque_region(region* region) {
-    marshal(4, region ? region->wl_obj() : nullptr);
+void surface::set_opaque_region(region* region_) {
+    marshal(4, region_ ? region_->wl_obj() : nullptr);
 }
 
-void surface::set_input_region(region* region) {
-    marshal(5, region ? region->wl_obj() : nullptr);
+void surface::set_input_region(region* region_) {
+    marshal(5, region_ ? region_->wl_obj() : nullptr);
 }
 
 void surface::commit() {
     marshal(6);
 }
 
-void surface::set_buffer_transform(int32_t transform) {
-    marshal(7, transform);
+void surface::set_buffer_transform(int32_t transform_) {
+    marshal(7, transform_);
 }
 
-void surface::set_buffer_scale(int32_t scale) {
-    marshal(8, scale);
+void surface::set_buffer_scale(int32_t scale_) {
+    marshal(8, scale_);
 }
 
 void surface::destroy() {
@@ -798,17 +798,17 @@ void surface::destroy() {
     proxy::destroy();
 }
 
-void surface::enter_handler(void* data, wl_proxy* wl_obj, wl_proxy* output) {
+void surface::enter_handler(void* data, wl_proxy* wl_obj, wl_proxy* output_) {
     auto& handler = proxy::user_data_to_wrapper_cast<surface>(data)->_enter_handler;
     if(handler) {
-        handler(*proxy::wrapper_cast<class output>(output));
+        handler(*proxy::wrapper_cast<output>(output_));
     }
 }
 
-void surface::leave_handler(void* data, wl_proxy* wl_obj, wl_proxy* output) {
+void surface::leave_handler(void* data, wl_proxy* wl_obj, wl_proxy* output_) {
     auto& handler = proxy::user_data_to_wrapper_cast<surface>(data)->_leave_handler;
     if(handler) {
-        handler(*proxy::wrapper_cast<class output>(output));
+        handler(*proxy::wrapper_cast<output>(output_));
     }
 }
 
@@ -852,34 +852,34 @@ seat::seat(proxy& factory)
 }
 
 pointer seat::get_pointer() {
-    pointer id(*this);
-    marshal(0, id.wl_obj());
-    return id;
+    pointer id_(*this);
+    marshal(0, id_.wl_obj());
+    return id_;
 }
 
 keyboard seat::get_keyboard() {
-    keyboard id(*this);
-    marshal(1, id.wl_obj());
-    return id;
+    keyboard id_(*this);
+    marshal(1, id_.wl_obj());
+    return id_;
 }
 
 touch seat::get_touch() {
-    touch id(*this);
-    marshal(2, id.wl_obj());
-    return id;
+    touch id_(*this);
+    marshal(2, id_.wl_obj());
+    return id_;
 }
 
-void seat::capabilities_handler(void* data, wl_proxy* wl_obj, uint32_t capabilities) {
+void seat::capabilities_handler(void* data, wl_proxy* wl_obj, uint32_t capabilities_) {
     auto& handler = proxy::user_data_to_wrapper_cast<seat>(data)->_capabilities_handler;
     if(handler) {
-        handler(capabilities);
+        handler(capabilities_);
     }
 }
 
-void seat::name_handler(void* data, wl_proxy* wl_obj, const char* name) {
+void seat::name_handler(void* data, wl_proxy* wl_obj, const char* name_) {
     auto& handler = proxy::user_data_to_wrapper_cast<seat>(data)->_name_handler;
     if(handler) {
-        handler(name);
+        handler(name_);
     }
 }
 
@@ -933,8 +933,8 @@ pointer::~pointer(){
     destroy();
 }
 
-void pointer::set_cursor(uint32_t serial, surface* surface, int32_t hotspot_x, int32_t hotspot_y) {
-    marshal(0, serial, surface ? surface->wl_obj() : nullptr, hotspot_x, hotspot_y);
+void pointer::set_cursor(uint32_t serial_, surface* surface_, int32_t hotspot_x_, int32_t hotspot_y_) {
+    marshal(0, serial_, surface_ ? surface_->wl_obj() : nullptr, hotspot_x_, hotspot_y_);
 }
 
 void pointer::destroy() {
@@ -944,38 +944,38 @@ void pointer::destroy() {
     proxy::destroy();
 }
 
-void pointer::enter_handler(void* data, wl_proxy* wl_obj, uint32_t serial, wl_proxy* surface, wl_fixed_t surface_x, wl_fixed_t surface_y) {
+void pointer::enter_handler(void* data, wl_proxy* wl_obj, uint32_t serial_, wl_proxy* surface_, wl_fixed_t surface_x_, wl_fixed_t surface_y_) {
     auto& handler = proxy::user_data_to_wrapper_cast<pointer>(data)->_enter_handler;
     if(handler) {
-        handler(serial, *proxy::wrapper_cast<class surface>(surface), surface_x, surface_y);
+        handler(serial_, *proxy::wrapper_cast<surface>(surface_), surface_x_, surface_y_);
     }
 }
 
-void pointer::leave_handler(void* data, wl_proxy* wl_obj, uint32_t serial, wl_proxy* surface) {
+void pointer::leave_handler(void* data, wl_proxy* wl_obj, uint32_t serial_, wl_proxy* surface_) {
     auto& handler = proxy::user_data_to_wrapper_cast<pointer>(data)->_leave_handler;
     if(handler) {
-        handler(serial, *proxy::wrapper_cast<class surface>(surface));
+        handler(serial_, *proxy::wrapper_cast<surface>(surface_));
     }
 }
 
-void pointer::motion_handler(void* data, wl_proxy* wl_obj, uint32_t time, wl_fixed_t surface_x, wl_fixed_t surface_y) {
+void pointer::motion_handler(void* data, wl_proxy* wl_obj, uint32_t time_, wl_fixed_t surface_x_, wl_fixed_t surface_y_) {
     auto& handler = proxy::user_data_to_wrapper_cast<pointer>(data)->_motion_handler;
     if(handler) {
-        handler(time, surface_x, surface_y);
+        handler(time_, surface_x_, surface_y_);
     }
 }
 
-void pointer::button_handler(void* data, wl_proxy* wl_obj, uint32_t serial, uint32_t time, uint32_t button, uint32_t state) {
+void pointer::button_handler(void* data, wl_proxy* wl_obj, uint32_t serial_, uint32_t time_, uint32_t button_, uint32_t state_) {
     auto& handler = proxy::user_data_to_wrapper_cast<pointer>(data)->_button_handler;
     if(handler) {
-        handler(serial, time, button, state);
+        handler(serial_, time_, button_, state_);
     }
 }
 
-void pointer::axis_handler(void* data, wl_proxy* wl_obj, uint32_t time, uint32_t axis, wl_fixed_t value) {
+void pointer::axis_handler(void* data, wl_proxy* wl_obj, uint32_t time_, uint32_t axis_, wl_fixed_t value_) {
     auto& handler = proxy::user_data_to_wrapper_cast<pointer>(data)->_axis_handler;
     if(handler) {
-        handler(time, axis, value);
+        handler(time_, axis_, value_);
     }
 }
 
@@ -1034,38 +1034,38 @@ void keyboard::destroy() {
     proxy::destroy();
 }
 
-void keyboard::keymap_handler(void* data, wl_proxy* wl_obj, uint32_t format, int32_t fd, uint32_t size) {
+void keyboard::keymap_handler(void* data, wl_proxy* wl_obj, uint32_t format_, int32_t fd_, uint32_t size_) {
     auto& handler = proxy::user_data_to_wrapper_cast<keyboard>(data)->_keymap_handler;
     if(handler) {
-        handler(format, fd, size);
+        handler(format_, fd_, size_);
     }
 }
 
-void keyboard::enter_handler(void* data, wl_proxy* wl_obj, uint32_t serial, wl_proxy* surface, const wl_array* keys) {
+void keyboard::enter_handler(void* data, wl_proxy* wl_obj, uint32_t serial_, wl_proxy* surface_, const wl_array* keys_) {
     auto& handler = proxy::user_data_to_wrapper_cast<keyboard>(data)->_enter_handler;
     if(handler) {
-        handler(serial, *proxy::wrapper_cast<class surface>(surface), *keys);
+        handler(serial_, *proxy::wrapper_cast<surface>(surface_), *keys_);
     }
 }
 
-void keyboard::leave_handler(void* data, wl_proxy* wl_obj, uint32_t serial, wl_proxy* surface) {
+void keyboard::leave_handler(void* data, wl_proxy* wl_obj, uint32_t serial_, wl_proxy* surface_) {
     auto& handler = proxy::user_data_to_wrapper_cast<keyboard>(data)->_leave_handler;
     if(handler) {
-        handler(serial, *proxy::wrapper_cast<class surface>(surface));
+        handler(serial_, *proxy::wrapper_cast<surface>(surface_));
     }
 }
 
-void keyboard::key_handler(void* data, wl_proxy* wl_obj, uint32_t serial, uint32_t time, uint32_t key, uint32_t state) {
+void keyboard::key_handler(void* data, wl_proxy* wl_obj, uint32_t serial_, uint32_t time_, uint32_t key_, uint32_t state_) {
     auto& handler = proxy::user_data_to_wrapper_cast<keyboard>(data)->_key_handler;
     if(handler) {
-        handler(serial, time, key, state);
+        handler(serial_, time_, key_, state_);
     }
 }
 
-void keyboard::modifiers_handler(void* data, wl_proxy* wl_obj, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group) {
+void keyboard::modifiers_handler(void* data, wl_proxy* wl_obj, uint32_t serial_, uint32_t mods_depressed_, uint32_t mods_latched_, uint32_t mods_locked_, uint32_t group_) {
     auto& handler = proxy::user_data_to_wrapper_cast<keyboard>(data)->_modifiers_handler;
     if(handler) {
-        handler(serial, mods_depressed, mods_latched, mods_locked, group);
+        handler(serial_, mods_depressed_, mods_latched_, mods_locked_, group_);
     }
 }
 
@@ -1124,24 +1124,24 @@ void touch::destroy() {
     proxy::destroy();
 }
 
-void touch::down_handler(void* data, wl_proxy* wl_obj, uint32_t serial, uint32_t time, wl_proxy* surface, int32_t id, wl_fixed_t x, wl_fixed_t y) {
+void touch::down_handler(void* data, wl_proxy* wl_obj, uint32_t serial_, uint32_t time_, wl_proxy* surface_, int32_t id_, wl_fixed_t x_, wl_fixed_t y_) {
     auto& handler = proxy::user_data_to_wrapper_cast<touch>(data)->_down_handler;
     if(handler) {
-        handler(serial, time, *proxy::wrapper_cast<class surface>(surface), id, x, y);
+        handler(serial_, time_, *proxy::wrapper_cast<surface>(surface_), id_, x_, y_);
     }
 }
 
-void touch::up_handler(void* data, wl_proxy* wl_obj, uint32_t serial, uint32_t time, int32_t id) {
+void touch::up_handler(void* data, wl_proxy* wl_obj, uint32_t serial_, uint32_t time_, int32_t id_) {
     auto& handler = proxy::user_data_to_wrapper_cast<touch>(data)->_up_handler;
     if(handler) {
-        handler(serial, time, id);
+        handler(serial_, time_, id_);
     }
 }
 
-void touch::motion_handler(void* data, wl_proxy* wl_obj, uint32_t time, int32_t id, wl_fixed_t x, wl_fixed_t y) {
+void touch::motion_handler(void* data, wl_proxy* wl_obj, uint32_t time_, int32_t id_, wl_fixed_t x_, wl_fixed_t y_) {
     auto& handler = proxy::user_data_to_wrapper_cast<touch>(data)->_motion_handler;
     if(handler) {
-        handler(time, id, x, y);
+        handler(time_, id_, x_, y_);
     }
 }
 
@@ -1194,17 +1194,17 @@ output::output(proxy& factory)
     add_listener(listener);
 }
 
-void output::geometry_handler(void* data, wl_proxy* wl_obj, int32_t x, int32_t y, int32_t physical_width, int32_t physical_height, int32_t subpixel, const char* make, const char* model, int32_t transform) {
+void output::geometry_handler(void* data, wl_proxy* wl_obj, int32_t x_, int32_t y_, int32_t physical_width_, int32_t physical_height_, int32_t subpixel_, const char* make_, const char* model_, int32_t transform_) {
     auto& handler = proxy::user_data_to_wrapper_cast<output>(data)->_geometry_handler;
     if(handler) {
-        handler(x, y, physical_width, physical_height, subpixel, make, model, transform);
+        handler(x_, y_, physical_width_, physical_height_, subpixel_, make_, model_, transform_);
     }
 }
 
-void output::mode_handler(void* data, wl_proxy* wl_obj, uint32_t flags, int32_t width, int32_t height, int32_t refresh) {
+void output::mode_handler(void* data, wl_proxy* wl_obj, uint32_t flags_, int32_t width_, int32_t height_, int32_t refresh_) {
     auto& handler = proxy::user_data_to_wrapper_cast<output>(data)->_mode_handler;
     if(handler) {
-        handler(flags, width, height, refresh);
+        handler(flags_, width_, height_, refresh_);
     }
 }
 
@@ -1215,10 +1215,10 @@ void output::done_handler(void* data, wl_proxy* wl_obj) {
     }
 }
 
-void output::scale_handler(void* data, wl_proxy* wl_obj, int32_t factor) {
+void output::scale_handler(void* data, wl_proxy* wl_obj, int32_t factor_) {
     auto& handler = proxy::user_data_to_wrapper_cast<output>(data)->_scale_handler;
     if(handler) {
-        handler(factor);
+        handler(factor_);
     }
 }
 
@@ -1250,12 +1250,12 @@ region::~region(){
     destroy();
 }
 
-void region::add(int32_t x, int32_t y, int32_t width, int32_t height) {
-    marshal(1, x, y, width, height);
+void region::add(int32_t x_, int32_t y_, int32_t width_, int32_t height_) {
+    marshal(1, x_, y_, width_, height_);
 }
 
-void region::subtract(int32_t x, int32_t y, int32_t width, int32_t height) {
-    marshal(2, x, y, width, height);
+void region::subtract(int32_t x_, int32_t y_, int32_t width_, int32_t height_) {
+    marshal(2, x_, y_, width_, height_);
 }
 
 void region::destroy() {

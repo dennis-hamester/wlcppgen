@@ -110,14 +110,14 @@ public:
      *  Binds a new, client-created object to the server using the specified name as
      *  the identifier.
      *
-     *  @param name unique name for the object
+     *  @param name_ unique name for the object
      *  @return
      */
     template <typename T>
-    T bind(std::uint32_t name, std::uint32_t version) {
-        T id(*this);
-        marshal(0, name, T::interface.name, version, id.wl_obj());
-        return id;
+    T bind(std::uint32_t name_, std::uint32_t version_) {
+        T id_(*this);
+        marshal(0, name_, T::interface.name, version_, id_.wl_obj());
+        return id_;
     }
 
     /** announce global object
@@ -127,11 +127,11 @@ public:
      *  The event notifies the client that a global object with the given name is
      *  now available, and it implements the given version of the given interface.
      *
-     *  Parameter name:
-     *  Parameter interface:
-     *  Parameter version:
+     *  Parameter name_:
+     *  Parameter interface_:
+     *  Parameter version_:
      */
-    using global_handler_sig = void (std::uint32_t name, const std::string& interface, std::uint32_t version);
+    using global_handler_sig = void (std::uint32_t name_, const std::string& interface_, std::uint32_t version_);
 
     /** Set a handler for the global event
      *  @param handler Callable of signature @ref global_handler_sig
@@ -153,9 +153,9 @@ public:
      *  the client destroys it, to avoid races between the global going away and a
      *  client sending a request to it.
      *
-     *  Parameter name:
+     *  Parameter name_:
      */
-    using global_remove_handler_sig = void (std::uint32_t name);
+    using global_remove_handler_sig = void (std::uint32_t name_);
 
     /** Set a handler for the global_remove event
      *  @param handler Callable of signature @ref global_remove_handler_sig
@@ -171,8 +171,8 @@ private:
         void (*global_remove_handler) (void*, wl_proxy*, std::uint32_t);
     };
 
-    static void global_handler(void* data, wl_proxy* wl_obj, std::uint32_t name, const char* interface, std::uint32_t version);
-    static void global_remove_handler(void* data, wl_proxy* wl_obj, std::uint32_t name);
+    static void global_handler(void* data, wl_proxy* wl_obj, std::uint32_t name_, const char* interface_, std::uint32_t version_);
+    static void global_remove_handler(void* data, wl_proxy* wl_obj, std::uint32_t name_);
 
     static const listener_t listener;
 
@@ -219,9 +219,9 @@ public:
      *
      *  Notify the client when the related request is done.
      *
-     *  Parameter serial: serial of the event
+     *  Parameter serial_: serial of the event
      */
-    using done_handler_sig = void (std::uint32_t serial);
+    using done_handler_sig = void (std::uint32_t serial_);
 
     /** Set a handler for the done event
      *  @param handler Callable of signature @ref done_handler_sig
@@ -236,7 +236,7 @@ private:
         void (*done_handler) (void*, wl_proxy*, std::uint32_t);
     };
 
-    static void done_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial);
+    static void done_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial_);
 
     static const listener_t listener;
 
@@ -347,14 +347,14 @@ public:
      *  A buffer will keep a reference to the pool it was created from so it is
      *  valid to destroy the pool immediately after creating a buffer from it.
      *
-     *  @param offset
-     *  @param width
-     *  @param height
-     *  @param stride
-     *  @param format
+     *  @param offset_
+     *  @param width_
+     *  @param height_
+     *  @param stride_
+     *  @param format_
      *  @return
      */
-    buffer create_buffer(std::int32_t offset, std::int32_t width, std::int32_t height, std::int32_t stride, std::uint32_t format);
+    buffer create_buffer(std::int32_t offset_, std::int32_t width_, std::int32_t height_, std::int32_t stride_, std::uint32_t format_);
 
     /** change the size of the pool mapping
      *
@@ -362,9 +362,9 @@ public:
      *  from the file descriptor passed when the pool was created, but using the new
      *  size.
      *
-     *  @param size
+     *  @param size_
      */
-    void resize(std::int32_t size);
+    void resize(std::int32_t size_);
 
 protected:
     void destroy() override;
@@ -496,20 +496,20 @@ public:
      *  server will mmap size bytes of the passed file descriptor, to use as backing
      *  memory for the pool.
      *
-     *  @param fd
-     *  @param size
+     *  @param fd_
+     *  @param size_
      *  @return
      */
-    shm_pool create_pool(std::int32_t fd, std::int32_t size);
+    shm_pool create_pool(std::int32_t fd_, std::int32_t size_);
 
     /** pixel format description
      *
      *  Informs the client about a valid pixel format that can be used for buffers.
      *  Known formats include argb8888 and xrgb8888.
      *
-     *  Parameter format:
+     *  Parameter format_:
      */
-    using format_handler_sig = void (std::uint32_t format);
+    using format_handler_sig = void (std::uint32_t format_);
 
     /** Set a handler for the format event
      *  @param handler Callable of signature @ref format_handler_sig
@@ -524,7 +524,7 @@ private:
         void (*format_handler) (void*, wl_proxy*, std::uint32_t);
     };
 
-    static void format_handler(void* data, wl_proxy* wl_obj, std::uint32_t format);
+    static void format_handler(void* data, wl_proxy* wl_obj, std::uint32_t format_);
 
     static const listener_t listener;
 
@@ -652,10 +652,10 @@ public:
      *  
      *  Used for feedback during drag-and-drop.
      *
-     *  @param serial
-     *  @param mime_type
+     *  @param serial_
+     *  @param mime_type_
      */
-    void accept(std::uint32_t serial, const std::string* mime_type);
+    void accept(std::uint32_t serial_, const std::string* mime_type_);
 
     /** request that the data is transferred
      *
@@ -668,19 +668,19 @@ public:
      *  The receiving client reads from the read end of the pipe until EOF and the
      *  closes its end, at which point the transfer is complete.
      *
-     *  @param mime_type
-     *  @param fd
+     *  @param mime_type_
+     *  @param fd_
      */
-    void receive(const std::string& mime_type, std::int32_t fd);
+    void receive(const std::string& mime_type_, std::int32_t fd_);
 
     /** advertise offered mime type
      *
      *  Sent immediately after creating the wl_data_offer object. One event per
      *  offered mime type.
      *
-     *  Parameter mime_type:
+     *  Parameter mime_type_:
      */
-    using offer_handler_sig = void (const std::string& mime_type);
+    using offer_handler_sig = void (const std::string& mime_type_);
 
     /** Set a handler for the offer event
      *  @param handler Callable of signature @ref offer_handler_sig
@@ -698,7 +698,7 @@ private:
         void (*offer_handler) (void*, wl_proxy*, const char*);
     };
 
-    static void offer_handler(void* data, wl_proxy* wl_obj, const char* mime_type);
+    static void offer_handler(void* data, wl_proxy* wl_obj, const char* mime_type_);
 
     static const listener_t listener;
 
@@ -747,9 +747,9 @@ public:
      *  This request adds a mime type to the set of mime types advertised to
      *  targets. Can be called several times to offer multiple types.
      *
-     *  @param mime_type
+     *  @param mime_type_
      */
-    void offer(const std::string& mime_type);
+    void offer(const std::string& mime_type_);
 
     /** a target accepts an offered mime type
      *
@@ -758,9 +758,9 @@ public:
      *  
      *  Used for feedback during drag-and-drop.
      *
-     *  Parameter mime_type:
+     *  Parameter mime_type_:
      */
-    using target_handler_sig = void (const std::string* mime_type);
+    using target_handler_sig = void (const std::string* mime_type_);
 
     /** Set a handler for the target event
      *  @param handler Callable of signature @ref target_handler_sig
@@ -775,10 +775,10 @@ public:
      *  Request for data from the client. Send the data as the specified mime type
      *  over the passed file descriptor, then close it.
      *
-     *  Parameter mime_type:
-     *  Parameter fd:
+     *  Parameter mime_type_:
+     *  Parameter fd_:
      */
-    using send_handler_sig = void (const std::string& mime_type, std::int32_t fd);
+    using send_handler_sig = void (const std::string& mime_type_, std::int32_t fd_);
 
     /** Set a handler for the send event
      *  @param handler Callable of signature @ref send_handler_sig
@@ -813,8 +813,8 @@ private:
         void (*cancelled_handler) (void*, wl_proxy*);
     };
 
-    static void target_handler(void* data, wl_proxy* wl_obj, const char* mime_type);
-    static void send_handler(void* data, wl_proxy* wl_obj, const char* mime_type, std::int32_t fd);
+    static void target_handler(void* data, wl_proxy* wl_obj, const char* mime_type_);
+    static void send_handler(void* data, wl_proxy* wl_obj, const char* mime_type_, std::int32_t fd_);
     static void cancelled_handler(void* data, wl_proxy* wl_obj);
 
     static const listener_t listener;
@@ -886,12 +886,12 @@ public:
      *  used as the icon surface. When the use as an icon ends, the the current and
      *  pending input regions become undefined, and the wl_surface is unmapped.
      *
-     *  @param source
-     *  @param origin
-     *  @param icon
-     *  @param serial serial of the implicit grab on the origin
+     *  @param source_
+     *  @param origin_
+     *  @param icon_
+     *  @param serial_ serial of the implicit grab on the origin
      */
-    void start_drag(data_source* source, surface& origin, surface* icon, std::uint32_t serial);
+    void start_drag(data_source* source_, surface& origin_, surface* icon_, std::uint32_t serial_);
 
     /** copy data to the selection
      *
@@ -900,10 +900,10 @@ public:
      *  
      *  To unset the selection, set the source to NULL.
      *
-     *  @param source
-     *  @param serial serial of the event that triggered this request
+     *  @param source_
+     *  @param serial_ serial of the event that triggered this request
      */
-    void set_selection(data_source* source, std::uint32_t serial);
+    void set_selection(data_source* source_, std::uint32_t serial_);
 
     /** introduce a new wl_data_offer
      *
@@ -914,9 +914,9 @@ public:
      *  object will send out data_offer.offer events to describe the mime types it
      *  offers.
      *
-     *  Parameter id:
+     *  Parameter id_:
      */
-    using data_offer_handler_sig = void (data_offer&& id);
+    using data_offer_handler_sig = void (data_offer&& id_);
 
     /** Set a handler for the data_offer event
      *  @param handler Callable of signature @ref data_offer_handler_sig
@@ -932,13 +932,13 @@ public:
      *  owned by the client. The position of the pointer at enter time is provided
      *  by the x and y arguments, in surface local coordinates.
      *
-     *  Parameter serial:
-     *  Parameter surface:
-     *  Parameter x:
-     *  Parameter y:
-     *  Parameter id:
+     *  Parameter serial_:
+     *  Parameter surface_:
+     *  Parameter x_:
+     *  Parameter y_:
+     *  Parameter id_:
      */
-    using enter_handler_sig = void (std::uint32_t serial, surface& surface, wl_fixed_t x, wl_fixed_t y, data_offer* id);
+    using enter_handler_sig = void (std::uint32_t serial_, surface& surface_, wl_fixed_t x_, wl_fixed_t y_, data_offer* id_);
 
     /** Set a handler for the enter event
      *  @param handler Callable of signature @ref enter_handler_sig
@@ -970,11 +970,11 @@ public:
      *  focused surface. The new position of the pointer is provided by the x and y
      *  arguments, in surface local coordinates.
      *
-     *  Parameter time: timestamp with millisecond granularity
-     *  Parameter x:
-     *  Parameter y:
+     *  Parameter time_: timestamp with millisecond granularity
+     *  Parameter x_:
+     *  Parameter y_:
      */
-    using motion_handler_sig = void (std::uint32_t time, wl_fixed_t x, wl_fixed_t y);
+    using motion_handler_sig = void (std::uint32_t time_, wl_fixed_t x_, wl_fixed_t y_);
 
     /** Set a handler for the motion event
      *  @param handler Callable of signature @ref motion_handler_sig
@@ -1009,9 +1009,9 @@ public:
      *  while the client has keyboard focus. The data_offer is valid until a new
      *  data_offer or NULL is received or until the client loses keyboard focus.
      *
-     *  Parameter id:
+     *  Parameter id_:
      */
-    using selection_handler_sig = void (data_offer* id);
+    using selection_handler_sig = void (data_offer* id_);
 
     /** Set a handler for the selection event
      *  @param handler Callable of signature @ref selection_handler_sig
@@ -1031,12 +1031,12 @@ private:
         void (*selection_handler) (void*, wl_proxy*, wl_proxy*);
     };
 
-    static void data_offer_handler(void* data, wl_proxy* wl_obj, wl_proxy* id);
-    static void enter_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial, wl_proxy* surface, wl_fixed_t x, wl_fixed_t y, wl_proxy* id);
+    static void data_offer_handler(void* data, wl_proxy* wl_obj, wl_proxy* id_);
+    static void enter_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial_, wl_proxy* surface_, wl_fixed_t x_, wl_fixed_t y_, wl_proxy* id_);
     static void leave_handler(void* data, wl_proxy* wl_obj);
-    static void motion_handler(void* data, wl_proxy* wl_obj, std::uint32_t time, wl_fixed_t x, wl_fixed_t y);
+    static void motion_handler(void* data, wl_proxy* wl_obj, std::uint32_t time_, wl_fixed_t x_, wl_fixed_t y_);
     static void drop_handler(void* data, wl_proxy* wl_obj);
-    static void selection_handler(void* data, wl_proxy* wl_obj, wl_proxy* id);
+    static void selection_handler(void* data, wl_proxy* wl_obj, wl_proxy* id_);
 
     static const listener_t listener;
 
@@ -1097,10 +1097,10 @@ public:
      *
      *  Create a new data device for a given seat.
      *
-     *  @param seat
+     *  @param seat_
      *  @return
      */
-    data_device get_data_device(seat& seat);
+    data_device get_data_device(seat& seat_);
 };
 
 #define WLCPP_SHELL_VERSION 1
@@ -1146,10 +1146,10 @@ public:
      *  
      *  Only one shell surface can be associated with a given surface.
      *
-     *  @param surface
+     *  @param surface_
      *  @return
      */
-    shell_surface get_shell_surface(surface& surface);
+    shell_surface get_shell_surface(surface& surface_);
 };
 
 #define WLCPP_SHELL_SURFACE_VERSION 1
@@ -1240,9 +1240,9 @@ public:
      *  A client must respond to a ping event with a pong request or the client may
      *  be deemed unresponsive.
      *
-     *  @param serial serial of the ping event
+     *  @param serial_ serial of the ping event
      */
-    void pong(std::uint32_t serial);
+    void pong(std::uint32_t serial_);
 
     /** start an interactive move
      *
@@ -1252,10 +1252,10 @@ public:
      *  may ignore move requests depending on the state of the surface (e.g.
      *  fullscreen or maximized).
      *
-     *  @param seat the wl_seat whose pointer is used
-     *  @param serial serial of the implicit grab on the pointer
+     *  @param seat_ the wl_seat whose pointer is used
+     *  @param serial_ serial of the implicit grab on the pointer
      */
-    void move(seat& seat, std::uint32_t serial);
+    void move(seat& seat_, std::uint32_t serial_);
 
     /** start an interactive resize
      *
@@ -1265,11 +1265,11 @@ public:
      *  may ignore resize requests depending on the state of the surface (e.g.
      *  fullscreen or maximized).
      *
-     *  @param seat the wl_seat whose pointer is used
-     *  @param serial serial of the implicit grab on the pointer
-     *  @param edges which edge or corner is being dragged
+     *  @param seat_ the wl_seat whose pointer is used
+     *  @param serial_ serial of the implicit grab on the pointer
+     *  @param edges_ which edge or corner is being dragged
      */
-    void resize(seat& seat, std::uint32_t serial, std::uint32_t edges);
+    void resize(seat& seat_, std::uint32_t serial_, std::uint32_t edges_);
 
     /** make the surface a toplevel surface
      *
@@ -1289,12 +1289,12 @@ public:
      *  
      *  The flags argument controls details of the transient behaviour.
      *
-     *  @param parent
-     *  @param x
-     *  @param y
-     *  @param flags
+     *  @param parent_
+     *  @param x_
+     *  @param y_
+     *  @param flags_
      */
-    void set_transient(surface& parent, std::int32_t x, std::int32_t y, std::uint32_t flags);
+    void set_transient(surface& parent_, std::int32_t x_, std::int32_t y_, std::uint32_t flags_);
 
     /** make the surface a fullscreen surface
      *
@@ -1329,11 +1329,11 @@ public:
      *  The compositor must reply to this request with a configure event with the
      *  dimensions for the output on which the surface will be made fullscreen.
      *
-     *  @param method
-     *  @param framerate
-     *  @param output
+     *  @param method_
+     *  @param framerate_
+     *  @param output_
      */
-    void set_fullscreen(std::uint32_t method, std::uint32_t framerate, output* output);
+    void set_fullscreen(std::uint32_t method_, std::uint32_t framerate_, output* output_);
 
     /** make the surface a popup surface
      *
@@ -1354,14 +1354,14 @@ public:
      *  surface relative to the upper left corner of the parent surface, in surface
      *  local coordinates.
      *
-     *  @param seat the wl_seat whose pointer is used
-     *  @param serial serial of the implicit grab on the pointer
-     *  @param parent
-     *  @param x
-     *  @param y
-     *  @param flags
+     *  @param seat_ the wl_seat whose pointer is used
+     *  @param serial_ serial of the implicit grab on the pointer
+     *  @param parent_
+     *  @param x_
+     *  @param y_
+     *  @param flags_
      */
-    void set_popup(seat& seat, std::uint32_t serial, surface& parent, std::int32_t x, std::int32_t y, std::uint32_t flags);
+    void set_popup(seat& seat_, std::uint32_t serial_, surface& parent_, std::int32_t x_, std::int32_t y_, std::uint32_t flags_);
 
     /** make the surface a maximized surface
      *
@@ -1382,9 +1382,9 @@ public:
      *  
      *  The details depend on the compositor implementation.
      *
-     *  @param output
+     *  @param output_
      */
-    void set_maximized(output* output);
+    void set_maximized(output* output_);
 
     /** set surface title
      *
@@ -1395,9 +1395,9 @@ public:
      *  
      *  The string must be encoded in UTF-8.
      *
-     *  @param title
+     *  @param title_
      */
-    void set_title(const std::string& title);
+    void set_title(const std::string& title_);
 
     /** set surface class
      *
@@ -1408,18 +1408,18 @@ public:
      *  path if it is a non-standard location) of the application's .desktop file as
      *  the class.
      *
-     *  @param class_
+     *  @param class__
      */
-    void set_class(const std::string& class_);
+    void set_class(const std::string& class__);
 
     /** ping client
      *
      *  Ping a client to check if it is receiving events and sending requests. A
      *  client is expected to reply with a pong request.
      *
-     *  Parameter serial:
+     *  Parameter serial_:
      */
-    using ping_handler_sig = void (std::uint32_t serial);
+    using ping_handler_sig = void (std::uint32_t serial_);
 
     /** Set a handler for the ping event
      *  @param handler Callable of signature @ref ping_handler_sig
@@ -1447,11 +1447,11 @@ public:
      *  The width and height arguments specify the size of the window in surface
      *  local coordinates.
      *
-     *  Parameter edges:
-     *  Parameter width:
-     *  Parameter height:
+     *  Parameter edges_:
+     *  Parameter width_:
+     *  Parameter height_:
      */
-    using configure_handler_sig = void (std::uint32_t edges, std::int32_t width, std::int32_t height);
+    using configure_handler_sig = void (std::uint32_t edges_, std::int32_t width_, std::int32_t height_);
 
     /** Set a handler for the configure event
      *  @param handler Callable of signature @ref configure_handler_sig
@@ -1484,8 +1484,8 @@ private:
         void (*popup_done_handler) (void*, wl_proxy*);
     };
 
-    static void ping_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial);
-    static void configure_handler(void* data, wl_proxy* wl_obj, std::uint32_t edges, std::int32_t width, std::int32_t height);
+    static void ping_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial_);
+    static void configure_handler(void* data, wl_proxy* wl_obj, std::uint32_t edges_, std::int32_t width_, std::int32_t height_);
     static void popup_done_handler(void* data, wl_proxy* wl_obj);
 
     static const listener_t listener;
@@ -1575,11 +1575,11 @@ public:
      *  If wl_surface.attach is sent with a NULL wl_buffer, the following
      *  wl_surface.commit will remove the surface content.
      *
-     *  @param buffer
-     *  @param x
-     *  @param y
+     *  @param buffer_
+     *  @param x_
+     *  @param y_
      */
-    void attach(buffer* buffer, std::int32_t x, std::int32_t y);
+    void attach(buffer* buffer_, std::int32_t x_, std::int32_t y_);
 
     /** mark part of the surface damaged
      *
@@ -1601,12 +1601,12 @@ public:
      *  pending damage. The server will clear the current damage as it repaints the
      *  surface.
      *
-     *  @param x
-     *  @param y
-     *  @param width
-     *  @param height
+     *  @param x_
+     *  @param y_
+     *  @param width_
+     *  @param height_
      */
-    void damage(std::int32_t x, std::int32_t y, std::int32_t width, std::int32_t height);
+    void damage(std::int32_t x_, std::int32_t y_, std::int32_t width_, std::int32_t height_);
 
     /** request repaint feedback
      *
@@ -1657,9 +1657,9 @@ public:
      *  immediately. A NULL wl_region causes the pending opaque region to be set to
      *  empty.
      *
-     *  @param region
+     *  @param region_
      */
-    void set_opaque_region(region* region);
+    void set_opaque_region(region* region_);
 
     /** set input region
      *
@@ -1685,9 +1685,9 @@ public:
      *  the wl_region object can be destroyed immediately. A NULL wl_region causes
      *  the input region to be set to infinite.
      *
-     *  @param region
+     *  @param region_
      */
-    void set_input_region(region* region);
+    void set_input_region(region* region_);
 
     /** commit pending surface state
      *
@@ -1732,9 +1732,9 @@ public:
      *  width of the buffer will become the surface height and the height of the
      *  buffer will become the surface width.
      *
-     *  @param transform
+     *  @param transform_
      */
-    void set_buffer_transform(std::int32_t transform);
+    void set_buffer_transform(std::int32_t transform_);
 
     /** sets the buffer scaling factor
      *
@@ -1755,9 +1755,9 @@ public:
      *  that is larger (by a factor of scale in each dimension) than the desired
      *  surface size.
      *
-     *  @param scale
+     *  @param scale_
      */
-    void set_buffer_scale(std::int32_t scale);
+    void set_buffer_scale(std::int32_t scale_);
 
     /** surface enters an output
      *
@@ -1766,9 +1766,9 @@ public:
      *  
      *  Note that a surface may be overlapping with zero or more outputs.
      *
-     *  Parameter output:
+     *  Parameter output_:
      */
-    using enter_handler_sig = void (output& output);
+    using enter_handler_sig = void (output& output_);
 
     /** Set a handler for the enter event
      *  @param handler Callable of signature @ref enter_handler_sig
@@ -1784,9 +1784,9 @@ public:
      *  in it no longer having any part of it within the scanout region of an
      *  output.
      *
-     *  Parameter output:
+     *  Parameter output_:
      */
-    using leave_handler_sig = void (output& output);
+    using leave_handler_sig = void (output& output_);
 
     /** Set a handler for the leave event
      *  @param handler Callable of signature @ref leave_handler_sig
@@ -1805,8 +1805,8 @@ private:
         void (*leave_handler) (void*, wl_proxy*, wl_proxy*);
     };
 
-    static void enter_handler(void* data, wl_proxy* wl_obj, wl_proxy* output);
-    static void leave_handler(void* data, wl_proxy* wl_obj, wl_proxy* output);
+    static void enter_handler(void* data, wl_proxy* wl_obj, wl_proxy* output_);
+    static void leave_handler(void* data, wl_proxy* wl_obj, wl_proxy* output_);
 
     static const listener_t listener;
 
@@ -1900,9 +1900,9 @@ public:
      *  touch capabilities. The argument is a capability enum containing the
      *  complete set of capabilities this seat has.
      *
-     *  Parameter capabilities:
+     *  Parameter capabilities_:
      */
-    using capabilities_handler_sig = void (std::uint32_t capabilities);
+    using capabilities_handler_sig = void (std::uint32_t capabilities_);
 
     /** Set a handler for the capabilities event
      *  @param handler Callable of signature @ref capabilities_handler_sig
@@ -1918,9 +1918,9 @@ public:
      *  which physical devices the seat represents. Based on the seat configuration
      *  used by the compositor.
      *
-     *  Parameter name:
+     *  Parameter name_:
      */
-    using name_handler_sig = void (const std::string& name);
+    using name_handler_sig = void (const std::string& name_);
 
     /** Set a handler for the name event
      *  @param handler Callable of signature @ref name_handler_sig
@@ -1936,8 +1936,8 @@ private:
         void (*name_handler) (void*, wl_proxy*, const char*);
     };
 
-    static void capabilities_handler(void* data, wl_proxy* wl_obj, std::uint32_t capabilities);
-    static void name_handler(void* data, wl_proxy* wl_obj, const char* name);
+    static void capabilities_handler(void* data, wl_proxy* wl_obj, std::uint32_t capabilities_);
+    static void name_handler(void* data, wl_proxy* wl_obj, const char* name_);
 
     static const listener_t listener;
 
@@ -2028,12 +2028,12 @@ public:
      *  used as the cursor. When the use as a cursor ends, the current and pending
      *  input regions become undefined, and the wl_surface is unmapped.
      *
-     *  @param serial serial of the enter event
-     *  @param surface
-     *  @param hotspot_x x coordinate in surface-relative coordinates
-     *  @param hotspot_y y coordinate in surface-relative coordinates
+     *  @param serial_ serial of the enter event
+     *  @param surface_
+     *  @param hotspot_x_ x coordinate in surface-relative coordinates
+     *  @param hotspot_y_ y coordinate in surface-relative coordinates
      */
-    void set_cursor(std::uint32_t serial, surface* surface, std::int32_t hotspot_x, std::int32_t hotspot_y);
+    void set_cursor(std::uint32_t serial_, surface* surface_, std::int32_t hotspot_x_, std::int32_t hotspot_y_);
 
     /** enter event
      *
@@ -2043,12 +2043,12 @@ public:
      *  client should respond to this event by setting an appropriate pointer image
      *  with the set_cursor request.
      *
-     *  Parameter serial:
-     *  Parameter surface:
-     *  Parameter surface_x: x coordinate in surface-relative coordinates
-     *  Parameter surface_y: y coordinate in surface-relative coordinates
+     *  Parameter serial_:
+     *  Parameter surface_:
+     *  Parameter surface_x_: x coordinate in surface-relative coordinates
+     *  Parameter surface_y_: y coordinate in surface-relative coordinates
      */
-    using enter_handler_sig = void (std::uint32_t serial, surface& surface, wl_fixed_t surface_x, wl_fixed_t surface_y);
+    using enter_handler_sig = void (std::uint32_t serial_, surface& surface_, wl_fixed_t surface_x_, wl_fixed_t surface_y_);
 
     /** Set a handler for the enter event
      *  @param handler Callable of signature @ref enter_handler_sig
@@ -2066,10 +2066,10 @@ public:
      *  The leave notification is sent before the enter notification for the new
      *  focus.
      *
-     *  Parameter serial:
-     *  Parameter surface:
+     *  Parameter serial_:
+     *  Parameter surface_:
      */
-    using leave_handler_sig = void (std::uint32_t serial, surface& surface);
+    using leave_handler_sig = void (std::uint32_t serial_, surface& surface_);
 
     /** Set a handler for the leave event
      *  @param handler Callable of signature @ref leave_handler_sig
@@ -2084,11 +2084,11 @@ public:
      *  Notification of pointer location change. The arguments surface_x and
      *  surface_y are the location relative to the focused surface.
      *
-     *  Parameter time: timestamp with millisecond granularity
-     *  Parameter surface_x: x coordinate in surface-relative coordinates
-     *  Parameter surface_y: y coordinate in surface-relative coordinates
+     *  Parameter time_: timestamp with millisecond granularity
+     *  Parameter surface_x_: x coordinate in surface-relative coordinates
+     *  Parameter surface_y_: y coordinate in surface-relative coordinates
      */
-    using motion_handler_sig = void (std::uint32_t time, wl_fixed_t surface_x, wl_fixed_t surface_y);
+    using motion_handler_sig = void (std::uint32_t time_, wl_fixed_t surface_x_, wl_fixed_t surface_y_);
 
     /** Set a handler for the motion event
      *  @param handler Callable of signature @ref motion_handler_sig
@@ -2106,12 +2106,12 @@ public:
      *  time argument is a timestamp with millisecond granularity, with an undefined
      *  base.
      *
-     *  Parameter serial:
-     *  Parameter time: timestamp with millisecond granularity
-     *  Parameter button:
-     *  Parameter state:
+     *  Parameter serial_:
+     *  Parameter time_: timestamp with millisecond granularity
+     *  Parameter button_:
+     *  Parameter state_:
      */
-    using button_handler_sig = void (std::uint32_t serial, std::uint32_t time, std::uint32_t button, std::uint32_t state);
+    using button_handler_sig = void (std::uint32_t serial_, std::uint32_t time_, std::uint32_t button_, std::uint32_t state_);
 
     /** Set a handler for the button event
      *  @param handler Callable of signature @ref button_handler_sig
@@ -2140,11 +2140,11 @@ public:
      *  When applicable, clients can transform its view relative to the scroll
      *  distance.
      *
-     *  Parameter time: timestamp with millisecond granularity
-     *  Parameter axis:
-     *  Parameter value:
+     *  Parameter time_: timestamp with millisecond granularity
+     *  Parameter axis_:
+     *  Parameter value_:
      */
-    using axis_handler_sig = void (std::uint32_t time, std::uint32_t axis, wl_fixed_t value);
+    using axis_handler_sig = void (std::uint32_t time_, std::uint32_t axis_, wl_fixed_t value_);
 
     /** Set a handler for the axis event
      *  @param handler Callable of signature @ref axis_handler_sig
@@ -2166,11 +2166,11 @@ private:
         void (*axis_handler) (void*, wl_proxy*, std::uint32_t, std::uint32_t, wl_fixed_t);
     };
 
-    static void enter_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial, wl_proxy* surface, wl_fixed_t surface_x, wl_fixed_t surface_y);
-    static void leave_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial, wl_proxy* surface);
-    static void motion_handler(void* data, wl_proxy* wl_obj, std::uint32_t time, wl_fixed_t surface_x, wl_fixed_t surface_y);
-    static void button_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial, std::uint32_t time, std::uint32_t button, std::uint32_t state);
-    static void axis_handler(void* data, wl_proxy* wl_obj, std::uint32_t time, std::uint32_t axis, wl_fixed_t value);
+    static void enter_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial_, wl_proxy* surface_, wl_fixed_t surface_x_, wl_fixed_t surface_y_);
+    static void leave_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial_, wl_proxy* surface_);
+    static void motion_handler(void* data, wl_proxy* wl_obj, std::uint32_t time_, wl_fixed_t surface_x_, wl_fixed_t surface_y_);
+    static void button_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial_, std::uint32_t time_, std::uint32_t button_, std::uint32_t state_);
+    static void axis_handler(void* data, wl_proxy* wl_obj, std::uint32_t time_, std::uint32_t axis_, wl_fixed_t value_);
 
     static const listener_t listener;
 
@@ -2240,11 +2240,11 @@ public:
      *  This event provides a file descriptor to the client which can be
      *  memory-mapped to provide a keyboard mapping description.
      *
-     *  Parameter format:
-     *  Parameter fd:
-     *  Parameter size:
+     *  Parameter format_:
+     *  Parameter fd_:
+     *  Parameter size_:
      */
-    using keymap_handler_sig = void (std::uint32_t format, std::int32_t fd, std::uint32_t size);
+    using keymap_handler_sig = void (std::uint32_t format_, std::int32_t fd_, std::uint32_t size_);
 
     /** Set a handler for the keymap event
      *  @param handler Callable of signature @ref keymap_handler_sig
@@ -2258,11 +2258,11 @@ public:
      *
      *  Notification that this seat's keyboard focus is on a certain surface.
      *
-     *  Parameter serial:
-     *  Parameter surface:
-     *  Parameter keys: the currently pressed keys
+     *  Parameter serial_:
+     *  Parameter surface_:
+     *  Parameter keys_: the currently pressed keys
      */
-    using enter_handler_sig = void (std::uint32_t serial, surface& surface, const wl_array& keys);
+    using enter_handler_sig = void (std::uint32_t serial_, surface& surface_, const wl_array& keys_);
 
     /** Set a handler for the enter event
      *  @param handler Callable of signature @ref enter_handler_sig
@@ -2280,10 +2280,10 @@ public:
      *  The leave notification is sent before the enter notification for the new
      *  focus.
      *
-     *  Parameter serial:
-     *  Parameter surface:
+     *  Parameter serial_:
+     *  Parameter surface_:
      */
-    using leave_handler_sig = void (std::uint32_t serial, surface& surface);
+    using leave_handler_sig = void (std::uint32_t serial_, surface& surface_);
 
     /** Set a handler for the leave event
      *  @param handler Callable of signature @ref leave_handler_sig
@@ -2298,12 +2298,12 @@ public:
      *  A key was pressed or released. The time argument is a timestamp with
      *  millisecond granularity, with an undefined base.
      *
-     *  Parameter serial:
-     *  Parameter time: timestamp with millisecond granularity
-     *  Parameter key:
-     *  Parameter state:
+     *  Parameter serial_:
+     *  Parameter time_: timestamp with millisecond granularity
+     *  Parameter key_:
+     *  Parameter state_:
      */
-    using key_handler_sig = void (std::uint32_t serial, std::uint32_t time, std::uint32_t key, std::uint32_t state);
+    using key_handler_sig = void (std::uint32_t serial_, std::uint32_t time_, std::uint32_t key_, std::uint32_t state_);
 
     /** Set a handler for the key event
      *  @param handler Callable of signature @ref key_handler_sig
@@ -2318,13 +2318,13 @@ public:
      *  Notifies clients that the modifier and/or group state has changed, and it
      *  should update its local state.
      *
-     *  Parameter serial:
-     *  Parameter mods_depressed:
-     *  Parameter mods_latched:
-     *  Parameter mods_locked:
-     *  Parameter group:
+     *  Parameter serial_:
+     *  Parameter mods_depressed_:
+     *  Parameter mods_latched_:
+     *  Parameter mods_locked_:
+     *  Parameter group_:
      */
-    using modifiers_handler_sig = void (std::uint32_t serial, std::uint32_t mods_depressed, std::uint32_t mods_latched, std::uint32_t mods_locked, std::uint32_t group);
+    using modifiers_handler_sig = void (std::uint32_t serial_, std::uint32_t mods_depressed_, std::uint32_t mods_latched_, std::uint32_t mods_locked_, std::uint32_t group_);
 
     /** Set a handler for the modifiers event
      *  @param handler Callable of signature @ref modifiers_handler_sig
@@ -2346,11 +2346,11 @@ private:
         void (*modifiers_handler) (void*, wl_proxy*, std::uint32_t, std::uint32_t, std::uint32_t, std::uint32_t, std::uint32_t);
     };
 
-    static void keymap_handler(void* data, wl_proxy* wl_obj, std::uint32_t format, std::int32_t fd, std::uint32_t size);
-    static void enter_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial, wl_proxy* surface, const wl_array* keys);
-    static void leave_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial, wl_proxy* surface);
-    static void key_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial, std::uint32_t time, std::uint32_t key, std::uint32_t state);
-    static void modifiers_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial, std::uint32_t mods_depressed, std::uint32_t mods_latched, std::uint32_t mods_locked, std::uint32_t group);
+    static void keymap_handler(void* data, wl_proxy* wl_obj, std::uint32_t format_, std::int32_t fd_, std::uint32_t size_);
+    static void enter_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial_, wl_proxy* surface_, const wl_array* keys_);
+    static void leave_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial_, wl_proxy* surface_);
+    static void key_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial_, std::uint32_t time_, std::uint32_t key_, std::uint32_t state_);
+    static void modifiers_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial_, std::uint32_t mods_depressed_, std::uint32_t mods_latched_, std::uint32_t mods_locked_, std::uint32_t group_);
 
     static const listener_t listener;
 
@@ -2406,14 +2406,14 @@ public:
      *  a unique @id. Future events from this touchpoint reference this ID. The ID
      *  ceases to be valid after a touch up event and may be re-used in the future.
      *
-     *  Parameter serial:
-     *  Parameter time: timestamp with millisecond granularity
-     *  Parameter surface:
-     *  Parameter id: the unique ID of this touch point
-     *  Parameter x: x coordinate in surface-relative coordinates
-     *  Parameter y: y coordinate in surface-relative coordinates
+     *  Parameter serial_:
+     *  Parameter time_: timestamp with millisecond granularity
+     *  Parameter surface_:
+     *  Parameter id_: the unique ID of this touch point
+     *  Parameter x_: x coordinate in surface-relative coordinates
+     *  Parameter y_: y coordinate in surface-relative coordinates
      */
-    using down_handler_sig = void (std::uint32_t serial, std::uint32_t time, surface& surface, std::int32_t id, wl_fixed_t x, wl_fixed_t y);
+    using down_handler_sig = void (std::uint32_t serial_, std::uint32_t time_, surface& surface_, std::int32_t id_, wl_fixed_t x_, wl_fixed_t y_);
 
     /** Set a handler for the down event
      *  @param handler Callable of signature @ref down_handler_sig
@@ -2429,11 +2429,11 @@ public:
      *  touchpoint and the touch point's ID is released and may be re-used in a
      *  future touch down event.
      *
-     *  Parameter serial:
-     *  Parameter time: timestamp with millisecond granularity
-     *  Parameter id: the unique ID of this touch point
+     *  Parameter serial_:
+     *  Parameter time_: timestamp with millisecond granularity
+     *  Parameter id_: the unique ID of this touch point
      */
-    using up_handler_sig = void (std::uint32_t serial, std::uint32_t time, std::int32_t id);
+    using up_handler_sig = void (std::uint32_t serial_, std::uint32_t time_, std::int32_t id_);
 
     /** Set a handler for the up event
      *  @param handler Callable of signature @ref up_handler_sig
@@ -2447,12 +2447,12 @@ public:
      *
      *  A touchpoint has changed coordinates.
      *
-     *  Parameter time: timestamp with millisecond granularity
-     *  Parameter id: the unique ID of this touch point
-     *  Parameter x: x coordinate in surface-relative coordinates
-     *  Parameter y: y coordinate in surface-relative coordinates
+     *  Parameter time_: timestamp with millisecond granularity
+     *  Parameter id_: the unique ID of this touch point
+     *  Parameter x_: x coordinate in surface-relative coordinates
+     *  Parameter y_: y coordinate in surface-relative coordinates
      */
-    using motion_handler_sig = void (std::uint32_t time, std::int32_t id, wl_fixed_t x, wl_fixed_t y);
+    using motion_handler_sig = void (std::uint32_t time_, std::int32_t id_, wl_fixed_t x_, wl_fixed_t y_);
 
     /** Set a handler for the motion event
      *  @param handler Callable of signature @ref motion_handler_sig
@@ -2506,9 +2506,9 @@ private:
         void (*cancel_handler) (void*, wl_proxy*);
     };
 
-    static void down_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial, std::uint32_t time, wl_proxy* surface, std::int32_t id, wl_fixed_t x, wl_fixed_t y);
-    static void up_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial, std::uint32_t time, std::int32_t id);
-    static void motion_handler(void* data, wl_proxy* wl_obj, std::uint32_t time, std::int32_t id, wl_fixed_t x, wl_fixed_t y);
+    static void down_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial_, std::uint32_t time_, wl_proxy* surface_, std::int32_t id_, wl_fixed_t x_, wl_fixed_t y_);
+    static void up_handler(void* data, wl_proxy* wl_obj, std::uint32_t serial_, std::uint32_t time_, std::int32_t id_);
+    static void motion_handler(void* data, wl_proxy* wl_obj, std::uint32_t time_, std::int32_t id_, wl_fixed_t x_, wl_fixed_t y_);
     static void frame_handler(void* data, wl_proxy* wl_obj);
     static void cancel_handler(void* data, wl_proxy* wl_obj);
 
@@ -2612,16 +2612,16 @@ public:
      *  is sent when binding to the output object and whenever any of the properties
      *  change.
      *
-     *  Parameter x: x position within the global compositor space
-     *  Parameter y: y position within the global compositor space
-     *  Parameter physical_width: width in millimeters of the output
-     *  Parameter physical_height: height in millimeters of the output
-     *  Parameter subpixel: subpixel orientation of the output
-     *  Parameter make: textual description of the manufacturer
-     *  Parameter model: textual description of the model
-     *  Parameter transform: transform that maps framebuffer to output
+     *  Parameter x_: x position within the global compositor space
+     *  Parameter y_: y position within the global compositor space
+     *  Parameter physical_width_: width in millimeters of the output
+     *  Parameter physical_height_: height in millimeters of the output
+     *  Parameter subpixel_: subpixel orientation of the output
+     *  Parameter make_: textual description of the manufacturer
+     *  Parameter model_: textual description of the model
+     *  Parameter transform_: transform that maps framebuffer to output
      */
-    using geometry_handler_sig = void (std::int32_t x, std::int32_t y, std::int32_t physical_width, std::int32_t physical_height, std::int32_t subpixel, const std::string& make, const std::string& model, std::int32_t transform);
+    using geometry_handler_sig = void (std::int32_t x_, std::int32_t y_, std::int32_t physical_width_, std::int32_t physical_height_, std::int32_t subpixel_, const std::string& make_, const std::string& model_, std::int32_t transform_);
 
     /** Set a handler for the geometry event
      *  @param handler Callable of signature @ref geometry_handler_sig
@@ -2645,12 +2645,12 @@ public:
      *  space. For instance, the output may be scaled, as described in
      *  wl_output.scale, or transformed , as described in wl_output.transform.
      *
-     *  Parameter flags: bitfield of mode flags
-     *  Parameter width: width of the mode in hardware units
-     *  Parameter height: height of the mode in hardware units
-     *  Parameter refresh: vertical refresh rate in mHz
+     *  Parameter flags_: bitfield of mode flags
+     *  Parameter width_: width of the mode in hardware units
+     *  Parameter height_: height of the mode in hardware units
+     *  Parameter refresh_: vertical refresh rate in mHz
      */
-    using mode_handler_sig = void (std::uint32_t flags, std::int32_t width, std::int32_t height, std::int32_t refresh);
+    using mode_handler_sig = void (std::uint32_t flags_, std::int32_t width_, std::int32_t height_, std::int32_t refresh_);
 
     /** Set a handler for the mode event
      *  @param handler Callable of signature @ref mode_handler_sig
@@ -2694,9 +2694,9 @@ public:
      *  compositor can avoid scaling the surface, and the client can supply a higher
      *  detail image.
      *
-     *  Parameter factor: scaling factor of output
+     *  Parameter factor_: scaling factor of output
      */
-    using scale_handler_sig = void (std::int32_t factor);
+    using scale_handler_sig = void (std::int32_t factor_);
 
     /** Set a handler for the scale event
      *  @param handler Callable of signature @ref scale_handler_sig
@@ -2714,10 +2714,10 @@ private:
         void (*scale_handler) (void*, wl_proxy*, std::int32_t);
     };
 
-    static void geometry_handler(void* data, wl_proxy* wl_obj, std::int32_t x, std::int32_t y, std::int32_t physical_width, std::int32_t physical_height, std::int32_t subpixel, const char* make, const char* model, std::int32_t transform);
-    static void mode_handler(void* data, wl_proxy* wl_obj, std::uint32_t flags, std::int32_t width, std::int32_t height, std::int32_t refresh);
+    static void geometry_handler(void* data, wl_proxy* wl_obj, std::int32_t x_, std::int32_t y_, std::int32_t physical_width_, std::int32_t physical_height_, std::int32_t subpixel_, const char* make_, const char* model_, std::int32_t transform_);
+    static void mode_handler(void* data, wl_proxy* wl_obj, std::uint32_t flags_, std::int32_t width_, std::int32_t height_, std::int32_t refresh_);
     static void done_handler(void* data, wl_proxy* wl_obj);
-    static void scale_handler(void* data, wl_proxy* wl_obj, std::int32_t factor);
+    static void scale_handler(void* data, wl_proxy* wl_obj, std::int32_t factor_);
 
     static const listener_t listener;
 
@@ -2768,23 +2768,23 @@ public:
      *
      *  Add the specified rectangle to the region.
      *
-     *  @param x
-     *  @param y
-     *  @param width
-     *  @param height
+     *  @param x_
+     *  @param y_
+     *  @param width_
+     *  @param height_
      */
-    void add(std::int32_t x, std::int32_t y, std::int32_t width, std::int32_t height);
+    void add(std::int32_t x_, std::int32_t y_, std::int32_t width_, std::int32_t height_);
 
     /** subtract rectangle from region
      *
      *  Subtract the specified rectangle from the region.
      *
-     *  @param x
-     *  @param y
-     *  @param width
-     *  @param height
+     *  @param x_
+     *  @param y_
+     *  @param width_
+     *  @param height_
      */
-    void subtract(std::int32_t x, std::int32_t y, std::int32_t width, std::int32_t height);
+    void subtract(std::int32_t x_, std::int32_t y_, std::int32_t width_, std::int32_t height_);
 
 protected:
     void destroy() override;
