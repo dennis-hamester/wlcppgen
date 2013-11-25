@@ -64,7 +64,7 @@ class region;
  *  are available to all clients. These objects typically represent an actual
  *  object in the server (for example, an input device) or they are singleton
  *  objects that provide extension functionality.
- *  
+ *
  *  When a client creates a registry object, the registry object will emit a
  *  global event for each global currently in the registry. Globals come and go
  *  as a result of device or monitor hotplugs, reconfiguration or other events,
@@ -72,7 +72,7 @@ class region;
  *  client up to date with the changes. To mark the end of the initial burst of
  *  events, the client can use the wl_display.sync request immediately after
  *  calling wl_display.get_registry.
- *  
+ *
  *  A client can bind to a global object by using the bind request. This creates
  *  a client-side handle that lets the object emit events to the client and lets
  *  the client invoke requests on the object.
@@ -123,7 +123,7 @@ public:
     /** announce global object
      *
      *  Notify the client of global objects.
-     *  
+     *
      *  The event notifies the client that a global object with the given name is
      *  now available, and it implements the given version of the given interface.
      *
@@ -144,11 +144,11 @@ public:
     /** announce removal of global object
      *
      *  Notify the client of removed global objects.
-     *  
+     *
      *  This event notifies the client that the global identified by name is no
      *  longer available. If the client bound to the global using the bind request,
      *  the client should now destroy that object.
-     *  
+     *
      *  The object remains valid and requests to the object will be ignored until
      *  the client destroys it, to avoid races between the global going away and a
      *  client sending a request to it.
@@ -337,13 +337,13 @@ public:
     /** create a buffer from the pool
      *
      *  Create a wl_buffer object from the pool.
-     *  
+     *
      *  The buffer is created offset bytes into the pool and has width and height as
      *  specified. The stride arguments specifies the number of bytes from beginning
      *  of one row to the beginning of the next. The format is the pixel format of
      *  the buffer and must be one of those advertised through the wl_shm.format
      *  event.
-     *  
+     *
      *  A buffer will keep a reference to the pool it was created from so it is
      *  valid to destroy the pool immediately after creating a buffer from it.
      *
@@ -385,7 +385,7 @@ enum shm_error {
 /** pixel formats
  *
  *  This describes the memory layout of an individual pixel.
- *  
+ *
  *  All renderers should support argb8888 and xrgb8888 but any other formats are
  *  optional and may not be supported by the particular renderer in use.
  */
@@ -453,9 +453,9 @@ enum shm_format {
 /** shared memory support
  *
  *  A global singleton object that provides support for shared memory.
- *  
+ *
  *  Clients can create wl_shm_pool objects using the create_pool request.
- *  
+ *
  *  At connection setup time, the wl_shm object emits one or more format events
  *  to inform clients about the valid pixel formats that can be used for
  *  buffers.
@@ -491,7 +491,7 @@ public:
     /** create a shm pool
      *
      *  Create a new wl_shm_pool object.
-     *  
+     *
      *  The pool can be used to create shared memory based buffer objects. The
      *  server will mmap size bytes of the passed file descriptor, to use as backing
      *  memory for the pool.
@@ -573,7 +573,7 @@ public:
      *
      *  Sent when this wl_buffer is no longer used by the compositor. The client is
      *  now free to re-use or destroy this buffer and its backing storage.
-     *  
+     *
      *  If a client receives a release event before the frame callback requested in
      *  the same wl_surface.commit that attaches this wl_buffer to a surface, then
      *  the client is immediately free to re-use the buffer and its backing storage,
@@ -649,7 +649,7 @@ public:
      *
      *  Indicate that the client can accept the given mime type, or NULL for not
      *  accepted.
-     *  
+     *
      *  Used for feedback during drag-and-drop.
      *
      *  @param serial_
@@ -664,7 +664,7 @@ public:
      *  file descriptor (typically created with the pipe system call). The source
      *  client writes the data in the mime type representation requested and then
      *  closes the file descriptor.
-     *  
+     *
      *  The receiving client reads from the read end of the pipe until EOF and the
      *  closes its end, at which point the transfer is complete.
      *
@@ -755,7 +755,7 @@ public:
      *
      *  Sent when a target accepts pointer_focus or motion events. If a target does
      *  not accept any of the offered types, type is NULL.
-     *  
+     *
      *  Used for feedback during drag-and-drop.
      *
      *  Parameter mime_type_:
@@ -830,7 +830,7 @@ private:
  *
  *  There is one wl_data_device per seat which can be obtained from the global
  *  wl_data_device_manager singleton.
- *  
+ *
  *  A wl_data_device provides access to inter-client data transfer mechanisms
  *  such as copy-and-paste and drag-and-drop.
  */
@@ -866,21 +866,21 @@ public:
      *
      *  This request asks the compositor to start a drag-and-drop operation on
      *  behalf of the client.
-     *  
+     *
      *  The source argument is the data source that provides the data for the
      *  eventual data transfer. If source is NULL, enter, leave and motion events
      *  are sent only to the client that initiated the drag and the client is
      *  expected to handle the data passing internally.
-     *  
+     *
      *  The origin surface is the surface where the drag originates and the client
      *  must have an active implicit grab that matches the serial.
-     *  
+     *
      *  The icon surface is an optional (can be NULL) surface that provides an icon
      *  to be moved around with the cursor. Initially, the top-left corner of the
      *  icon surface is placed at the cursor hotspot, but subsequent
      *  wl_surface.attach request can move the relative position. Attach requests
      *  must be confirmed with wl_surface.commit as usual.
-     *  
+     *
      *  The current and pending input regions of the icon wl_surface are cleared,
      *  and wl_surface.set_input_region is ignored until the wl_surface is no longer
      *  used as the icon surface. When the use as an icon ends, the the current and
@@ -897,7 +897,7 @@ public:
      *
      *  This request asks the compositor to set the selection to the data from the
      *  source on behalf of the client.
-     *  
+     *
      *  To unset the selection, set the source to NULL.
      *
      *  @param source_
@@ -1109,7 +1109,7 @@ public:
  *
  *  This interface is implemented by servers that provide desktop-style user
  *  interfaces.
- *  
+ *
  *  It allows clients to associate a wl_shell_surface with a basic surface.
  */
 class shell final
@@ -1143,7 +1143,7 @@ public:
     /** create a shell surface from a surface
      *
      *  Create a shell surface for an existing surface.
-     *  
+     *
      *  Only one shell surface can be associated with a given surface.
      *
      *  @param surface_
@@ -1198,11 +1198,11 @@ enum shell_surface_fullscreen_method {
  *
  *  An interface that may be implemented by a wl_surface, for implementations
  *  that provide a desktop-style user interface.
- *  
+ *
  *  It provides requests to treat surfaces like toplevel, fullscreen or popup
  *  windows, move, resize or maximize them, associate metadata like title and
  *  class, etc.
- *  
+ *
  *  On the server side the object is automatically destroyed when the related
  *  wl_surface is destroyed. On client side, wl_shell_surface_destroy() must be
  *  called before destroying the wl_surface object.
@@ -1247,7 +1247,7 @@ public:
     /** start an interactive move
      *
      *  Start a pointer-driven move of the surface.
-     *  
+     *
      *  This request must be used in response to a button press event. The server
      *  may ignore move requests depending on the state of the surface (e.g.
      *  fullscreen or maximized).
@@ -1260,7 +1260,7 @@ public:
     /** start an interactive resize
      *
      *  Start a pointer-driven resizing of the surface.
-     *  
+     *
      *  This request must be used in response to a button press event. The server
      *  may ignore resize requests depending on the state of the surface (e.g.
      *  fullscreen or maximized).
@@ -1274,7 +1274,7 @@ public:
     /** make the surface a toplevel surface
      *
      *  Map the surface as a toplevel surface.
-     *  
+     *
      *  A toplevel surface is not fullscreen, maximized or transient.
      */
     void set_toplevel();
@@ -1282,11 +1282,11 @@ public:
     /** make the surface a transient surface
      *
      *  Map the surface relative to an existing surface.
-     *  
+     *
      *  The x and y arguments specify the locations of the upper left corner of the
      *  surface relative to the upper left corner of the parent surface, in surface
      *  local coordinates.
-     *  
+     *
      *  The flags argument controls details of the transient behaviour.
      *
      *  @param parent_
@@ -1299,33 +1299,33 @@ public:
     /** make the surface a fullscreen surface
      *
      *  Map the surface as a fullscreen surface.
-     *  
+     *
      *  If an output parameter is given then the surface will be made fullscreen on
      *  that output. If the client does not specify the output then the compositor
      *  will apply its policy - usually choosing the output on which the surface has
      *  the biggest surface area.
-     *  
+     *
      *  The client may specify a method to resolve a size conflict between the
      *  output size and the surface size - this is provided through the method
      *  parameter.
-     *  
+     *
      *  The framerate parameter is used only when the method is set to "driver", to
      *  indicate the preferred framerate. A value of 0 indicates that the app does
      *  not care about framerate. The framerate is specified in mHz, that is
      *  framerate of 60000 is 60Hz.
-     *  
+     *
      *  A method of "scale" or "driver" implies a scaling operation of the surface,
      *  either via a direct scaling operation or a change of the output mode. This
      *  will override any kind of output scaling, so that mapping a surface with a
      *  buffer size equal to the mode can fill the screen independent of
      *  buffer_scale.
-     *  
+     *
      *  A method of "fill" means we don't scale up the buffer, however any output
      *  scale is applied. This means that you may run into an edge case where the
      *  application maps a buffer with the same size of the output mode but
      *  buffer_scale 1 (thus making a surface larger than the output). In this case
      *  it is allowed to downscale the results to fit the screen.
-     *  
+     *
      *  The compositor must reply to this request with a configure event with the
      *  dimensions for the output on which the surface will be made fullscreen.
      *
@@ -1338,18 +1338,18 @@ public:
     /** make the surface a popup surface
      *
      *  Map the surface as a popup.
-     *  
+     *
      *  A popup surface is a transient surface with an added pointer grab.
-     *  
+     *
      *  An existing implicit grab will be changed to owner-events mode, and the
      *  popup grab will continue after the implicit grab ends (i.e. releasing the
      *  mouse button does not cause the popup to be unmapped).
-     *  
+     *
      *  The popup grab continues until the window is destroyed or a mouse button is
      *  pressed in any other clients window. A click in any of the clients surfaces
      *  is reported as normal, however, clicks in other clients surfaces will be
      *  discarded and trigger the callback.
-     *  
+     *
      *  The x and y arguments specify the locations of the upper left corner of the
      *  surface relative to the upper left corner of the parent surface, in surface
      *  local coordinates.
@@ -1366,20 +1366,20 @@ public:
     /** make the surface a maximized surface
      *
      *  Map the surface as a maximized surface.
-     *  
+     *
      *  If an output parameter is given then the surface will be maximized on that
      *  output. If the client does not specify the output then the compositor will
      *  apply its policy - usually choosing the output on which the surface has the
      *  biggest surface area.
-     *  
+     *
      *  The compositor will reply with a configure event telling the expected new
      *  surface size. The operation is completed on the next buffer attach to this
      *  surface.
-     *  
+     *
      *  A maximized surface typically fills the entire output it is bound to, except
      *  for desktop element such as panels. This is the main difference between a
      *  maximized shell surface and a fullscreen shell surface.
-     *  
+     *
      *  The details depend on the compositor implementation.
      *
      *  @param output_
@@ -1389,10 +1389,10 @@ public:
     /** set surface title
      *
      *  Set a short title for the surface.
-     *  
+     *
      *  This string may be used to identify the surface in a task bar, window list,
      *  or other user interface elements provided by the compositor.
-     *  
+     *
      *  The string must be encoded in UTF-8.
      *
      *  @param title_
@@ -1402,7 +1402,7 @@ public:
     /** set surface class
      *
      *  Set a class for the surface.
-     *  
+     *
      *  The surface class identifies the general class of applications to which the
      *  surface belongs. A common convention is to use the file name (or the full
      *  path if it is a non-standard location) of the application's .desktop file as
@@ -1432,18 +1432,18 @@ public:
     /** suggest resize
      *
      *  The configure event asks the client to resize its surface.
-     *  
+     *
      *  The size is a hint, in the sense that the client is free to ignore it if it
      *  doesn't resize, pick a smaller size (to satisfy aspect ratio or resize in
      *  steps of NxM pixels).
-     *  
+     *
      *  The edges parameter provides a hint about how the surface was resized. The
      *  client may use this information to decide how to adjust its content to the
      *  new size (e.g. a scrolling area might adjust its content position to leave
      *  the viewable content unmoved).
-     *  
+     *
      *  The client is free to dismiss all but the last configure event it received.
-     *  
+     *
      *  The width and height arguments specify the size of the window in surface
      *  local coordinates.
      *
@@ -1501,11 +1501,11 @@ private:
  *
  *  A surface is a rectangular area that is displayed on the screen. It has a
  *  location, size and pixel contents.
- *  
+ *
  *  The size of a surface (and relative positions on it) is described in surface
  *  local coordinates, which may differ from the buffer local coordinates of the
  *  pixel content, in case a buffer_transform or a buffer_scale is used.
- *  
+ *
  *  Surfaces are also used for some special purposes, e.g. as cursor images for
  *  pointers, drag icons, etc.
  */
@@ -1540,26 +1540,26 @@ public:
     /** set the surface contents
      *
      *  Set a buffer as the content of this surface.
-     *  
+     *
      *  The new size of the surface is calculated based on the buffer size
      *  transformed by the inverse buffer_transform and the inverse buffer_scale.
      *  This means that the supplied buffer must be an integer multiple of the
      *  buffer_scale.
-     *  
+     *
      *  The x and y arguments specify the location of the new pending buffer's upper
      *  left corner, relative to the current buffer's upper left corner, in surface
      *  local coordinates. In other words, the x and y, combined with the new
      *  surface size define in which directions the surface's size changes.
-     *  
+     *
      *  Surface contents are double-buffered state, see wl_surface.commit.
-     *  
+     *
      *  The initial surface contents are void; there is no content.
      *  wl_surface.attach assigns the given wl_buffer as the pending wl_buffer.
      *  wl_surface.commit makes the pending wl_buffer the new surface contents, and
      *  the size of the surface becomes the size calculated from the wl_buffer, as
      *  described above. After commit, there is no pending buffer until the next
      *  attach.
-     *  
+     *
      *  Committing a pending wl_buffer allows the compositor to read the pixels in
      *  the wl_buffer. The compositor may access the pixels at any time after the
      *  wl_surface.commit request. When the compositor will not access the pixels
@@ -1567,11 +1567,11 @@ public:
      *  wl_buffer.release, the client may re-use the wl_buffer. A wl_buffer that has
      *  been attached and then replaced by another attach instead of committed will
      *  not receive a release event, and is not used by the compositor.
-     *  
+     *
      *  Destroying the wl_buffer after wl_buffer.release does not change the surface
      *  contents. However, if the client destroys the wl_buffer before receiving the
      *  wl_buffer.release event, the surface contents become undefined immediately.
-     *  
+     *
      *  If wl_surface.attach is sent with a NULL wl_buffer, the following
      *  wl_surface.commit will remove the surface content.
      *
@@ -1588,15 +1588,15 @@ public:
      *  needs to be repainted. The pending buffer must be set by wl_surface.attach
      *  before sending damage. The compositor ignores the parts of the damage that
      *  fall outside of the surface.
-     *  
+     *
      *  Damage is double-buffered state, see wl_surface.commit.
-     *  
+     *
      *  The damage rectangle is specified in surface local coordinates.
-     *  
+     *
      *  The initial value for pending damage is empty: no damage. wl_surface.damage
      *  adds pending damage: the new pending damage is the union of old pending
      *  damage and the given rectangle.
-     *  
+     *
      *  wl_surface.commit assigns pending damage as the current damage, and clears
      *  pending damage. The server will clear the current damage as it repaints the
      *  surface.
@@ -1614,16 +1614,16 @@ public:
      *  redrawing operations, and driving animations. The frame request will take
      *  effect on the next wl_surface.commit. The notification will only be posted
      *  for one frame unless requested again.
-     *  
+     *
      *  A server should avoid signalling the frame callbacks if the surface is not
      *  visible in any way, e.g. the surface is off-screen, or completely obscured
      *  by other opaque surfaces.
-     *  
+     *
      *  A client can request a frame callback even without an attach, damage, or any
      *  other state changes. wl_surface.commit triggers a display update, so the
      *  callback event will arrive after the next output refresh where the surface
      *  is visible.
-     *  
+     *
      *  The object returned by this request will be destroyed by the compositor
      *  after the callback is fired and as such the client must not attempt to use
      *  it after that point.
@@ -1635,23 +1635,23 @@ public:
     /** set opaque region
      *
      *  This request sets the region of the surface that contains opaque content.
-     *  
+     *
      *  The opaque region is an optimization hint for the compositor that lets it
      *  optimize out redrawing of content behind opaque regions. Setting an opaque
      *  region is not required for correct behaviour, but marking transparent
      *  content as opaque will result in repaint artifacts.
-     *  
+     *
      *  The opaque region is specified in surface local coordinates.
-     *  
+     *
      *  The compositor ignores the parts of the opaque region that fall outside of
      *  the surface.
-     *  
+     *
      *  Opaque region is double-buffered state, see wl_surface.commit.
-     *  
+     *
      *  wl_surface.set_opaque_region changes the pending opaque region.
      *  wl_surface.commit copies the pending region to the current region.
      *  Otherwise, the pending and current regions are never changed.
-     *  
+     *
      *  The initial value for opaque region is empty. Setting the pending opaque
      *  region has copy semantics, and the wl_region object can be destroyed
      *  immediately. A NULL wl_region causes the pending opaque region to be set to
@@ -1665,21 +1665,21 @@ public:
      *
      *  This request sets the region of the surface that can receive pointer and
      *  touch events.
-     *  
+     *
      *  Input events happening outside of this region will try the next surface in
      *  the server surface stack. The compositor ignores the parts of the input
      *  region that fall outside of the surface.
-     *  
+     *
      *  The input region is specified in surface local coordinates.
-     *  
+     *
      *  Input region is double-buffered state, see wl_surface.commit.
-     *  
+     *
      *  wl_surface.set_input_region changes the pending input region.
      *  wl_surface.commit copies the pending region to the current region. Otherwise
      *  the pending and current regions are never changed, except cursor and icon
      *  surfaces are special cases, see wl_pointer.set_cursor and
      *  wl_data_device.start_drag.
-     *  
+     *
      *  The initial value for input region is infinite. That means the whole surface
      *  will accept input. Setting the pending input region has copy semantics, and
      *  the wl_region object can be destroyed immediately. A NULL wl_region causes
@@ -1696,16 +1696,16 @@ public:
      *  current state in use by the compositor. Commit request atomically applies
      *  all pending state, replacing the current state. After commit, the new
      *  pending state is as documented for each related request.
-     *  
+     *
      *  On commit, a pending wl_buffer is applied first, all other state second.
      *  This means that all coordinates in double-buffered state are relative to the
      *  new wl_buffer coming into use, except for wl_surface.attach itself. If there
      *  is no pending wl_buffer, the coordinates are relative to the current surface
      *  contents.
-     *  
+     *
      *  All requests that need a commit to become effective are documented to affect
      *  double-buffered state.
-     *  
+     *
      *  Other interfaces may add further double-buffered surface state.
      */
     void commit();
@@ -1715,11 +1715,11 @@ public:
      *  This request sets an optional transformation on how the compositor
      *  interprets the contents of the buffer attached to the surface. The accepted
      *  values for the transform parameter are the values for wl_output.transform.
-     *  
+     *
      *  Buffer transform is double-buffered state, see wl_surface.commit.
-     *  
+     *
      *  A newly created surface has its buffer transformation set to normal.
-     *  
+     *
      *  The purpose of this request is to allow clients to render content according
      *  to the output transform, thus permiting the compositor to use certain
      *  optimizations even if the display is rotated. Using hardware overlays and
@@ -1727,7 +1727,7 @@ public:
      *  optimizations. Those optimizations are highly dependent on the compositor
      *  implementation, so the use of this request should be considered on a
      *  case-by-case basis.
-     *  
+     *
      *  Note that if the transform value includes 90 or 270 degree rotation, the
      *  width of the buffer will become the surface height and the height of the
      *  buffer will become the surface width.
@@ -1740,17 +1740,17 @@ public:
      *
      *  This request sets an optional scaling factor on how the compositor
      *  interprets the contents of the buffer attached to the window.
-     *  
+     *
      *  Buffer scale is double-buffered state, see wl_surface.commit.
-     *  
+     *
      *  A newly created surface has its buffer scale set to 1.
-     *  
+     *
      *  The purpose of this request is to allow clients to supply higher resolution
      *  buffer data for use on high resolution outputs. Its intended that you pick
      *  the same	buffer scale as the scale of the output that the surface is
      *  displayed on.This means the compositor can avoid scaling when rendering the
      *  surface on that output.
-     *  
+     *
      *  Note that if the scale is larger than 1, then you have to attach a buffer
      *  that is larger (by a factor of scale in each dimension) than the desired
      *  surface size.
@@ -1763,7 +1763,7 @@ public:
      *
      *  This is emitted whenever a surface's creation, movement, or resizing results
      *  in some part of it being within the scanout region of an output.
-     *  
+     *
      *  Note that a surface may be overlapping with zero or more outputs.
      *
      *  Parameter output_:
@@ -1866,7 +1866,7 @@ public:
      *
      *  The ID provided will be initialized to the wl_pointer interface for this
      *  seat.
-     *  
+     *
      *  This request only takes effect if the seat has the pointer capability.
      *
      *  @return
@@ -1877,7 +1877,7 @@ public:
      *
      *  The ID provided will be initialized to the wl_keyboard interface for this
      *  seat.
-     *  
+     *
      *  This request only takes effect if the seat has the keyboard capability.
      *
      *  @return
@@ -1887,7 +1887,7 @@ public:
     /** return touch object
      *
      *  The ID provided will be initialized to the wl_touch interface for this seat.
-     *  
+     *
      *  This request only takes effect if the seat has the touch capability.
      *
      *  @return
@@ -1969,7 +1969,7 @@ enum pointer_axis {
  *
  *  The wl_pointer interface represents one or more input devices, such as mice,
  *  which control the pointer location and pointer_focus of a seat.
- *  
+ *
  *  The wl_pointer interface generates motion, enter and leave events for the
  *  surfaces that the pointer is located over, and button and axis events for
  *  button presses, button releases and scrolling.
@@ -2010,19 +2010,19 @@ public:
      *  is the current pointer surface. If there was a previous surface set with
      *  this request it is replaced. If surface is NULL, the pointer image is
      *  hidden.
-     *  
+     *
      *  The parameters hotspot_x and hotspot_y define the position of the pointer
      *  surface relative to the pointer location. Its top-left corner is always at
      *  (x, y) - (hotspot_x, hotspot_y), where (x, y) are the coordinates of the
      *  pointer location, in surface local coordinates.
-     *  
+     *
      *  On surface.attach requests to the pointer surface, hotspot_x and hotspot_y
      *  are decremented by the x and y parameters passed to the request. Attach must
      *  be confirmed by wl_surface.commit as usual.
-     *  
+     *
      *  The hotspot can also be updated by passing the currently set pointer surface
      *  to this request with new values for hotspot_x and hotspot_y.
-     *  
+     *
      *  The current and pending input regions of the wl_surface are cleared, and
      *  wl_surface.set_input_region is ignored until the wl_surface is no longer
      *  used as the cursor. When the use as a cursor ends, the current and pending
@@ -2038,7 +2038,7 @@ public:
     /** enter event
      *
      *  Notification that this seat's pointer is focused on a certain surface.
-     *  
+     *
      *  When an seat's focus enters a surface, the pointer image is undefined and a
      *  client should respond to this event by setting an appropriate pointer image
      *  with the set_cursor request.
@@ -2062,7 +2062,7 @@ public:
      *
      *  Notification that this seat's pointer is no longer focused on a certain
      *  surface.
-     *  
+     *
      *  The leave notification is sent before the enter notification for the new
      *  focus.
      *
@@ -2101,7 +2101,7 @@ public:
     /** pointer button event
      *
      *  Mouse button click and release notifications.
-     *  
+     *
      *  The location of the click is given by the last motion or enter event. The
      *  time argument is a timestamp with millisecond granularity, with an undefined
      *  base.
@@ -2124,19 +2124,19 @@ public:
     /** axis event
      *
      *  Scroll and other axis notifications.
-     *  
+     *
      *  For scroll events (vertical and horizontal scroll axes), the value parameter
      *  is the length of a vector along the specified axis in a coordinate space
      *  identical to those of motion events, representing a relative movement along
      *  the specified axis.
-     *  
+     *
      *  For devices that support movements non-parallel to axes multiple axis events
      *  will be emitted.
-     *  
+     *
      *  When applicable, for example for touch pads, the server can choose to emit
      *  scroll events where the motion vector is equivalent to a motion event
      *  vector.
-     *  
+     *
      *  When applicable, clients can transform its view relative to the scroll
      *  distance.
      *
@@ -2276,7 +2276,7 @@ public:
      *
      *  Notification that this seat's keyboard focus is no longer on a certain
      *  surface.
-     *  
+     *
      *  The leave notification is sent before the enter notification for the new
      *  focus.
      *
@@ -2366,7 +2366,7 @@ private:
 /** touchscreen input device
  *
  *  The wl_touch interface represents a touchscreen associated with a seat.
- *  
+ *
  *  Touch interactions can consist of one or more contacts. For each contact, a
  *  series of events is generated, starting with a down event, followed by zero
  *  or more motion events, and ending with an up event. Events relating to the
@@ -2541,10 +2541,10 @@ enum output_subpixel {
  *
  *  This describes the transform that a compositor will apply to a surface to
  *  compensate for the rotation or mirroring of an output device.
- *  
+ *
  *  The flipped values correspond to an initial flip around a vertical axis
  *  followed by rotation.
- *  
+ *
  *  The purpose is mainly to allow clients render accordingly and tell the
  *  compositor, so that for fullscreen surfaces, the compositor will still be
  *  able to scan out directly from client surfaces.
@@ -2634,12 +2634,12 @@ public:
     /** advertise available modes for the output
      *
      *  The mode event describes an available mode for the output.
-     *  
+     *
      *  The event is sent when binding to the output object and there will always be
      *  one mode, the current mode. The event is sent again if an output changes
      *  mode, for the mode that is now current. In other words, the current mode is
      *  always the last mode that was received with the current flag set.
-     *  
+     *
      *  The size of a mode is given in physical hardware units of the output device.
      *  This is not necessarily the same as the output size in the global compositor
      *  space. For instance, the output may be scaled, as described in
@@ -2682,12 +2682,12 @@ public:
      *  This event contains scaling geometry information that is not in the geometry
      *  event. It may be sent after binding the output object or if the output scale
      *  changes later. If it is not sent, the client should assume a scale of 1.
-     *  
+     *
      *  A scale larger than 1 means that the compositor will automatically scale
      *  surface buffers by this amount when rendering. This is used for very high
      *  resolution displays where applications rendering at the native resolution
      *  would be too small to be legible.
-     *  
+     *
      *  It is intended that scaling aware clients track the current output of a
      *  surface, and if it is on a scaled output it should use
      *  wl_surface.set_buffer_scale with the scale of the output. That way the
@@ -2732,7 +2732,7 @@ private:
 /** region interface
  *
  *  A region object describes an area.
- *  
+ *
  *  Region objects are used to describe the opaque and input regions of a
  *  surface.
  */

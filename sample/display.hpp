@@ -102,7 +102,7 @@ public:
      *  wl_callback object. Since requests are handled in-order and events are
      *  delivered in-order, this can used as a barrier to ensure all previous
      *  requests and the resulting events have been handled.
-     *  
+     *
      *  The object returned by this request will be destroyed by the compositor
      *  after the callback is fired and as such the client must not attempt to use
      *  it after that point.

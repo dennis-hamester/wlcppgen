@@ -91,7 +91,7 @@ class Description:
             for line in wrapped_lines:
                 result.append(' *  ' + line)
             if i != len(lines) - 1 and lines[i + 1] != '':
-                result.append(' *  ')
+                result.append(' *')
 
         return result
 
