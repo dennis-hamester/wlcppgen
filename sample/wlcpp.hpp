@@ -58,7 +58,7 @@ class region;
 
 #define WLCPP_REGISTRY_VERSION 1
 
-/** global registry object
+/** \brief global registry object
  *
  *  The global registry object. The server has a number of global objects that
  *  are available to all clients. These objects typically represent an actual
@@ -80,37 +80,38 @@ class region;
 class registry final
     : public proxy {
 public:
-    /** wl_interface for registry */
+    /** \brief wl_interface for @ref registry */
     static const wl_interface interface;
 
-    /** registry version at wrapper generation time */
+    /** \brief @ref registry version at wrapper generation time */
     static constexpr std::uint32_t version = 1;
 
-    /** Wrap existing wl_registry object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_registry object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     registry(wl_proxy* obj = nullptr);
 
-    /** Create new registry from factory
+    /** \brief Create new @ref registry from factory
      *  @param factory Object which acts as the factory
      */
     explicit registry(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     registry(registry&& rhs) = default;
 
-    /** Default destructor */
+    /** \brief Default destructor */
     virtual ~registry() = default;
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     registry& operator=(registry&& rhs) = default;
 
-    /** bind an object to the display
+    /** \brief bind an object to the display
      *
      *  Binds a new, client-created object to the server using the specified name as
      *  the identifier.
      *
      *  @param name_ unique name for the object
+     *  @param version_
      *  @return
      */
     template <typename T>
@@ -120,20 +121,20 @@ public:
         return id_;
     }
 
-    /** announce global object
+    /** \brief announce global object
      *
      *  Notify the client of global objects.
      *
      *  The event notifies the client that a global object with the given name is
      *  now available, and it implements the given version of the given interface.
      *
-     *  Parameter name_:
-     *  Parameter interface_:
-     *  Parameter version_:
+     *  @param name_
+     *  @param interface_
+     *  @param version_
      */
     using global_handler_sig = void (std::uint32_t name_, const std::string& interface_, std::uint32_t version_);
 
-    /** Set a handler for the global event
+    /** \brief Set a handler for the global event
      *  @param handler Callable of signature @ref global_handler_sig
      */
     template <typename T>
@@ -141,7 +142,7 @@ public:
         _global_handler = std::function<global_handler_sig>(std::forward<T>(handler));
     }
 
-    /** announce removal of global object
+    /** \brief announce removal of global object
      *
      *  Notify the client of removed global objects.
      *
@@ -153,11 +154,11 @@ public:
      *  the client destroys it, to avoid races between the global going away and a
      *  client sending a request to it.
      *
-     *  Parameter name_:
+     *  @param name_
      */
     using global_remove_handler_sig = void (std::uint32_t name_);
 
-    /** Set a handler for the global_remove event
+    /** \brief Set a handler for the global_remove event
      *  @param handler Callable of signature @ref global_remove_handler_sig
      */
     template <typename T>
@@ -182,7 +183,7 @@ private:
 
 #define WLCPP_CALLBACK_VERSION 1
 
-/** callback object
+/** \brief callback object
  *
  *  Clients can handle the 'done' event to get notified when the related request
  *  is done.
@@ -190,40 +191,40 @@ private:
 class callback final
     : public proxy {
 public:
-    /** wl_interface for callback */
+    /** \brief wl_interface for @ref callback */
     static const wl_interface interface;
 
-    /** callback version at wrapper generation time */
+    /** \brief @ref callback version at wrapper generation time */
     static constexpr std::uint32_t version = 1;
 
-    /** Wrap existing wl_callback object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_callback object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     callback(wl_proxy* obj = nullptr);
 
-    /** Create new callback from factory
+    /** \brief Create new @ref callback from factory
      *  @param factory Object which acts as the factory
      */
     explicit callback(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     callback(callback&& rhs) = default;
 
-    /** Default destructor */
+    /** \brief Default destructor */
     virtual ~callback() = default;
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     callback& operator=(callback&& rhs) = default;
 
-    /** done event
+    /** \brief done event
      *
      *  Notify the client when the related request is done.
      *
-     *  Parameter serial_: serial of the event
+     *  @param serial_ serial of the event
      */
     using done_handler_sig = void (std::uint32_t serial_);
 
-    /** Set a handler for the done event
+    /** \brief Set a handler for the done event
      *  @param handler Callable of signature @ref done_handler_sig
      */
     template <typename T>
@@ -245,7 +246,7 @@ private:
 
 #define WLCPP_COMPOSITOR_VERSION 3
 
-/** the compositor singleton
+/** \brief the compositor singleton
  *
  *  A compositor. This object is a singleton global. The compositor is in charge
  *  of combining the contents of multiple surfaces into one displayable output.
@@ -253,32 +254,32 @@ private:
 class compositor final
     : public proxy {
 public:
-    /** wl_interface for compositor */
+    /** \brief wl_interface for @ref compositor */
     static const wl_interface interface;
 
-    /** compositor version at wrapper generation time */
+    /** \brief @ref compositor version at wrapper generation time */
     static constexpr std::uint32_t version = 3;
 
-    /** Wrap existing wl_compositor object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_compositor object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     compositor(wl_proxy* obj = nullptr);
 
-    /** Create new compositor from factory
+    /** \brief Create new @ref compositor from factory
      *  @param factory Object which acts as the factory
      */
     explicit compositor(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     compositor(compositor&& rhs) = default;
 
-    /** Default destructor */
+    /** \brief Default destructor */
     virtual ~compositor() = default;
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     compositor& operator=(compositor&& rhs) = default;
 
-    /** create new surface
+    /** \brief create new surface
      *
      *  Ask the compositor to create a new surface.
      *
@@ -286,7 +287,7 @@ public:
      */
     surface create_surface();
 
-    /** create new region
+    /** \brief create new region
      *
      *  Ask the compositor to create a new region.
      *
@@ -297,7 +298,7 @@ public:
 
 #define WLCPP_SHM_POOL_VERSION 1
 
-/** a shared memory pool
+/** \brief a shared memory pool
  *
  *  The wl_shm_pool object encapsulates a piece of memory shared between the
  *  compositor and client. Through the wl_shm_pool object, the client can
@@ -309,32 +310,32 @@ public:
 class shm_pool final
     : public proxy {
 public:
-    /** wl_interface for shm_pool */
+    /** \brief wl_interface for @ref shm_pool */
     static const wl_interface interface;
 
-    /** shm_pool version at wrapper generation time */
+    /** \brief @ref shm_pool version at wrapper generation time */
     static constexpr std::uint32_t version = 1;
 
-    /** Wrap existing wl_shm_pool object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_shm_pool object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     shm_pool(wl_proxy* obj = nullptr);
 
-    /** Create new shm_pool from factory
+    /** \brief Create new @ref shm_pool from factory
      *  @param factory Object which acts as the factory
      */
     explicit shm_pool(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     shm_pool(shm_pool&& rhs) = default;
 
-    /** Destructor */
+    /** \brief Destructor */
     virtual ~shm_pool();
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     shm_pool& operator=(shm_pool&& rhs) = default;
 
-    /** create a buffer from the pool
+    /** \brief create a buffer from the pool
      *
      *  Create a wl_buffer object from the pool.
      *
@@ -356,7 +357,7 @@ public:
      */
     buffer create_buffer(std::int32_t offset_, std::int32_t width_, std::int32_t height_, std::int32_t stride_, std::uint32_t format_);
 
-    /** change the size of the pool mapping
+    /** \brief change the size of the pool mapping
      *
      *  This request will cause the server to remap the backing memory for the pool
      *  from the file descriptor passed when the pool was created, but using the new
@@ -372,7 +373,7 @@ protected:
 
 #define WLCPP_SHM_VERSION 1
 
-/** wl_shm error values
+/** \brief wl_shm error values
  *
  *  These errors can be emitted in response to wl_shm requests.
  */
@@ -382,7 +383,7 @@ enum shm_error {
     SHM_ERROR_INVALID_FD = 2, /**< mmapping the file descriptor failed */
 };
 
-/** pixel formats
+/** \brief pixel formats
  *
  *  This describes the memory layout of an individual pixel.
  *
@@ -450,7 +451,7 @@ enum shm_format {
     SHM_FORMAT_YVU444 = 0x34325659,
 };
 
-/** shared memory support
+/** \brief shared memory support
  *
  *  A global singleton object that provides support for shared memory.
  *
@@ -463,32 +464,32 @@ enum shm_format {
 class shm final
     : public proxy {
 public:
-    /** wl_interface for shm */
+    /** \brief wl_interface for @ref shm */
     static const wl_interface interface;
 
-    /** shm version at wrapper generation time */
+    /** \brief @ref shm version at wrapper generation time */
     static constexpr std::uint32_t version = 1;
 
-    /** Wrap existing wl_shm object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_shm object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     shm(wl_proxy* obj = nullptr);
 
-    /** Create new shm from factory
+    /** \brief Create new @ref shm from factory
      *  @param factory Object which acts as the factory
      */
     explicit shm(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     shm(shm&& rhs) = default;
 
-    /** Default destructor */
+    /** \brief Default destructor */
     virtual ~shm() = default;
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     shm& operator=(shm&& rhs) = default;
 
-    /** create a shm pool
+    /** \brief create a shm pool
      *
      *  Create a new wl_shm_pool object.
      *
@@ -502,16 +503,16 @@ public:
      */
     shm_pool create_pool(std::int32_t fd_, std::int32_t size_);
 
-    /** pixel format description
+    /** \brief pixel format description
      *
      *  Informs the client about a valid pixel format that can be used for buffers.
      *  Known formats include argb8888 and xrgb8888.
      *
-     *  Parameter format_:
+     *  @param format_
      */
     using format_handler_sig = void (std::uint32_t format_);
 
-    /** Set a handler for the format event
+    /** \brief Set a handler for the format event
      *  @param handler Callable of signature @ref format_handler_sig
      */
     template <typename T>
@@ -533,7 +534,7 @@ private:
 
 #define WLCPP_BUFFER_VERSION 1
 
-/** content for a wl_surface
+/** \brief content for a wl_surface
  *
  *  A buffer provides the content for a wl_surface. Buffers are created through
  *  factory interfaces such as wl_drm, wl_shm or similar. It has a width and a
@@ -544,32 +545,32 @@ private:
 class buffer final
     : public proxy {
 public:
-    /** wl_interface for buffer */
+    /** \brief wl_interface for @ref buffer */
     static const wl_interface interface;
 
-    /** buffer version at wrapper generation time */
+    /** \brief @ref buffer version at wrapper generation time */
     static constexpr std::uint32_t version = 1;
 
-    /** Wrap existing wl_buffer object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_buffer object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     buffer(wl_proxy* obj = nullptr);
 
-    /** Create new buffer from factory
+    /** \brief Create new @ref buffer from factory
      *  @param factory Object which acts as the factory
      */
     explicit buffer(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     buffer(buffer&& rhs) = default;
 
-    /** Destructor */
+    /** \brief Destructor */
     virtual ~buffer();
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     buffer& operator=(buffer&& rhs) = default;
 
-    /** compositor releases buffer
+    /** \brief compositor releases buffer
      *
      *  Sent when this wl_buffer is no longer used by the compositor. The client is
      *  now free to re-use or destroy this buffer and its backing storage.
@@ -584,7 +585,7 @@ public:
      */
     using release_handler_sig = void ();
 
-    /** Set a handler for the release event
+    /** \brief Set a handler for the release event
      *  @param handler Callable of signature @ref release_handler_sig
      */
     template <typename T>
@@ -609,7 +610,7 @@ private:
 
 #define WLCPP_DATA_OFFER_VERSION 1
 
-/** offer to transfer data
+/** \brief offer to transfer data
  *
  *  A wl_data_offer represents a piece of data offered for transfer by another
  *  client (the source client). It is used by the copy-and-paste and
@@ -620,32 +621,32 @@ private:
 class data_offer final
     : public proxy {
 public:
-    /** wl_interface for data_offer */
+    /** \brief wl_interface for @ref data_offer */
     static const wl_interface interface;
 
-    /** data_offer version at wrapper generation time */
+    /** \brief @ref data_offer version at wrapper generation time */
     static constexpr std::uint32_t version = 1;
 
-    /** Wrap existing wl_data_offer object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_data_offer object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     data_offer(wl_proxy* obj = nullptr);
 
-    /** Create new data_offer from factory
+    /** \brief Create new @ref data_offer from factory
      *  @param factory Object which acts as the factory
      */
     explicit data_offer(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     data_offer(data_offer&& rhs) = default;
 
-    /** Destructor */
+    /** \brief Destructor */
     virtual ~data_offer();
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     data_offer& operator=(data_offer&& rhs) = default;
 
-    /** accept one of the offered mime types
+    /** \brief accept one of the offered mime types
      *
      *  Indicate that the client can accept the given mime type, or NULL for not
      *  accepted.
@@ -657,7 +658,7 @@ public:
      */
     void accept(std::uint32_t serial_, const std::string* mime_type_);
 
-    /** request that the data is transferred
+    /** \brief request that the data is transferred
      *
      *  To transfer the offered data, the client issues this request and indicates
      *  the mime type it wants to receive. The transfer happens through the passed
@@ -673,16 +674,16 @@ public:
      */
     void receive(const std::string& mime_type_, std::int32_t fd_);
 
-    /** advertise offered mime type
+    /** \brief advertise offered mime type
      *
      *  Sent immediately after creating the wl_data_offer object. One event per
      *  offered mime type.
      *
-     *  Parameter mime_type_:
+     *  @param mime_type_
      */
     using offer_handler_sig = void (const std::string& mime_type_);
 
-    /** Set a handler for the offer event
+    /** \brief Set a handler for the offer event
      *  @param handler Callable of signature @ref offer_handler_sig
      */
     template <typename T>
@@ -707,7 +708,7 @@ private:
 
 #define WLCPP_DATA_SOURCE_VERSION 1
 
-/** offer to transfer data
+/** \brief offer to transfer data
  *
  *  The wl_data_source object is the source side of a wl_data_offer. It is
  *  created by the source client in a data transfer and provides a way to
@@ -717,32 +718,32 @@ private:
 class data_source final
     : public proxy {
 public:
-    /** wl_interface for data_source */
+    /** \brief wl_interface for @ref data_source */
     static const wl_interface interface;
 
-    /** data_source version at wrapper generation time */
+    /** \brief @ref data_source version at wrapper generation time */
     static constexpr std::uint32_t version = 1;
 
-    /** Wrap existing wl_data_source object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_data_source object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     data_source(wl_proxy* obj = nullptr);
 
-    /** Create new data_source from factory
+    /** \brief Create new @ref data_source from factory
      *  @param factory Object which acts as the factory
      */
     explicit data_source(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     data_source(data_source&& rhs) = default;
 
-    /** Destructor */
+    /** \brief Destructor */
     virtual ~data_source();
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     data_source& operator=(data_source&& rhs) = default;
 
-    /** add an offered mime type
+    /** \brief add an offered mime type
      *
      *  This request adds a mime type to the set of mime types advertised to
      *  targets. Can be called several times to offer multiple types.
@@ -751,18 +752,18 @@ public:
      */
     void offer(const std::string& mime_type_);
 
-    /** a target accepts an offered mime type
+    /** \brief a target accepts an offered mime type
      *
      *  Sent when a target accepts pointer_focus or motion events. If a target does
      *  not accept any of the offered types, type is NULL.
      *
      *  Used for feedback during drag-and-drop.
      *
-     *  Parameter mime_type_:
+     *  @param mime_type_
      */
     using target_handler_sig = void (const std::string* mime_type_);
 
-    /** Set a handler for the target event
+    /** \brief Set a handler for the target event
      *  @param handler Callable of signature @ref target_handler_sig
      */
     template <typename T>
@@ -770,17 +771,17 @@ public:
         _target_handler = std::function<target_handler_sig>(std::forward<T>(handler));
     }
 
-    /** send the data
+    /** \brief send the data
      *
      *  Request for data from the client. Send the data as the specified mime type
      *  over the passed file descriptor, then close it.
      *
-     *  Parameter mime_type_:
-     *  Parameter fd_:
+     *  @param mime_type_
+     *  @param fd_
      */
     using send_handler_sig = void (const std::string& mime_type_, std::int32_t fd_);
 
-    /** Set a handler for the send event
+    /** \brief Set a handler for the send event
      *  @param handler Callable of signature @ref send_handler_sig
      */
     template <typename T>
@@ -788,14 +789,14 @@ public:
         _send_handler = std::function<send_handler_sig>(std::forward<T>(handler));
     }
 
-    /** selection was cancelled
+    /** \brief selection was cancelled
      *
      *  This data source has been replaced by another data source. The client should
      *  clean up and destroy this data source.
      */
     using cancelled_handler_sig = void ();
 
-    /** Set a handler for the cancelled event
+    /** \brief Set a handler for the cancelled event
      *  @param handler Callable of signature @ref cancelled_handler_sig
      */
     template <typename T>
@@ -826,7 +827,7 @@ private:
 
 #define WLCPP_DATA_DEVICE_VERSION 1
 
-/** data transfer device
+/** \brief data transfer device
  *
  *  There is one wl_data_device per seat which can be obtained from the global
  *  wl_data_device_manager singleton.
@@ -837,32 +838,32 @@ private:
 class data_device final
     : public proxy {
 public:
-    /** wl_interface for data_device */
+    /** \brief wl_interface for @ref data_device */
     static const wl_interface interface;
 
-    /** data_device version at wrapper generation time */
+    /** \brief @ref data_device version at wrapper generation time */
     static constexpr std::uint32_t version = 1;
 
-    /** Wrap existing wl_data_device object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_data_device object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     data_device(wl_proxy* obj = nullptr);
 
-    /** Create new data_device from factory
+    /** \brief Create new @ref data_device from factory
      *  @param factory Object which acts as the factory
      */
     explicit data_device(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     data_device(data_device&& rhs) = default;
 
-    /** Default destructor */
+    /** \brief Default destructor */
     virtual ~data_device() = default;
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     data_device& operator=(data_device&& rhs) = default;
 
-    /** start drag-and-drop operation
+    /** \brief start drag-and-drop operation
      *
      *  This request asks the compositor to start a drag-and-drop operation on
      *  behalf of the client.
@@ -893,7 +894,7 @@ public:
      */
     void start_drag(data_source* source_, surface& origin_, surface* icon_, std::uint32_t serial_);
 
-    /** copy data to the selection
+    /** \brief copy data to the selection
      *
      *  This request asks the compositor to set the selection to the data from the
      *  source on behalf of the client.
@@ -905,7 +906,7 @@ public:
      */
     void set_selection(data_source* source_, std::uint32_t serial_);
 
-    /** introduce a new wl_data_offer
+    /** \brief introduce a new wl_data_offer
      *
      *  The data_offer event introduces a new wl_data_offer object, which will
      *  subsequently be used in either the data_device.enter event (for
@@ -914,11 +915,11 @@ public:
      *  object will send out data_offer.offer events to describe the mime types it
      *  offers.
      *
-     *  Parameter id_:
+     *  @param id_
      */
     using data_offer_handler_sig = void (data_offer&& id_);
 
-    /** Set a handler for the data_offer event
+    /** \brief Set a handler for the data_offer event
      *  @param handler Callable of signature @ref data_offer_handler_sig
      */
     template <typename T>
@@ -926,21 +927,21 @@ public:
         _data_offer_handler = std::function<data_offer_handler_sig>(std::forward<T>(handler));
     }
 
-    /** initiate drag-and-drop session
+    /** \brief initiate drag-and-drop session
      *
      *  This event is sent when an active drag-and-drop pointer enters a surface
      *  owned by the client. The position of the pointer at enter time is provided
      *  by the x and y arguments, in surface local coordinates.
      *
-     *  Parameter serial_:
-     *  Parameter surface_:
-     *  Parameter x_:
-     *  Parameter y_:
-     *  Parameter id_:
+     *  @param serial_
+     *  @param surface_
+     *  @param x_
+     *  @param y_
+     *  @param id_
      */
     using enter_handler_sig = void (std::uint32_t serial_, surface& surface_, wl_fixed_t x_, wl_fixed_t y_, data_offer* id_);
 
-    /** Set a handler for the enter event
+    /** \brief Set a handler for the enter event
      *  @param handler Callable of signature @ref enter_handler_sig
      */
     template <typename T>
@@ -948,7 +949,7 @@ public:
         _enter_handler = std::function<enter_handler_sig>(std::forward<T>(handler));
     }
 
-    /** end drag-and-drop session
+    /** \brief end drag-and-drop session
      *
      *  This event is sent when the drag-and-drop pointer leaves the surface and the
      *  session ends. The client must destroy the wl_data_offer introduced at enter
@@ -956,7 +957,7 @@ public:
      */
     using leave_handler_sig = void ();
 
-    /** Set a handler for the leave event
+    /** \brief Set a handler for the leave event
      *  @param handler Callable of signature @ref leave_handler_sig
      */
     template <typename T>
@@ -964,19 +965,19 @@ public:
         _leave_handler = std::function<leave_handler_sig>(std::forward<T>(handler));
     }
 
-    /** drag-and-drop session motion
+    /** \brief drag-and-drop session motion
      *
      *  This event is sent when the drag-and-drop pointer moves within the currently
      *  focused surface. The new position of the pointer is provided by the x and y
      *  arguments, in surface local coordinates.
      *
-     *  Parameter time_: timestamp with millisecond granularity
-     *  Parameter x_:
-     *  Parameter y_:
+     *  @param time_ timestamp with millisecond granularity
+     *  @param x_
+     *  @param y_
      */
     using motion_handler_sig = void (std::uint32_t time_, wl_fixed_t x_, wl_fixed_t y_);
 
-    /** Set a handler for the motion event
+    /** \brief Set a handler for the motion event
      *  @param handler Callable of signature @ref motion_handler_sig
      */
     template <typename T>
@@ -984,14 +985,14 @@ public:
         _motion_handler = std::function<motion_handler_sig>(std::forward<T>(handler));
     }
 
-    /** end drag-and-drag session successfully
+    /** \brief end drag-and-drag session successfully
      *
      *  The event is sent when a drag-and-drop operation is ended because the
      *  implicit grab is removed.
      */
     using drop_handler_sig = void ();
 
-    /** Set a handler for the drop event
+    /** \brief Set a handler for the drop event
      *  @param handler Callable of signature @ref drop_handler_sig
      */
     template <typename T>
@@ -999,7 +1000,7 @@ public:
         _drop_handler = std::function<drop_handler_sig>(std::forward<T>(handler));
     }
 
-    /** advertise new selection
+    /** \brief advertise new selection
      *
      *  The selection event is sent out to notify the client of a new wl_data_offer
      *  for the selection for this device. The data_device.data_offer and the
@@ -1009,11 +1010,11 @@ public:
      *  while the client has keyboard focus. The data_offer is valid until a new
      *  data_offer or NULL is received or until the client loses keyboard focus.
      *
-     *  Parameter id_:
+     *  @param id_
      */
     using selection_handler_sig = void (data_offer* id_);
 
-    /** Set a handler for the selection event
+    /** \brief Set a handler for the selection event
      *  @param handler Callable of signature @ref selection_handler_sig
      */
     template <typename T>
@@ -1050,7 +1051,7 @@ private:
 
 #define WLCPP_DATA_DEVICE_MANAGER_VERSION 1
 
-/** data transfer interface
+/** \brief data transfer interface
  *
  *  The wl_data_device_manager is a singleton global object that provides access
  *  to inter-client data transfer mechanisms such as copy-and-paste and
@@ -1060,32 +1061,32 @@ private:
 class data_device_manager final
     : public proxy {
 public:
-    /** wl_interface for data_device_manager */
+    /** \brief wl_interface for @ref data_device_manager */
     static const wl_interface interface;
 
-    /** data_device_manager version at wrapper generation time */
+    /** \brief @ref data_device_manager version at wrapper generation time */
     static constexpr std::uint32_t version = 1;
 
-    /** Wrap existing wl_data_device_manager object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_data_device_manager object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     data_device_manager(wl_proxy* obj = nullptr);
 
-    /** Create new data_device_manager from factory
+    /** \brief Create new @ref data_device_manager from factory
      *  @param factory Object which acts as the factory
      */
     explicit data_device_manager(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     data_device_manager(data_device_manager&& rhs) = default;
 
-    /** Default destructor */
+    /** \brief Default destructor */
     virtual ~data_device_manager() = default;
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     data_device_manager& operator=(data_device_manager&& rhs) = default;
 
-    /** create a new data source
+    /** \brief create a new data source
      *
      *  Create a new data source.
      *
@@ -1093,7 +1094,7 @@ public:
      */
     data_source create_data_source();
 
-    /** create a new data device
+    /** \brief create a new data device
      *
      *  Create a new data device for a given seat.
      *
@@ -1105,7 +1106,7 @@ public:
 
 #define WLCPP_SHELL_VERSION 1
 
-/** create desktop-style surfaces
+/** \brief create desktop-style surfaces
  *
  *  This interface is implemented by servers that provide desktop-style user
  *  interfaces.
@@ -1115,32 +1116,32 @@ public:
 class shell final
     : public proxy {
 public:
-    /** wl_interface for shell */
+    /** \brief wl_interface for @ref shell */
     static const wl_interface interface;
 
-    /** shell version at wrapper generation time */
+    /** \brief @ref shell version at wrapper generation time */
     static constexpr std::uint32_t version = 1;
 
-    /** Wrap existing wl_shell object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_shell object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     shell(wl_proxy* obj = nullptr);
 
-    /** Create new shell from factory
+    /** \brief Create new @ref shell from factory
      *  @param factory Object which acts as the factory
      */
     explicit shell(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     shell(shell&& rhs) = default;
 
-    /** Default destructor */
+    /** \brief Default destructor */
     virtual ~shell() = default;
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     shell& operator=(shell&& rhs) = default;
 
-    /** create a shell surface from a surface
+    /** \brief create a shell surface from a surface
      *
      *  Create a shell surface for an existing surface.
      *
@@ -1154,7 +1155,7 @@ public:
 
 #define WLCPP_SHELL_SURFACE_VERSION 1
 
-/** edge values for resizing
+/** \brief edge values for resizing
  *
  *  These values are used to indicate which edge of a surface is being dragged
  *  in a resize operation. The server may use this information to adapt its
@@ -1172,7 +1173,7 @@ enum shell_surface_resize {
     SHELL_SURFACE_RESIZE_BOTTOM_RIGHT = 10,
 };
 
-/** details of transient behaviour
+/** \brief details of transient behaviour
  *
  *  These flags specify details of the expected behaviour of transient surfaces.
  *  Used in the set_transient request.
@@ -1181,7 +1182,7 @@ enum shell_surface_transient {
     SHELL_SURFACE_TRANSIENT_INACTIVE = 0x1, /**< do not set keyboard focus */
 };
 
-/** different method to set the surface fullscreen
+/** \brief different method to set the surface fullscreen
  *
  *  Hints to indicate to the compositor how to deal with a conflict between the
  *  dimensions of the surface and the dimensions of the output. The compositor
@@ -1194,7 +1195,7 @@ enum shell_surface_fullscreen_method {
     SHELL_SURFACE_FULLSCREEN_METHOD_FILL = 3, /**< no upscaling, center on output and add black borders to compensate size mismatch */
 };
 
-/** desktop-style metadata interface
+/** \brief desktop-style metadata interface
  *
  *  An interface that may be implemented by a wl_surface, for implementations
  *  that provide a desktop-style user interface.
@@ -1210,32 +1211,32 @@ enum shell_surface_fullscreen_method {
 class shell_surface final
     : public proxy {
 public:
-    /** wl_interface for shell_surface */
+    /** \brief wl_interface for @ref shell_surface */
     static const wl_interface interface;
 
-    /** shell_surface version at wrapper generation time */
+    /** \brief @ref shell_surface version at wrapper generation time */
     static constexpr std::uint32_t version = 1;
 
-    /** Wrap existing wl_shell_surface object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_shell_surface object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     shell_surface(wl_proxy* obj = nullptr);
 
-    /** Create new shell_surface from factory
+    /** \brief Create new @ref shell_surface from factory
      *  @param factory Object which acts as the factory
      */
     explicit shell_surface(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     shell_surface(shell_surface&& rhs) = default;
 
-    /** Default destructor */
+    /** \brief Default destructor */
     virtual ~shell_surface() = default;
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     shell_surface& operator=(shell_surface&& rhs) = default;
 
-    /** respond to a ping event
+    /** \brief respond to a ping event
      *
      *  A client must respond to a ping event with a pong request or the client may
      *  be deemed unresponsive.
@@ -1244,7 +1245,7 @@ public:
      */
     void pong(std::uint32_t serial_);
 
-    /** start an interactive move
+    /** \brief start an interactive move
      *
      *  Start a pointer-driven move of the surface.
      *
@@ -1257,7 +1258,7 @@ public:
      */
     void move(seat& seat_, std::uint32_t serial_);
 
-    /** start an interactive resize
+    /** \brief start an interactive resize
      *
      *  Start a pointer-driven resizing of the surface.
      *
@@ -1271,7 +1272,7 @@ public:
      */
     void resize(seat& seat_, std::uint32_t serial_, std::uint32_t edges_);
 
-    /** make the surface a toplevel surface
+    /** \brief make the surface a toplevel surface
      *
      *  Map the surface as a toplevel surface.
      *
@@ -1279,7 +1280,7 @@ public:
      */
     void set_toplevel();
 
-    /** make the surface a transient surface
+    /** \brief make the surface a transient surface
      *
      *  Map the surface relative to an existing surface.
      *
@@ -1296,7 +1297,7 @@ public:
      */
     void set_transient(surface& parent_, std::int32_t x_, std::int32_t y_, std::uint32_t flags_);
 
-    /** make the surface a fullscreen surface
+    /** \brief make the surface a fullscreen surface
      *
      *  Map the surface as a fullscreen surface.
      *
@@ -1335,7 +1336,7 @@ public:
      */
     void set_fullscreen(std::uint32_t method_, std::uint32_t framerate_, output* output_);
 
-    /** make the surface a popup surface
+    /** \brief make the surface a popup surface
      *
      *  Map the surface as a popup.
      *
@@ -1363,7 +1364,7 @@ public:
      */
     void set_popup(seat& seat_, std::uint32_t serial_, surface& parent_, std::int32_t x_, std::int32_t y_, std::uint32_t flags_);
 
-    /** make the surface a maximized surface
+    /** \brief make the surface a maximized surface
      *
      *  Map the surface as a maximized surface.
      *
@@ -1386,7 +1387,7 @@ public:
      */
     void set_maximized(output* output_);
 
-    /** set surface title
+    /** \brief set surface title
      *
      *  Set a short title for the surface.
      *
@@ -1399,7 +1400,7 @@ public:
      */
     void set_title(const std::string& title_);
 
-    /** set surface class
+    /** \brief set surface class
      *
      *  Set a class for the surface.
      *
@@ -1412,16 +1413,16 @@ public:
      */
     void set_class(const std::string& class__);
 
-    /** ping client
+    /** \brief ping client
      *
      *  Ping a client to check if it is receiving events and sending requests. A
      *  client is expected to reply with a pong request.
      *
-     *  Parameter serial_:
+     *  @param serial_
      */
     using ping_handler_sig = void (std::uint32_t serial_);
 
-    /** Set a handler for the ping event
+    /** \brief Set a handler for the ping event
      *  @param handler Callable of signature @ref ping_handler_sig
      */
     template <typename T>
@@ -1429,7 +1430,7 @@ public:
         _ping_handler = std::function<ping_handler_sig>(std::forward<T>(handler));
     }
 
-    /** suggest resize
+    /** \brief suggest resize
      *
      *  The configure event asks the client to resize its surface.
      *
@@ -1447,13 +1448,13 @@ public:
      *  The width and height arguments specify the size of the window in surface
      *  local coordinates.
      *
-     *  Parameter edges_:
-     *  Parameter width_:
-     *  Parameter height_:
+     *  @param edges_
+     *  @param width_
+     *  @param height_
      */
     using configure_handler_sig = void (std::uint32_t edges_, std::int32_t width_, std::int32_t height_);
 
-    /** Set a handler for the configure event
+    /** \brief Set a handler for the configure event
      *  @param handler Callable of signature @ref configure_handler_sig
      */
     template <typename T>
@@ -1461,7 +1462,7 @@ public:
         _configure_handler = std::function<configure_handler_sig>(std::forward<T>(handler));
     }
 
-    /** popup interaction is done
+    /** \brief popup interaction is done
      *
      *  The popup_done event is sent out when a popup grab is broken, that is, when
      *  the user clicks a surface that doesn't belong to the client owning the popup
@@ -1469,7 +1470,7 @@ public:
      */
     using popup_done_handler_sig = void ();
 
-    /** Set a handler for the popup_done event
+    /** \brief Set a handler for the popup_done event
      *  @param handler Callable of signature @ref popup_done_handler_sig
      */
     template <typename T>
@@ -1497,7 +1498,7 @@ private:
 
 #define WLCPP_SURFACE_VERSION 3
 
-/** an onscreen surface
+/** \brief an onscreen surface
  *
  *  A surface is a rectangular area that is displayed on the screen. It has a
  *  location, size and pixel contents.
@@ -1512,32 +1513,32 @@ private:
 class surface final
     : public proxy {
 public:
-    /** wl_interface for surface */
+    /** \brief wl_interface for @ref surface */
     static const wl_interface interface;
 
-    /** surface version at wrapper generation time */
+    /** \brief @ref surface version at wrapper generation time */
     static constexpr std::uint32_t version = 3;
 
-    /** Wrap existing wl_surface object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_surface object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     surface(wl_proxy* obj = nullptr);
 
-    /** Create new surface from factory
+    /** \brief Create new @ref surface from factory
      *  @param factory Object which acts as the factory
      */
     explicit surface(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     surface(surface&& rhs) = default;
 
-    /** Destructor */
+    /** \brief Destructor */
     virtual ~surface();
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     surface& operator=(surface&& rhs) = default;
 
-    /** set the surface contents
+    /** \brief set the surface contents
      *
      *  Set a buffer as the content of this surface.
      *
@@ -1581,7 +1582,7 @@ public:
      */
     void attach(buffer* buffer_, std::int32_t x_, std::int32_t y_);
 
-    /** mark part of the surface damaged
+    /** \brief mark part of the surface damaged
      *
      *  This request is used to describe the regions where the pending buffer is
      *  different from the current surface contents, and where the surface therefore
@@ -1608,7 +1609,7 @@ public:
      */
     void damage(std::int32_t x_, std::int32_t y_, std::int32_t width_, std::int32_t height_);
 
-    /** request repaint feedback
+    /** \brief request repaint feedback
      *
      *  Request notification when the next frame is displayed. Useful for throttling
      *  redrawing operations, and driving animations. The frame request will take
@@ -1632,7 +1633,7 @@ public:
      */
     callback frame();
 
-    /** set opaque region
+    /** \brief set opaque region
      *
      *  This request sets the region of the surface that contains opaque content.
      *
@@ -1661,7 +1662,7 @@ public:
      */
     void set_opaque_region(region* region_);
 
-    /** set input region
+    /** \brief set input region
      *
      *  This request sets the region of the surface that can receive pointer and
      *  touch events.
@@ -1689,7 +1690,7 @@ public:
      */
     void set_input_region(region* region_);
 
-    /** commit pending surface state
+    /** \brief commit pending surface state
      *
      *  Surface state (input, opaque, and damage regions, attached buffers, etc.) is
      *  double-buffered. Protocol requests modify the pending state, as opposed to
@@ -1710,7 +1711,7 @@ public:
      */
     void commit();
 
-    /** sets the buffer transformation
+    /** \brief sets the buffer transformation
      *
      *  This request sets an optional transformation on how the compositor
      *  interprets the contents of the buffer attached to the surface. The accepted
@@ -1736,7 +1737,7 @@ public:
      */
     void set_buffer_transform(std::int32_t transform_);
 
-    /** sets the buffer scaling factor
+    /** \brief sets the buffer scaling factor
      *
      *  This request sets an optional scaling factor on how the compositor
      *  interprets the contents of the buffer attached to the window.
@@ -1759,18 +1760,18 @@ public:
      */
     void set_buffer_scale(std::int32_t scale_);
 
-    /** surface enters an output
+    /** \brief surface enters an output
      *
      *  This is emitted whenever a surface's creation, movement, or resizing results
      *  in some part of it being within the scanout region of an output.
      *
      *  Note that a surface may be overlapping with zero or more outputs.
      *
-     *  Parameter output_:
+     *  @param output_
      */
     using enter_handler_sig = void (output& output_);
 
-    /** Set a handler for the enter event
+    /** \brief Set a handler for the enter event
      *  @param handler Callable of signature @ref enter_handler_sig
      */
     template <typename T>
@@ -1778,17 +1779,17 @@ public:
         _enter_handler = std::function<enter_handler_sig>(std::forward<T>(handler));
     }
 
-    /** surface leaves an output
+    /** \brief surface leaves an output
      *
      *  This is emitted whenever a surface's creation, movement, or resizing results
      *  in it no longer having any part of it within the scanout region of an
      *  output.
      *
-     *  Parameter output_:
+     *  @param output_
      */
     using leave_handler_sig = void (output& output_);
 
-    /** Set a handler for the leave event
+    /** \brief Set a handler for the leave event
      *  @param handler Callable of signature @ref leave_handler_sig
      */
     template <typename T>
@@ -1816,7 +1817,7 @@ private:
 
 #define WLCPP_SEAT_VERSION 3
 
-/** seat capability bitmask
+/** \brief seat capability bitmask
  *
  *  This is a bitmask of capabilities this seat has; if a member is set, then it
  *  is present on the seat.
@@ -1827,7 +1828,7 @@ enum seat_capability {
     SEAT_CAPABILITY_TOUCH = 4, /**< The seat has touch devices */
 };
 
-/** group of input devices
+/** \brief group of input devices
  *
  *  A seat is a group of keyboards, pointer and touch devices. This object is
  *  published as a global during start up, or when such a device is hot plugged.
@@ -1837,32 +1838,32 @@ enum seat_capability {
 class seat final
     : public proxy {
 public:
-    /** wl_interface for seat */
+    /** \brief wl_interface for @ref seat */
     static const wl_interface interface;
 
-    /** seat version at wrapper generation time */
+    /** \brief @ref seat version at wrapper generation time */
     static constexpr std::uint32_t version = 3;
 
-    /** Wrap existing wl_seat object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_seat object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     seat(wl_proxy* obj = nullptr);
 
-    /** Create new seat from factory
+    /** \brief Create new @ref seat from factory
      *  @param factory Object which acts as the factory
      */
     explicit seat(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     seat(seat&& rhs) = default;
 
-    /** Default destructor */
+    /** \brief Default destructor */
     virtual ~seat() = default;
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     seat& operator=(seat&& rhs) = default;
 
-    /** return pointer object
+    /** \brief return pointer object
      *
      *  The ID provided will be initialized to the wl_pointer interface for this
      *  seat.
@@ -1873,7 +1874,7 @@ public:
      */
     pointer get_pointer();
 
-    /** return keyboard object
+    /** \brief return keyboard object
      *
      *  The ID provided will be initialized to the wl_keyboard interface for this
      *  seat.
@@ -1884,7 +1885,7 @@ public:
      */
     keyboard get_keyboard();
 
-    /** return touch object
+    /** \brief return touch object
      *
      *  The ID provided will be initialized to the wl_touch interface for this seat.
      *
@@ -1894,17 +1895,17 @@ public:
      */
     touch get_touch();
 
-    /** seat capabilities changed
+    /** \brief seat capabilities changed
      *
      *  This is emitted whenever a seat gains or loses the pointer, keyboard or
      *  touch capabilities. The argument is a capability enum containing the
      *  complete set of capabilities this seat has.
      *
-     *  Parameter capabilities_:
+     *  @param capabilities_
      */
     using capabilities_handler_sig = void (std::uint32_t capabilities_);
 
-    /** Set a handler for the capabilities event
+    /** \brief Set a handler for the capabilities event
      *  @param handler Callable of signature @ref capabilities_handler_sig
      */
     template <typename T>
@@ -1912,17 +1913,17 @@ public:
         _capabilities_handler = std::function<capabilities_handler_sig>(std::forward<T>(handler));
     }
 
-    /** unique identifier for this seat
+    /** \brief unique identifier for this seat
      *
      *  In a multiseat configuration this can be used by the client to help identify
      *  which physical devices the seat represents. Based on the seat configuration
      *  used by the compositor.
      *
-     *  Parameter name_:
+     *  @param name_
      */
     using name_handler_sig = void (const std::string& name_);
 
-    /** Set a handler for the name event
+    /** \brief Set a handler for the name event
      *  @param handler Callable of signature @ref name_handler_sig
      */
     template <typename T>
@@ -1947,7 +1948,7 @@ private:
 
 #define WLCPP_POINTER_VERSION 3
 
-/** physical button state
+/** \brief physical button state
  *
  *  Describes the physical state of a button which provoked the button event.
  */
@@ -1956,7 +1957,7 @@ enum pointer_button_state {
     POINTER_BUTTON_STATE_PRESSED = 1, /**< The button is pressed */
 };
 
-/** axis types
+/** \brief axis types
  *
  *  Describes the axis types of scroll events.
  */
@@ -1965,7 +1966,7 @@ enum pointer_axis {
     POINTER_AXIS_HORIZONTAL_SCROLL = 1,
 };
 
-/** pointer input device
+/** \brief pointer input device
  *
  *  The wl_pointer interface represents one or more input devices, such as mice,
  *  which control the pointer location and pointer_focus of a seat.
@@ -1977,32 +1978,32 @@ enum pointer_axis {
 class pointer final
     : public proxy {
 public:
-    /** wl_interface for pointer */
+    /** \brief wl_interface for @ref pointer */
     static const wl_interface interface;
 
-    /** pointer version at wrapper generation time */
+    /** \brief @ref pointer version at wrapper generation time */
     static constexpr std::uint32_t version = 3;
 
-    /** Wrap existing wl_pointer object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_pointer object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     pointer(wl_proxy* obj = nullptr);
 
-    /** Create new pointer from factory
+    /** \brief Create new @ref pointer from factory
      *  @param factory Object which acts as the factory
      */
     explicit pointer(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     pointer(pointer&& rhs) = default;
 
-    /** Destructor */
+    /** \brief Destructor */
     virtual ~pointer();
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     pointer& operator=(pointer&& rhs) = default;
 
-    /** set the pointer surface
+    /** \brief set the pointer surface
      *
      *  Set the pointer surface, i.e., the surface that contains the pointer image
      *  (cursor). This request only takes effect if the pointer focus for this
@@ -2035,7 +2036,7 @@ public:
      */
     void set_cursor(std::uint32_t serial_, surface* surface_, std::int32_t hotspot_x_, std::int32_t hotspot_y_);
 
-    /** enter event
+    /** \brief enter event
      *
      *  Notification that this seat's pointer is focused on a certain surface.
      *
@@ -2043,14 +2044,14 @@ public:
      *  client should respond to this event by setting an appropriate pointer image
      *  with the set_cursor request.
      *
-     *  Parameter serial_:
-     *  Parameter surface_:
-     *  Parameter surface_x_: x coordinate in surface-relative coordinates
-     *  Parameter surface_y_: y coordinate in surface-relative coordinates
+     *  @param serial_
+     *  @param surface_
+     *  @param surface_x_ x coordinate in surface-relative coordinates
+     *  @param surface_y_ y coordinate in surface-relative coordinates
      */
     using enter_handler_sig = void (std::uint32_t serial_, surface& surface_, wl_fixed_t surface_x_, wl_fixed_t surface_y_);
 
-    /** Set a handler for the enter event
+    /** \brief Set a handler for the enter event
      *  @param handler Callable of signature @ref enter_handler_sig
      */
     template <typename T>
@@ -2058,7 +2059,7 @@ public:
         _enter_handler = std::function<enter_handler_sig>(std::forward<T>(handler));
     }
 
-    /** leave event
+    /** \brief leave event
      *
      *  Notification that this seat's pointer is no longer focused on a certain
      *  surface.
@@ -2066,12 +2067,12 @@ public:
      *  The leave notification is sent before the enter notification for the new
      *  focus.
      *
-     *  Parameter serial_:
-     *  Parameter surface_:
+     *  @param serial_
+     *  @param surface_
      */
     using leave_handler_sig = void (std::uint32_t serial_, surface& surface_);
 
-    /** Set a handler for the leave event
+    /** \brief Set a handler for the leave event
      *  @param handler Callable of signature @ref leave_handler_sig
      */
     template <typename T>
@@ -2079,18 +2080,18 @@ public:
         _leave_handler = std::function<leave_handler_sig>(std::forward<T>(handler));
     }
 
-    /** pointer motion event
+    /** \brief pointer motion event
      *
      *  Notification of pointer location change. The arguments surface_x and
      *  surface_y are the location relative to the focused surface.
      *
-     *  Parameter time_: timestamp with millisecond granularity
-     *  Parameter surface_x_: x coordinate in surface-relative coordinates
-     *  Parameter surface_y_: y coordinate in surface-relative coordinates
+     *  @param time_ timestamp with millisecond granularity
+     *  @param surface_x_ x coordinate in surface-relative coordinates
+     *  @param surface_y_ y coordinate in surface-relative coordinates
      */
     using motion_handler_sig = void (std::uint32_t time_, wl_fixed_t surface_x_, wl_fixed_t surface_y_);
 
-    /** Set a handler for the motion event
+    /** \brief Set a handler for the motion event
      *  @param handler Callable of signature @ref motion_handler_sig
      */
     template <typename T>
@@ -2098,7 +2099,7 @@ public:
         _motion_handler = std::function<motion_handler_sig>(std::forward<T>(handler));
     }
 
-    /** pointer button event
+    /** \brief pointer button event
      *
      *  Mouse button click and release notifications.
      *
@@ -2106,14 +2107,14 @@ public:
      *  time argument is a timestamp with millisecond granularity, with an undefined
      *  base.
      *
-     *  Parameter serial_:
-     *  Parameter time_: timestamp with millisecond granularity
-     *  Parameter button_:
-     *  Parameter state_:
+     *  @param serial_
+     *  @param time_ timestamp with millisecond granularity
+     *  @param button_
+     *  @param state_
      */
     using button_handler_sig = void (std::uint32_t serial_, std::uint32_t time_, std::uint32_t button_, std::uint32_t state_);
 
-    /** Set a handler for the button event
+    /** \brief Set a handler for the button event
      *  @param handler Callable of signature @ref button_handler_sig
      */
     template <typename T>
@@ -2121,7 +2122,7 @@ public:
         _button_handler = std::function<button_handler_sig>(std::forward<T>(handler));
     }
 
-    /** axis event
+    /** \brief axis event
      *
      *  Scroll and other axis notifications.
      *
@@ -2140,13 +2141,13 @@ public:
      *  When applicable, clients can transform its view relative to the scroll
      *  distance.
      *
-     *  Parameter time_: timestamp with millisecond granularity
-     *  Parameter axis_:
-     *  Parameter value_:
+     *  @param time_ timestamp with millisecond granularity
+     *  @param axis_
+     *  @param value_
      */
     using axis_handler_sig = void (std::uint32_t time_, std::uint32_t axis_, wl_fixed_t value_);
 
-    /** Set a handler for the axis event
+    /** \brief Set a handler for the axis event
      *  @param handler Callable of signature @ref axis_handler_sig
      */
     template <typename T>
@@ -2183,7 +2184,7 @@ private:
 
 #define WLCPP_KEYBOARD_VERSION 3
 
-/** keyboard mapping format
+/** \brief keyboard mapping format
  *
  *  This specifies the format of the keymap provided to the client with the
  *  wl_keyboard.keymap event.
@@ -2193,7 +2194,7 @@ enum keyboard_keymap_format {
     KEYBOARD_KEYMAP_FORMAT_XKB_V1 = 1, /**< libxkbcommon compatible */
 };
 
-/** physical key state
+/** \brief physical key state
  *
  *  Describes the physical state of a key which provoked the key event.
  */
@@ -2202,7 +2203,7 @@ enum keyboard_key_state {
     KEYBOARD_KEY_STATE_PRESSED = 1, /**< key is pressed */
 };
 
-/** keyboard input device
+/** \brief keyboard input device
  *
  *  The wl_keyboard interface represents one or more keyboards associated with a
  *  seat.
@@ -2210,43 +2211,43 @@ enum keyboard_key_state {
 class keyboard final
     : public proxy {
 public:
-    /** wl_interface for keyboard */
+    /** \brief wl_interface for @ref keyboard */
     static const wl_interface interface;
 
-    /** keyboard version at wrapper generation time */
+    /** \brief @ref keyboard version at wrapper generation time */
     static constexpr std::uint32_t version = 3;
 
-    /** Wrap existing wl_keyboard object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_keyboard object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     keyboard(wl_proxy* obj = nullptr);
 
-    /** Create new keyboard from factory
+    /** \brief Create new @ref keyboard from factory
      *  @param factory Object which acts as the factory
      */
     explicit keyboard(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     keyboard(keyboard&& rhs) = default;
 
-    /** Destructor */
+    /** \brief Destructor */
     virtual ~keyboard();
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     keyboard& operator=(keyboard&& rhs) = default;
 
-    /** keyboard mapping
+    /** \brief keyboard mapping
      *
      *  This event provides a file descriptor to the client which can be
      *  memory-mapped to provide a keyboard mapping description.
      *
-     *  Parameter format_:
-     *  Parameter fd_:
-     *  Parameter size_:
+     *  @param format_
+     *  @param fd_
+     *  @param size_
      */
     using keymap_handler_sig = void (std::uint32_t format_, std::int32_t fd_, std::uint32_t size_);
 
-    /** Set a handler for the keymap event
+    /** \brief Set a handler for the keymap event
      *  @param handler Callable of signature @ref keymap_handler_sig
      */
     template <typename T>
@@ -2254,17 +2255,17 @@ public:
         _keymap_handler = std::function<keymap_handler_sig>(std::forward<T>(handler));
     }
 
-    /** enter event
+    /** \brief enter event
      *
      *  Notification that this seat's keyboard focus is on a certain surface.
      *
-     *  Parameter serial_:
-     *  Parameter surface_:
-     *  Parameter keys_: the currently pressed keys
+     *  @param serial_
+     *  @param surface_
+     *  @param keys_ the currently pressed keys
      */
     using enter_handler_sig = void (std::uint32_t serial_, surface& surface_, const wl_array& keys_);
 
-    /** Set a handler for the enter event
+    /** \brief Set a handler for the enter event
      *  @param handler Callable of signature @ref enter_handler_sig
      */
     template <typename T>
@@ -2272,7 +2273,7 @@ public:
         _enter_handler = std::function<enter_handler_sig>(std::forward<T>(handler));
     }
 
-    /** leave event
+    /** \brief leave event
      *
      *  Notification that this seat's keyboard focus is no longer on a certain
      *  surface.
@@ -2280,12 +2281,12 @@ public:
      *  The leave notification is sent before the enter notification for the new
      *  focus.
      *
-     *  Parameter serial_:
-     *  Parameter surface_:
+     *  @param serial_
+     *  @param surface_
      */
     using leave_handler_sig = void (std::uint32_t serial_, surface& surface_);
 
-    /** Set a handler for the leave event
+    /** \brief Set a handler for the leave event
      *  @param handler Callable of signature @ref leave_handler_sig
      */
     template <typename T>
@@ -2293,19 +2294,19 @@ public:
         _leave_handler = std::function<leave_handler_sig>(std::forward<T>(handler));
     }
 
-    /** key event
+    /** \brief key event
      *
      *  A key was pressed or released. The time argument is a timestamp with
      *  millisecond granularity, with an undefined base.
      *
-     *  Parameter serial_:
-     *  Parameter time_: timestamp with millisecond granularity
-     *  Parameter key_:
-     *  Parameter state_:
+     *  @param serial_
+     *  @param time_ timestamp with millisecond granularity
+     *  @param key_
+     *  @param state_
      */
     using key_handler_sig = void (std::uint32_t serial_, std::uint32_t time_, std::uint32_t key_, std::uint32_t state_);
 
-    /** Set a handler for the key event
+    /** \brief Set a handler for the key event
      *  @param handler Callable of signature @ref key_handler_sig
      */
     template <typename T>
@@ -2313,20 +2314,20 @@ public:
         _key_handler = std::function<key_handler_sig>(std::forward<T>(handler));
     }
 
-    /** modifier and group state
+    /** \brief modifier and group state
      *
      *  Notifies clients that the modifier and/or group state has changed, and it
      *  should update its local state.
      *
-     *  Parameter serial_:
-     *  Parameter mods_depressed_:
-     *  Parameter mods_latched_:
-     *  Parameter mods_locked_:
-     *  Parameter group_:
+     *  @param serial_
+     *  @param mods_depressed_
+     *  @param mods_latched_
+     *  @param mods_locked_
+     *  @param group_
      */
     using modifiers_handler_sig = void (std::uint32_t serial_, std::uint32_t mods_depressed_, std::uint32_t mods_latched_, std::uint32_t mods_locked_, std::uint32_t group_);
 
-    /** Set a handler for the modifiers event
+    /** \brief Set a handler for the modifiers event
      *  @param handler Callable of signature @ref modifiers_handler_sig
      */
     template <typename T>
@@ -2363,7 +2364,7 @@ private:
 
 #define WLCPP_TOUCH_VERSION 3
 
-/** touchscreen input device
+/** \brief touchscreen input device
  *
  *  The wl_touch interface represents a touchscreen associated with a seat.
  *
@@ -2375,47 +2376,47 @@ private:
 class touch final
     : public proxy {
 public:
-    /** wl_interface for touch */
+    /** \brief wl_interface for @ref touch */
     static const wl_interface interface;
 
-    /** touch version at wrapper generation time */
+    /** \brief @ref touch version at wrapper generation time */
     static constexpr std::uint32_t version = 3;
 
-    /** Wrap existing wl_touch object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_touch object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     touch(wl_proxy* obj = nullptr);
 
-    /** Create new touch from factory
+    /** \brief Create new @ref touch from factory
      *  @param factory Object which acts as the factory
      */
     explicit touch(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     touch(touch&& rhs) = default;
 
-    /** Destructor */
+    /** \brief Destructor */
     virtual ~touch();
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     touch& operator=(touch&& rhs) = default;
 
-    /** touch down event and beginning of a touch sequence
+    /** \brief touch down event and beginning of a touch sequence
      *
      *  A new touch point has appeared on the surface. This touch point is assigned
      *  a unique @id. Future events from this touchpoint reference this ID. The ID
      *  ceases to be valid after a touch up event and may be re-used in the future.
      *
-     *  Parameter serial_:
-     *  Parameter time_: timestamp with millisecond granularity
-     *  Parameter surface_:
-     *  Parameter id_: the unique ID of this touch point
-     *  Parameter x_: x coordinate in surface-relative coordinates
-     *  Parameter y_: y coordinate in surface-relative coordinates
+     *  @param serial_
+     *  @param time_ timestamp with millisecond granularity
+     *  @param surface_
+     *  @param id_ the unique ID of this touch point
+     *  @param x_ x coordinate in surface-relative coordinates
+     *  @param y_ y coordinate in surface-relative coordinates
      */
     using down_handler_sig = void (std::uint32_t serial_, std::uint32_t time_, surface& surface_, std::int32_t id_, wl_fixed_t x_, wl_fixed_t y_);
 
-    /** Set a handler for the down event
+    /** \brief Set a handler for the down event
      *  @param handler Callable of signature @ref down_handler_sig
      */
     template <typename T>
@@ -2423,19 +2424,19 @@ public:
         _down_handler = std::function<down_handler_sig>(std::forward<T>(handler));
     }
 
-    /** end of a touch event sequence
+    /** \brief end of a touch event sequence
      *
      *  The touch point has disappeared. No further events will be sent for this
      *  touchpoint and the touch point's ID is released and may be re-used in a
      *  future touch down event.
      *
-     *  Parameter serial_:
-     *  Parameter time_: timestamp with millisecond granularity
-     *  Parameter id_: the unique ID of this touch point
+     *  @param serial_
+     *  @param time_ timestamp with millisecond granularity
+     *  @param id_ the unique ID of this touch point
      */
     using up_handler_sig = void (std::uint32_t serial_, std::uint32_t time_, std::int32_t id_);
 
-    /** Set a handler for the up event
+    /** \brief Set a handler for the up event
      *  @param handler Callable of signature @ref up_handler_sig
      */
     template <typename T>
@@ -2443,18 +2444,18 @@ public:
         _up_handler = std::function<up_handler_sig>(std::forward<T>(handler));
     }
 
-    /** update of touch point coordinates
+    /** \brief update of touch point coordinates
      *
      *  A touchpoint has changed coordinates.
      *
-     *  Parameter time_: timestamp with millisecond granularity
-     *  Parameter id_: the unique ID of this touch point
-     *  Parameter x_: x coordinate in surface-relative coordinates
-     *  Parameter y_: y coordinate in surface-relative coordinates
+     *  @param time_ timestamp with millisecond granularity
+     *  @param id_ the unique ID of this touch point
+     *  @param x_ x coordinate in surface-relative coordinates
+     *  @param y_ y coordinate in surface-relative coordinates
      */
     using motion_handler_sig = void (std::uint32_t time_, std::int32_t id_, wl_fixed_t x_, wl_fixed_t y_);
 
-    /** Set a handler for the motion event
+    /** \brief Set a handler for the motion event
      *  @param handler Callable of signature @ref motion_handler_sig
      */
     template <typename T>
@@ -2462,13 +2463,13 @@ public:
         _motion_handler = std::function<motion_handler_sig>(std::forward<T>(handler));
     }
 
-    /** end of touch frame event
+    /** \brief end of touch frame event
      *
      *  Indicates the end of a contact point list.
      */
     using frame_handler_sig = void ();
 
-    /** Set a handler for the frame event
+    /** \brief Set a handler for the frame event
      *  @param handler Callable of signature @ref frame_handler_sig
      */
     template <typename T>
@@ -2476,7 +2477,7 @@ public:
         _frame_handler = std::function<frame_handler_sig>(std::forward<T>(handler));
     }
 
-    /** touch session cancelled
+    /** \brief touch session cancelled
      *
      *  Sent if the compositor decides the touch stream is a global gesture. No
      *  further events are sent to the clients from that particular gesture. Touch
@@ -2486,7 +2487,7 @@ public:
      */
     using cancel_handler_sig = void ();
 
-    /** Set a handler for the cancel event
+    /** \brief Set a handler for the cancel event
      *  @param handler Callable of signature @ref cancel_handler_sig
      */
     template <typename T>
@@ -2523,7 +2524,7 @@ private:
 
 #define WLCPP_OUTPUT_VERSION 2
 
-/** subpixel geometry information
+/** \brief subpixel geometry information
  *
  *  This enumeration describes how the physical pixels on an output are layed
  *  out.
@@ -2537,7 +2538,7 @@ enum output_subpixel {
     OUTPUT_SUBPIXEL_VERTICAL_BGR = 5,
 };
 
-/** transform from framebuffer to output
+/** \brief transform from framebuffer to output
  *
  *  This describes the transform that a compositor will apply to a surface to
  *  compensate for the rotation or mirroring of an output device.
@@ -2560,7 +2561,7 @@ enum output_transform {
     OUTPUT_TRANSFORM_FLIPPED_270 = 7,
 };
 
-/** mode information
+/** \brief mode information
  *
  *  These flags describe properties of an output mode. They are used in the
  *  flags bitfield of the mode event.
@@ -2570,7 +2571,7 @@ enum output_mode {
     OUTPUT_MODE_PREFERRED = 0x2, /**< indicates this is the preferred mode */
 };
 
-/** compositor output region
+/** \brief compositor output region
  *
  *  An output describes part of the compositor geometry. The compositor works in
  *  the 'compositor coordinate system' and an output corresponds to rectangular
@@ -2581,49 +2582,49 @@ enum output_mode {
 class output final
     : public proxy {
 public:
-    /** wl_interface for output */
+    /** \brief wl_interface for @ref output */
     static const wl_interface interface;
 
-    /** output version at wrapper generation time */
+    /** \brief @ref output version at wrapper generation time */
     static constexpr std::uint32_t version = 2;
 
-    /** Wrap existing wl_output object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_output object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     output(wl_proxy* obj = nullptr);
 
-    /** Create new output from factory
+    /** \brief Create new @ref output from factory
      *  @param factory Object which acts as the factory
      */
     explicit output(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     output(output&& rhs) = default;
 
-    /** Default destructor */
+    /** \brief Default destructor */
     virtual ~output() = default;
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     output& operator=(output&& rhs) = default;
 
-    /** properties of the output
+    /** \brief properties of the output
      *
      *  The geometry event describes geometric properties of the output. The event
      *  is sent when binding to the output object and whenever any of the properties
      *  change.
      *
-     *  Parameter x_: x position within the global compositor space
-     *  Parameter y_: y position within the global compositor space
-     *  Parameter physical_width_: width in millimeters of the output
-     *  Parameter physical_height_: height in millimeters of the output
-     *  Parameter subpixel_: subpixel orientation of the output
-     *  Parameter make_: textual description of the manufacturer
-     *  Parameter model_: textual description of the model
-     *  Parameter transform_: transform that maps framebuffer to output
+     *  @param x_ x position within the global compositor space
+     *  @param y_ y position within the global compositor space
+     *  @param physical_width_ width in millimeters of the output
+     *  @param physical_height_ height in millimeters of the output
+     *  @param subpixel_ subpixel orientation of the output
+     *  @param make_ textual description of the manufacturer
+     *  @param model_ textual description of the model
+     *  @param transform_ transform that maps framebuffer to output
      */
     using geometry_handler_sig = void (std::int32_t x_, std::int32_t y_, std::int32_t physical_width_, std::int32_t physical_height_, std::int32_t subpixel_, const std::string& make_, const std::string& model_, std::int32_t transform_);
 
-    /** Set a handler for the geometry event
+    /** \brief Set a handler for the geometry event
      *  @param handler Callable of signature @ref geometry_handler_sig
      */
     template <typename T>
@@ -2631,7 +2632,7 @@ public:
         _geometry_handler = std::function<geometry_handler_sig>(std::forward<T>(handler));
     }
 
-    /** advertise available modes for the output
+    /** \brief advertise available modes for the output
      *
      *  The mode event describes an available mode for the output.
      *
@@ -2645,14 +2646,14 @@ public:
      *  space. For instance, the output may be scaled, as described in
      *  wl_output.scale, or transformed , as described in wl_output.transform.
      *
-     *  Parameter flags_: bitfield of mode flags
-     *  Parameter width_: width of the mode in hardware units
-     *  Parameter height_: height of the mode in hardware units
-     *  Parameter refresh_: vertical refresh rate in mHz
+     *  @param flags_ bitfield of mode flags
+     *  @param width_ width of the mode in hardware units
+     *  @param height_ height of the mode in hardware units
+     *  @param refresh_ vertical refresh rate in mHz
      */
     using mode_handler_sig = void (std::uint32_t flags_, std::int32_t width_, std::int32_t height_, std::int32_t refresh_);
 
-    /** Set a handler for the mode event
+    /** \brief Set a handler for the mode event
      *  @param handler Callable of signature @ref mode_handler_sig
      */
     template <typename T>
@@ -2660,7 +2661,7 @@ public:
         _mode_handler = std::function<mode_handler_sig>(std::forward<T>(handler));
     }
 
-    /** sent all information about output
+    /** \brief sent all information about output
      *
      *  This event is sent after all other properties has been sent after binding to
      *  the output object and after any other property changes done after that. This
@@ -2669,7 +2670,7 @@ public:
      */
     using done_handler_sig = void ();
 
-    /** Set a handler for the done event
+    /** \brief Set a handler for the done event
      *  @param handler Callable of signature @ref done_handler_sig
      */
     template <typename T>
@@ -2677,7 +2678,7 @@ public:
         _done_handler = std::function<done_handler_sig>(std::forward<T>(handler));
     }
 
-    /** output scaling properties
+    /** \brief output scaling properties
      *
      *  This event contains scaling geometry information that is not in the geometry
      *  event. It may be sent after binding the output object or if the output scale
@@ -2694,11 +2695,11 @@ public:
      *  compositor can avoid scaling the surface, and the client can supply a higher
      *  detail image.
      *
-     *  Parameter factor_: scaling factor of output
+     *  @param factor_ scaling factor of output
      */
     using scale_handler_sig = void (std::int32_t factor_);
 
-    /** Set a handler for the scale event
+    /** \brief Set a handler for the scale event
      *  @param handler Callable of signature @ref scale_handler_sig
      */
     template <typename T>
@@ -2729,7 +2730,7 @@ private:
 
 #define WLCPP_REGION_VERSION 1
 
-/** region interface
+/** \brief region interface
  *
  *  A region object describes an area.
  *
@@ -2739,32 +2740,32 @@ private:
 class region final
     : public proxy {
 public:
-    /** wl_interface for region */
+    /** \brief wl_interface for @ref region */
     static const wl_interface interface;
 
-    /** region version at wrapper generation time */
+    /** \brief @ref region version at wrapper generation time */
     static constexpr std::uint32_t version = 1;
 
-    /** Wrap existing wl_region object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_region object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     region(wl_proxy* obj = nullptr);
 
-    /** Create new region from factory
+    /** \brief Create new @ref region from factory
      *  @param factory Object which acts as the factory
      */
     explicit region(proxy& factory);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     region(region&& rhs) = default;
 
-    /** Destructor */
+    /** \brief Destructor */
     virtual ~region();
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     region& operator=(region&& rhs) = default;
 
-    /** add rectangle to region
+    /** \brief add rectangle to region
      *
      *  Add the specified rectangle to the region.
      *
@@ -2775,7 +2776,7 @@ public:
      */
     void add(std::int32_t x_, std::int32_t y_, std::int32_t width_, std::int32_t height_);
 
-    /** subtract rectangle from region
+    /** \brief subtract rectangle from region
      *
      *  Subtract the specified rectangle from the region.
      *

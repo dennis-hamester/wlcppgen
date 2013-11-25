@@ -95,8 +95,8 @@ diff -Naur a/display.cpp b/display.cpp
 +}
 +
 diff -Naur a/display.hpp b/display.hpp
---- a/display.hpp	2013-11-25 11:28:34.791769920 +0100
-+++ b/display.hpp	2013-11-25 11:28:34.791769920 +0100
+--- a/display.hpp	2013-11-25 13:35:57.770624190 +0100
++++ b/display.hpp	2013-11-25 13:35:57.773957525 +0100
 @@ -2,10 +2,8 @@
  #ifndef _WLCPP_DISPLAY_
  #define _WLCPP_DISPLAY_
@@ -114,7 +114,7 @@ diff -Naur a/display.hpp b/display.hpp
       */
      display(wl_proxy* obj = nullptr);
  
--    /** Create new display from factory
+-    /** \brief Create new @ref display from factory
 -     *  @param factory Object which acts as the factory
 -     */
 -    explicit display(proxy& factory);
@@ -122,15 +122,15 @@ diff -Naur a/display.hpp b/display.hpp
 +
 +    explicit display(int fd);
  
-     /** Default move constructor */
+     /** \brief Default move constructor */
      display(display&& rhs) = default;
  
--    /** Default destructor */
+-    /** \brief Default destructor */
 -    virtual ~display() = default;
-+    /** Destructor */
++    /** \brief Destructor */
 +    virtual ~display();
  
-     /** Default move assignment operator */
+     /** \brief Default move assignment operator */
      display& operator=(display&& rhs) = default;
  
 +    wl_display* wl_obj() const;
@@ -148,7 +148,7 @@ diff -Naur a/display.hpp b/display.hpp
 +    void cancel_read();
 +    int read_events();
 +
-     /** asynchronous roundtrip
+     /** \brief asynchronous roundtrip
       *
       *  The sync request asks the server to emit the 'done' event on the returned
 @@ -107,6 +119,9 @@

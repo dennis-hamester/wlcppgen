@@ -38,7 +38,7 @@ class display;
 
 #define WLCPP_DISPLAY_VERSION 1
 
-/** global error values
+/** \brief global error values
  *
  *  These errors are global and can be emitted in response to any server
  *  request.
@@ -49,7 +49,7 @@ enum display_error {
     DISPLAY_ERROR_NO_MEMORY = 2, /**< server is out of memory */
 };
 
-/** core global object
+/** \brief core global object
  *
  *  The core global object. This is a special singleton object. It is used for
  *  internal Wayland protocol features.
@@ -57,14 +57,14 @@ enum display_error {
 class display final
     : public proxy {
 public:
-    /** wl_interface for display */
+    /** \brief wl_interface for @ref display */
     static const wl_interface interface;
 
-    /** display version at wrapper generation time */
+    /** \brief @ref display version at wrapper generation time */
     static constexpr std::uint32_t version = 1;
 
-    /** Wrap existing wl_display object
-     *  @param obj Object to wrap
+    /** \brief Wrap existing wl_display object
+     *  @param obj Existing native object to wrap, can be nullptr
      */
     display(wl_proxy* obj = nullptr);
 
@@ -72,13 +72,13 @@ public:
 
     explicit display(int fd);
 
-    /** Default move constructor */
+    /** \brief Default move constructor */
     display(display&& rhs) = default;
 
-    /** Destructor */
+    /** \brief Destructor */
     virtual ~display();
 
-    /** Default move assignment operator */
+    /** \brief Default move assignment operator */
     display& operator=(display&& rhs) = default;
 
     wl_display* wl_obj() const;
@@ -96,7 +96,7 @@ public:
     void cancel_read();
     int read_events();
 
-    /** asynchronous roundtrip
+    /** \brief asynchronous roundtrip
      *
      *  The sync request asks the server to emit the 'done' event on the returned
      *  wl_callback object. Since requests are handled in-order and events are
@@ -111,7 +111,7 @@ public:
      */
     callback sync();
 
-    /** get global registry object
+    /** \brief get global registry object
      *
      *  This request creates a registry object that allows the client to list and
      *  bind the global objects available from the compositor.

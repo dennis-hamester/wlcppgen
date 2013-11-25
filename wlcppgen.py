@@ -76,10 +76,7 @@ class Description:
         result = list()
 
         if self.summary is not None:
-            wrapped_summary = self.wrap(self.summary, options.linewidth - 4 - less_width)
-            result.append('/** ' + wrapped_summary[0])
-            for line in wrapped_summary[1:]:
-                result.append(' *  ' + line)
+            result.append('/** \\brief ' + self.summary)
             if self.text != '':
                 result.append(' *')
         else:
@@ -100,19 +97,18 @@ class Description:
 
     def generate_request(self, options, request, less_width=0):
         result = self.generate_header(options, less_width)
-        filtered_arguments = list()
-        for argument in request.arguments:
-            if argument != request.return_argument:
-                filtered_arguments.append(argument)
 
-        if (self.summary is not None or self.text is not None) and (request.return_argument is not None or len(filtered_arguments)) > 0:
+        if (self.summary is not None or self.text is not None) and (request.return_argument is not None or len(request.arguments)) > 0:
             result.append(' *')
 
-        for argument in filtered_arguments:
-            param_doc = ' *  @param ' + mangle_argument_name(argument.name)
-            if argument.summary is not None:
-                param_doc += ' ' + argument.summary
-            result.append(param_doc)
+        for argument in request.arguments:
+            if argument != request.return_argument:
+                param_doc = ' *  @param ' + mangle_argument_name(argument.name)
+                if argument.summary is not None:
+                    param_doc += ' ' + argument.summary
+                result.append(param_doc)
+            elif request.return_argument.interface == None:
+                result.append(' *  @param ' + mangle_argument_name('version'))
 
         if request.return_argument is not None:
             return_doc = ' *  @return'
@@ -128,7 +124,7 @@ class Description:
         if len(event.arguments) > 0:
             result.append(' *')
         for argument in event.arguments:
-            param_doc = ' *  Parameter ' + mangle_argument_name(argument.name) + ':'
+            param_doc = ' *  @param ' + mangle_argument_name(argument.name)
             if argument.summary is not None:
                 param_doc += ' ' + argument.summary
             result.append(param_doc)
@@ -426,7 +422,7 @@ class Event:
             std_namespace = str()
 
         result = [
-            '/** Set a handler for the ' + self.name + ' event',
+            '/** \\brief Set a handler for the ' + self.name + ' event',
             ' *  @param handler Callable of signature @ref ' + self.name + '_handler_sig',
             ' */',
             'template <typename T>',
@@ -722,7 +718,7 @@ class Interface:
 
         public_part = list()
         public_part.extend([
-            '/** wl_interface for ' + class_name + ' */',
+            '/** \\brief wl_interface for @ref ' + class_name + ' */',
             self.generate_interface_decl(options, impl=False) + ';'
         ])
 
@@ -733,21 +729,21 @@ class Interface:
 
         public_part.extend([
             '',
-            '/** ' + class_name + ' version at wrapper generation time */',
+            '/** \\brief @ref ' + class_name + ' version at wrapper generation time */',
             'static constexpr ' + std_namespace + 'uint32_t version = ' + str(self.version) + ';'
         ])
 
         public_part.extend([
             '',
-            '/** Wrap existing ' + self.name + ' object',
-            ' *  @param obj Object to wrap',
+            '/** \\brief Wrap existing ' + self.name + ' object',
+            ' *  @param obj Existing native object to wrap, can be nullptr',
             ' */',
             self.generate_wl_obj_ctor(options, impl=False) + ';'
         ])
 
         public_part.extend([
             '',
-            '/** Create new ' + class_name + ' from factory',
+            '/** \\brief Create new @ref ' + class_name + ' from factory',
             ' *  @param factory Object which acts as the factory',
             ' */',
             self.generate_factory_ctor(options, impl=False) + ';'
@@ -755,26 +751,26 @@ class Interface:
 
         public_part.extend([
             '',
-            '/** Default move constructor */',
+            '/** \\brief Default move constructor */',
             self.generate_move_ctor(options, impl=False) + ' = default;'
         ])
 
         if self.destructor is None:
             public_part.extend([
                 '',
-                '/** Default destructor */',
+                '/** \\brief Default destructor */',
                 self.generate_dtor(options, impl=False) + ' = default;'
             ])
         else:
             public_part.extend([
                 '',
-                '/** Destructor */',
+                '/** \\brief Destructor */',
                 self.generate_dtor(options, impl=False) + ';'
             ])
 
         public_part.extend([
             '',
-            '/** Default move assignment operator */',
+            '/** \\brief Default move assignment operator */',
             self.generate_move_operator(options, impl=False) + ' = default;'
         ])
 
