@@ -295,7 +295,7 @@ class Request:
             if argument != self.return_argument:
                 sig += argument.generate_request_parameter(options)
             elif argument.argument_type == 'new_id' and argument.interface is None:
-                sig += std_namespace + 'uint32_t version_'
+                sig += std_namespace + 'uint32_t ' + mangle_argument_name('version')
             if argument != self.arguments[-1]:
                 sig += ', '
 
@@ -328,7 +328,7 @@ class Request:
         for argument in self.arguments:
             marshal_call += ', '
             if argument.argument_type == 'new_id' and argument.interface is None:
-                marshal_call += 'T::interface.name, version_, '
+                marshal_call += 'T::interface.name, ' + mangle_argument_name('version') + ', '
             if argument.argument_type == 'new_id':
                 marshal_call += mangle_argument_name(argument.name) + '.wl_obj()'
             elif argument.argument_type == 'string' and argument.allow_null:
