@@ -1183,7 +1183,7 @@ def print_usage():
     print()
     print('Available commands:')
     print('  --generate                   Generate wrappers. This is the default command.')
-    print('                               Requires --src, --dst and at least one protocol.')
+    print('                               Requires at least one protocol.')
     print('  --help, -h                   Display this help.')
     print('  --list-interfaces            List interfaces in every protocol.')
     print('                               Requires at least one protocol.')
@@ -1191,6 +1191,7 @@ def print_usage():
     print()
     print('Available options:')
     print('  --dst                        Output filename.')
+    print('                               If missing or "-" is given then stdout will be used.')
     print('  --exclude                    Comma-separated list of interfaces to exclude. This is')
     print('                               especially useful for wl_display, because a manually')
     print('                               written wrapper is more useful.')
@@ -1215,6 +1216,7 @@ def print_usage():
     print('  --qualify-std-namespace      Prefix std types with "std::". Should be specified')
     print('                               when generating the header')
     print('  --src                        Source template filename.')
+    print('                               If missing or "-" is given then stdin will be used.')
 
 def list_interfaces(specs, options):
     for spec in specs:
@@ -1314,12 +1316,6 @@ def main(argv=None):
                 raise UsageError('More than one command was given')
 
             # Check required options for each command
-            if 'generate' in commands:
-                if src_file is None:
-                    raise UsageError('--src must be specified')
-                if dst_file is None:
-                    raise UsageError('--dst must be specified')
-
             if commands.intersection(['generate', 'list-interfaces']):
                 if len(args) == 0:
                     raise UsageError('Path to at least one protocol specification must be given')
@@ -1328,8 +1324,11 @@ def main(argv=None):
 
             # Read source template
             if 'generate' in commands:
-                with open(src_file) as f:
-                    src_hpp_template = SourceTemplate(f.read())
+                if src_file is None or src_file == '-':
+                    src_hpp_template = SourceTemplate(sys.stdin.read())
+                else:
+                    with open(src_file) as f:
+                        src_hpp_template = SourceTemplate(f.read())
 
             # Read protocols
             if commands.intersection(['generate', 'list-interfaces']):
@@ -1341,10 +1340,14 @@ def main(argv=None):
             # Execute specified command
             if 'generate' in commands:
                 result = src_hpp_template.generate(specs, options)
-                with open(dst_file, 'w') as f:
+                if dst_file is None or dst_file == '-':
                     for line in result:
-                        f.write(line)
-                        f.write('\n')
+                        print(line)
+                else:
+                    with open(dst_file, 'w') as f:
+                        for line in result:
+                            f.write(line)
+                            f.write('\n')
 
             if 'help' in commands:
                 print_usage()

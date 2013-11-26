@@ -21,7 +21,7 @@ wlcppgen [command] [options] [protocols]
 
 Available commands:
   --generate                   Generate wrappers. This is the default command.
-                               Requires --src, --dst and at least one protocol.
+                               Requires at least one protocol.
   --help, -h                   Display this help.
   --list-interfaces            List interfaces in every protocol.
                                Requires at least one protocol.
@@ -29,6 +29,7 @@ Available commands:
 
 Available options:
   --dst                        Output filename.
+                               If missing or "-" is given then stdout will be used.
   --exclude                    Comma-separated list of interfaces to exclude. This is
                                especially useful for wl_display, because a manually
                                written wrapper is more useful.
@@ -53,6 +54,7 @@ Available options:
   --qualify-std-namespace      Prefix std types with "std::". Should be specified
                                when generating the header
   --src                        Source template filename.
+                               If missing or "-" is given then stdin will be used.
 </pre>
 
 wlcppgen comes with a small pre-generated sample [here](https://github.com/dennishamester/wlcppgen/tree/master/sample). See [generate.sh](https://github.com/dennishamester/wlcppgen/blob/master/sample/generate.sh) on how that specific wrapper was generated. It's a good place to start.
