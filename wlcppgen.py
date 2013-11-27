@@ -1186,6 +1186,9 @@ def print_usage():
     print('  --generate                   Generate wrappers. This is the default command.')
     print('                               Requires at least one protocol.')
     print('  --help, -h                   Display this help.')
+    print('  --list-classes               List the class names which would be generated from')
+    print('                               the given protocols.')
+    print('                               Requires at least one protocol.')
     print('  --list-interfaces            List interfaces in every protocol.')
     print('                               Requires at least one protocol.')
     print('  --version                    Display version.')
@@ -1219,6 +1222,12 @@ def print_usage():
     print('  --src                        Source template filename.')
     print('                               If missing or "-" is given then stdin will be used.')
 
+def list_classes(specs, options):
+    for spec in specs:
+        filtered_interfaces = filter_interfaces(spec.interfaces, options)
+        for interface in filtered_interfaces:
+            print(mangle_interface_name(interface.name, options))
+
 def list_interfaces(specs, options):
     for spec in specs:
         filtered_interfaces = filter_interfaces(spec.interfaces, options)
@@ -1245,6 +1254,7 @@ def main(argv=None):
                 # Commands
                 'generate',
                 'help',
+                'list-classes',
                 'list-interfaces',
                 'version',
                 # Options
@@ -1270,6 +1280,8 @@ def main(argv=None):
                     commands.add('generate')
                 elif opt in ['-h', '--help']:
                     commands.add('help')
+                elif opt == '--list-classes':
+                    commands.add('list-classes')
                 elif opt == '--list-interfaces':
                     commands.add('list-interfaces')
                 elif opt == '--version':
@@ -1314,7 +1326,7 @@ def main(argv=None):
                 raise UsageError('More than one command was given')
 
             # Check required options for each command
-            if commands.intersection(['generate', 'list-interfaces']):
+            if commands.intersection(['generate', 'list-classes', 'list-interfaces']):
                 if len(args) == 0:
                     raise UsageError('Path to at least one protocol specification must be given')
                 else:
@@ -1329,7 +1341,7 @@ def main(argv=None):
                         src_hpp_template = SourceTemplate(f.read())
 
             # Read protocols
-            if commands.intersection(['generate', 'list-interfaces']):
+            if commands.intersection(['generate', 'list-classes', 'list-interfaces']):
                 specs = list()
                 for spec_file in spec_files:
                     with open(spec_file) as f:
@@ -1349,6 +1361,9 @@ def main(argv=None):
 
             if 'help' in commands:
                 print_usage()
+
+            if 'list-classes' in commands:
+                list_classes(specs, options)
 
             if 'list-interfaces' in commands:
                 list_interfaces(specs, options)

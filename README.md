@@ -23,6 +23,9 @@ Available commands:
   --generate                   Generate wrappers. This is the default command.
                                Requires at least one protocol.
   --help, -h                   Display this help.
+  --list-classes               List the class names which would be generated from
+                               the given protocols.
+                               Requires at least one protocol.
   --list-interfaces            List interfaces in every protocol.
                                Requires at least one protocol.
   --version                    Display version.
