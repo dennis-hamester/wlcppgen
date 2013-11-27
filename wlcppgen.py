@@ -31,6 +31,16 @@ def mangle_interface_name(name, options):
 def mangle_argument_name(name):
     return name + '_'
 
+def filter_interfaces(interfaces, options):
+    result = list()
+    for interface in interfaces:
+        if len(options.only) > 0:
+            if interface.name in options.only:
+                result.append(interface)
+        elif interface.name not in options.exclude:
+            result.append(interface)
+    return result
+
 class ProtocolError(Exception):
     def __init__(self, msg):
         self.msg = msg
@@ -980,25 +990,16 @@ class Specification:
         else:
             return ['// Specification target "' + hook.id_str + '" unknown']
 
-    def filtered_interfaces(self, options):
-        result = list()
-        for interface in self.interfaces:
-            if len(options.only) > 0:
-                if interface.name in options.only:
-                    result.append(interface)
-            elif interface.name not in options.exclude:
-                result.append(interface)
-        return result
 
     def generate_prototypes(self, options):
-        filtered_interfaces = self.filtered_interfaces(options)
+        filtered_interfaces = filter_interfaces(self.interfaces, options)
         result = list()
         for interface in filtered_interfaces:
             result.append(interface.generate_prototype(options))
         return result
 
     def generate_classes(self, options):
-        filtered_interfaces = self.filtered_interfaces(options)
+        filtered_interfaces = filter_interfaces(self.interfaces, options)
         result = list()
         for interface in filtered_interfaces:
             result.append(interface.generate_version_define(options))
@@ -1012,7 +1013,7 @@ class Specification:
         return result
 
     def generate_cpp(self, options):
-        filtered_interfaces = self.filtered_interfaces(options)
+        filtered_interfaces = filter_interfaces(self.interfaces, options)
         result = list()
         for interface in filtered_interfaces:
             result.extend(interface.generate_cpp(options))
@@ -1220,12 +1221,9 @@ def print_usage():
 
 def list_interfaces(specs, options):
     for spec in specs:
-        for interface in spec.interfaces:
-            if len(options.only) > 0:
-                if interface.name in options.only:
-                    print(interface.name)
-            elif interface.name not in options.exclude:
-                print(interface.name)
+        filtered_interfaces = filter_interfaces(spec.interfaces, options)
+        for interface in filtered_interfaces:
+            print(interface.name)
 
 def print_version():
     print('wlcppgen ', end='')
