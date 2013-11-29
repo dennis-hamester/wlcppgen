@@ -1,5 +1,5 @@
 
-#include "wlcpp.hpp"
+// wlcpp <hook id="include.self"/>
 
 // wlcpp <hook id="spec.copyright"/>
 

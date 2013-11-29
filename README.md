@@ -36,6 +36,9 @@ Available options:
   --exclude                    Comma-separated list of interfaces to exclude. This is
                                especially useful for wl_display, because a manually
                                written wrapper is more useful.
+  --header (=wlcpp.hpp)        Header filename which contains declarations of the
+                               generated code.
+                               Can be used for the "include.self" hook.
   --ignore-events              Do not generate code for events.
   --include-guard (=_WLCPP_)   Name of the include guard.
   --indent (=4)                Number of spaces or tabs to indent.

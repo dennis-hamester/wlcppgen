@@ -1,13 +1,6 @@
 diff -Naur a/display.cpp b/display.cpp
---- a/display.cpp	2013-11-25 11:28:34.791769920 +0100
-+++ b/display.cpp	2013-11-25 11:28:34.791769920 +0100
-@@ -1,5 +1,5 @@
- 
--#include "wlcpp.hpp"
-+#include "display.hpp"
- 
- /* The following code was generated from the "wayland" protocol specification.
-  *
+--- a/display.cpp	2013-11-29 10:23:29.894762485 +0100
++++ b/display.cpp	2013-11-29 10:23:29.898095867 +0100
 @@ -57,8 +57,72 @@
      : proxy(obj) {
  }

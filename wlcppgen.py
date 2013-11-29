@@ -1088,6 +1088,24 @@ class HookHandlerNamespace:
                 return ['// HookHandlerNamespaces: target "' + target + '" unknown']
         return result
 
+class HookHandlerInclude:
+    def __init__(self):
+        self.id = 'include'
+
+    def generate(self, hook, specs, options):
+        target = hook.id_path[1]
+        variant = ('"', '"')
+        if 'variant' in hook.options:
+            if hook.options['variant'] == 'global':
+                variant = ('<', '>')
+            elif hook.options['variant'] != 'local':
+                return ['// HookHandlerInclude: variant "' + hook.options['variant'] + '" unknown']
+
+        if target == 'self':
+            return ['#include ' + variant[0] + options.header + variant[1]]
+        else:
+            return ['// HookHandlerInclude: target "' + target + '" unknown']
+
 class HookHandlerSpec:
     def __init__(self):
         self.id = 'spec'
@@ -1103,6 +1121,7 @@ class HookHandlerSpec:
 class GeneratorOptions:
     def __init__(self):
         self.exclude = list()
+        self.header = 'wlcpp.hpp'
         self.ignore_events = False
         self.include_guard = '_WLCPP_'
         self.indent = 4
@@ -1199,6 +1218,9 @@ def print_usage():
     print('  --exclude                    Comma-separated list of interfaces to exclude. This is')
     print('                               especially useful for wl_display, because a manually')
     print('                               written wrapper is more useful.')
+    print('  --header (=wlcpp.hpp)        Header filename which contains declarations of the')
+    print('                               generated code.')
+    print('                               Can be used for the "include.self" hook.')
     print('  --ignore-events              Do not generate code for events.')
     print('  --include-guard (=_WLCPP_)   Name of the include guard.')
     print('  --indent (=4)                Number of spaces or tabs to indent.')
@@ -1260,6 +1282,7 @@ def main(argv=None):
                 # Options
                 'src=', 'dst=',
                 'exclude=',
+                'header=',
                 'ignore-events',
                 'include-guard=',
                 'indent=',
@@ -1291,6 +1314,8 @@ def main(argv=None):
                     src_file = val
                 elif opt == '--dst':
                     dst_file = val
+                elif opt == '--header':
+                    options.header = val
                 elif opt == '--exclude':
                     options.exclude = val.split(',')
                 elif opt == '--ignore-events':
