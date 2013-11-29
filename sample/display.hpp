@@ -34,7 +34,8 @@
 
 namespace wlcpp {
 
-class display;
+class callback;
+class registry;
 
 #define WLCPP_DISPLAY_VERSION 1
 

@@ -88,8 +88,8 @@ diff -Naur a/display.cpp b/display.cpp
 +}
 +
 diff -Naur a/display.hpp b/display.hpp
---- a/display.hpp	2013-11-25 13:35:57.770624190 +0100
-+++ b/display.hpp	2013-11-25 13:35:57.773957525 +0100
+--- a/display.hpp	2013-11-29 12:44:35.161097606 +0100
++++ b/display.hpp	2013-11-29 12:44:35.164431005 +0100
 @@ -2,10 +2,8 @@
  #ifndef _WLCPP_DISPLAY_
  #define _WLCPP_DISPLAY_
@@ -103,7 +103,7 @@ diff -Naur a/display.hpp b/display.hpp
  
  /* The following code was generated from the "wayland" protocol specification.
   *
-@@ -70,20 +68,34 @@
+@@ -71,20 +69,34 @@
       */
      display(wl_proxy* obj = nullptr);
  
@@ -144,7 +144,7 @@ diff -Naur a/display.hpp b/display.hpp
      /** \brief asynchronous roundtrip
       *
       *  The sync request asks the server to emit the 'done' event on the returned
-@@ -107,6 +119,9 @@
+@@ -108,6 +120,9 @@
       *  @return
       */
      registry get_registry();

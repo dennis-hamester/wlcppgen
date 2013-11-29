@@ -276,6 +276,13 @@ class Request:
         else:
             self.is_template = False
 
+    def required_interfaces(self, options):
+        result = set()
+        for argument in self.arguments:
+            if argument.interface is not None:
+                result.add(argument.interface)
+        return result
+
     def generate_signature(self, options, class_name=None):
         sig = str()
         if self.is_template:
@@ -413,6 +420,13 @@ class Event:
 
         for argument in self.root.iter('arg'):
             self.arguments.append(Argument(argument))
+
+    def required_interfaces(self, options):
+        result = set()
+        for argument in self.arguments:
+            if argument.interface is not None:
+                result.add(argument.interface)
+        return result
 
     def generate_handler_sig(self, options):
         result = self.description.generate_handler_sig(options, self)
@@ -626,8 +640,18 @@ class Interface:
         for enum in self.root.iter('enum'):
             self.enums.append(Enum(enum))
 
-    def generate_prototype(self, options):
-        return 'class ' + mangle_interface_name(self.name, options) + ';'
+    def required_interfaces(self, options):
+        result = set()
+        for request in self.requests:
+            result.update(request.required_interfaces(options))
+        for event in self.events:
+            result.update(event.required_interfaces(options))
+        if self.name in result:
+            result.remove(self.name)
+        return result
+
+    def generate_prototype(name, options):
+        return 'class ' + mangle_interface_name(name, options) + ';'
 
     def generate_wl_obj_ctor(self, options, impl):
         result = str()
@@ -981,6 +1005,8 @@ class Specification:
     def generate(self, hook, options):
         if hook.id_str == 'spec.hpp.prototypes':
             return self.generate_prototypes(options)
+        elif hook.id_str == 'spec.hpp.required_prototypes':
+            return self.generate_required_prototypes(options)
         elif hook.id_str == 'spec.hpp.classes':
             return self.generate_classes(options)
         elif hook.id_str == 'spec.cpp':
@@ -990,12 +1016,26 @@ class Specification:
         else:
             return ['// Specification target "' + hook.id_str + '" unknown']
 
-
     def generate_prototypes(self, options):
         filtered_interfaces = filter_interfaces(self.interfaces, options)
         result = list()
         for interface in filtered_interfaces:
-            result.append(interface.generate_prototype(options))
+            result.append(Interface.generate_prototype(interface.name, options))
+        return result
+
+    def required_interfaces(self, options):
+        filtered_interfaces = filter_interfaces(self.interfaces, options)
+        result = set()
+        for interface in filtered_interfaces:
+            result.update(interface.required_interfaces(options))
+        return result
+
+    def generate_required_prototypes(self, options):
+        required_interfaces = list(self.required_interfaces(options))
+        required_interfaces.sort()
+        result = list()
+        for interface in required_interfaces:
+            result.append(Interface.generate_prototype(interface, options))
         return result
 
     def generate_classes(self, options):

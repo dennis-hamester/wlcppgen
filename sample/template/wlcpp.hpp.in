@@ -11,7 +11,7 @@
 
 // wlcpp <hook id="namespace.open"/>
 
-// wlcpp <hook id="spec.hpp.prototypes"/>
+// wlcpp <hook id="spec.hpp.required_prototypes"/>
 
 // wlcpp <hook id="spec.hpp.classes"/>
 

@@ -36,25 +36,20 @@
 
 namespace wlcpp {
 
-class registry;
-class callback;
-class compositor;
-class shm_pool;
-class shm;
 class buffer;
+class callback;
+class data_device;
 class data_offer;
 class data_source;
-class data_device;
-class data_device_manager;
-class shell;
-class shell_surface;
-class surface;
-class seat;
-class pointer;
 class keyboard;
-class touch;
 class output;
+class pointer;
 class region;
+class seat;
+class shell_surface;
+class shm_pool;
+class surface;
+class touch;
 
 #define WLCPP_REGISTRY_VERSION 1
 
