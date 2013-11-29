@@ -1,5 +1,6 @@
 
 // wlcpp <hook id="include.self"/>
+// wlcpp <hook id="include.extra"/>
 
 // wlcpp <hook id="spec.copyright"/>
 

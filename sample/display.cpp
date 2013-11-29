@@ -1,5 +1,6 @@
 
 #include "display.hpp"
+#include "wlcpp.hpp"
 
 /* The following code was generated from the "wayland" protocol specification.
  *

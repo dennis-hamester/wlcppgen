@@ -19,6 +19,7 @@
 ../wlcppgen.py --src template/wlcpp.cpp.in --dst display.cpp \
     --only wl_display \
     --header display.hpp \
+    --extra-includes wlcpp.hpp \
     --ignore-events \
     /usr/share/wayland/wayland.xml
 

@@ -2,8 +2,10 @@
 #ifndef _WLCPP_DISPLAY_
 #define _WLCPP_DISPLAY_
 
-#include "wlcpp.hpp"
-#include "event_queue.hpp"
+#include <functional>
+#include <string>
+#include <utility>
+#include "proxy.hpp"
 
 /* The following code was generated from the "wayland" protocol specification.
  *
