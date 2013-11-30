@@ -51,18 +51,31 @@ Available options:
                                interface names to generate class names. Only the first
                                prefix found is stripped.
   --linewidth (=80)            Maximum linewidth. Currently not very useful, because
-                               it is only respected
-                               for comments and indentation is not taken into account.
-  --macro-prefix (=WLCPP_)     Prefix for preprocessor macros (default: "WLCPP_").
+                               it is only respected for comments and indentation is not
+                               taken into account.
+  --macro-prefix (=WLCPP_)     Prefix for preprocessor macros.
   --namespace (=wlcpp)         The generated code is put into the specified namespace.
                                Can be empty or an arbitrary namespace (e.g. foo::bar).
   --only                       Comma-separated list of interfaces to generate wrappers
                                for. This option takes precedence over --exclude.
+                               Specifying exactly one interface activates single
+                               interface mode. See below.
   --proxy (=proxy)             Name of the proxy class.
   --qualify-std-namespace      Prefix std types with "std::". Should be specified
-                               when generating the header
+                               when generating the header.
   --src                        Source template filename.
                                If missing or "-" is given then stdin will be used.
+
+Single interface mode:
+  When exactly one interface is specified through "--only", single interface mode is
+  implicitly enabled which changes wlcppgen's behavior:
+   * The hook target "include.required_headers" is available.
+     This hook target assumes all other classes have also been generated in single
+     interface mode. It uses the option "--header" to deduce the respective header
+     file names.
+   * Special identifiers can be used for the options "--header" and "--include-guard":
+     "%c" - Class name
+     "%C" - Uppercase class name
 </pre>
 
 wlcppgen comes with a small pre-generated sample [here](https://github.com/dennishamester/wlcppgen/tree/master/sample). See [generate.sh](https://github.com/dennishamester/wlcppgen/blob/master/sample/generate.sh) on how that specific wrapper was generated. It's a good place to start.

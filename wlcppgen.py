@@ -41,6 +41,18 @@ def filter_interfaces(interfaces, options):
             result.append(interface)
     return result
 
+def single_interface_mode(options):
+    return len(options.only) == 1
+
+def substitute(s, options, class_=None):
+    result = s
+    if single_interface_mode(options):
+        if not class_:
+            class_ = options.only[0]
+        result = result.replace('%c', mangle_interface_name(class_, options))
+        result = result.replace('%C', mangle_interface_name(class_, options).upper())
+    return result
+
 class ProtocolError(Exception):
     def __init__(self, msg):
         self.msg = msg
@@ -1098,11 +1110,11 @@ class HookHandlerIncludeGuard:
         if len(options.include_guard) == 0:
             return list()
         elif target == 'ifndef':
-            return ['#ifndef ' + options.include_guard]
+            return ['#ifndef ' + substitute(options.include_guard, options)]
         elif target == 'define':
-            return ['#define ' + options.include_guard]
+            return ['#define ' + substitute(options.include_guard, options)]
         elif target == 'endif':
-            return ['#endif // ' + options.include_guard]
+            return ['#endif // ' + substitute(options.include_guard, options)]
         else:
             return ['// HookHandlerIncludeGuard: target "' + target + '" unknown']
 
@@ -1142,12 +1154,25 @@ class HookHandlerInclude:
                 return ['// HookHandlerInclude: variant "' + hook.options['variant'] + '" unknown']
 
         if target == 'self':
-            return ['#include ' + variant[0] + options.header + variant[1]]
+            return ['#include ' + variant[0] + substitute(options.header, options) + variant[1]]
         elif target == 'extra':
             result = list()
             for include in options.extra_includes:
                 result.append('#include ' + variant[0] + include + variant[1])
             return result
+        elif target == 'required_headers':
+            if single_interface_mode(options):
+                for spec in specs:
+                    for interface in spec.interfaces:
+                        if interface.name == options.only[0]:
+                            result = list()
+                            required_interfaces = list(interface.required_interfaces(options))
+                            required_interfaces.sort()
+                            for i in required_interfaces:
+                                result.append('#include ' + variant[0] + substitute(options.header, options, class_=i) + variant[1])
+                            return result
+            else:
+                return []
         else:
             return ['// HookHandlerInclude: target "' + target + '" unknown']
 
@@ -1279,18 +1304,31 @@ def print_usage():
     print('                               interface names to generate class names. Only the first')
     print('                               prefix found is stripped.')
     print('  --linewidth (=80)            Maximum linewidth. Currently not very useful, because')
-    print('                               it is only respected')
-    print('                               for comments and indentation is not taken into account.')
-    print('  --macro-prefix (=WLCPP_)     Prefix for preprocessor macros (default: "WLCPP_").')
+    print('                               it is only respected for comments and indentation is not')
+    print('                               taken into account.')
+    print('  --macro-prefix (=WLCPP_)     Prefix for preprocessor macros.')
     print('  --namespace (=wlcpp)         The generated code is put into the specified namespace.')
     print('                               Can be empty or an arbitrary namespace (e.g. foo::bar).')
     print('  --only                       Comma-separated list of interfaces to generate wrappers')
     print('                               for. This option takes precedence over --exclude.')
+    print('                               Specifying exactly one interface activates single')
+    print('                               interface mode. See below.')
     print('  --proxy (=proxy)             Name of the proxy class.')
     print('  --qualify-std-namespace      Prefix std types with "std::". Should be specified')
-    print('                               when generating the header')
+    print('                               when generating the header.')
     print('  --src                        Source template filename.')
     print('                               If missing or "-" is given then stdin will be used.')
+    print()
+    print('Single interface mode:')
+    print('  When exactly one interface is specified through "--only", single interface mode is')
+    print('  implicitly enabled which changes wlcppgen\'s behavior:')
+    print('   * The hook target "include.required_headers" is available.')
+    print('     This hook target assumes all other classes have also been generated in single')
+    print('     interface mode. It uses the option "--header" to deduce the respective header')
+    print('     file names.')
+    print('   * Special identifiers can be used for the options "--header" and "--include-guard":')
+    print('     "%c" - Class name')
+    print('     "%C" - Uppercase class name')
 
 def list_classes(specs, options):
     for spec in specs:
