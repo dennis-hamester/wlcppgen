@@ -12,16 +12,15 @@ include_directories(${WaylandClient_INCLUDE_DIRS})
 
 find_package(Doxygen)
 
+
+file(GLOB GENERATED_SOURCES generated/*.[h,c]pp)
 add_executable(wlcpp_sample
     main.cpp
-    display.hpp
-    display.cpp
     event_queue.hpp
     event_queue.cpp
     proxy.hpp
     proxy.cpp
-    wlcpp.hpp
-    wlcpp.cpp
+    ${GENERATED_SOURCES}
 )
 
 target_link_libraries(wlcpp_sample
@@ -38,7 +37,7 @@ if(DOXYGEN_EXECUTABLE)
         COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         OUTPUT ${PROJECT_BINARY_DIR}/html/index.html
         DEPENDS Doxyfile
-        DEPENDS proxy.hpp event_queue.hpp wlcpp.hpp display.hpp
+        DEPENDS ${GENERATED_SOURCES}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 

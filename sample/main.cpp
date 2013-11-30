@@ -3,8 +3,12 @@
 #include <iostream>
 #include <map>
 #include <poll.h>
-#include "display.hpp"
-#include "wlcpp.hpp"
+#include "generated/compositor.hpp"
+#include "generated/display.hpp"
+#include "generated/output.hpp"
+#include "generated/registry.hpp"
+#include "generated/shm.hpp"
+#include "generated/seat.hpp"
 
 using namespace std;
 using namespace std::placeholders;

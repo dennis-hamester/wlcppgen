@@ -1,27 +1,46 @@
 #!/bin/sh
 
-../wlcppgen.py --src template/wlcpp.hpp.in --dst wlcpp.hpp \
-    --exclude wl_display \
-    --qualify-std-namespace \
-    /usr/share/wayland/wayland.xml
+PROTOCOL=/usr/share/wayland/wayland.xml
+WLCPPGEN=../wlcppgen.py
+SRC_HPP=template/wlcpp.hpp.in
+SRC_CPP=template/wlcpp.cpp.in
+OUTPUT_PATH=generated
 
-../wlcppgen.py --src template/wlcpp.cpp.in --dst wlcpp.cpp \
-    --exclude wl_display \
-    /usr/share/wayland/wayland.xml
-
-../wlcppgen.py --src template/wlcpp.hpp.in --dst display.hpp \
+echo "generating file display.hpp"
+$WLCPPGEN --src $SRC_HPP --dst $OUTPUT_PATH/display.hpp \
     --only wl_display \
-    --ignore-events \
-    --include-guard=_WLCPP_DISPLAY_ \
+    --include-guard _DISPLAY_HPP_ \
     --qualify-std-namespace \
-    /usr/share/wayland/wayland.xml
-
-../wlcppgen.py --src template/wlcpp.cpp.in --dst display.cpp \
-    --only wl_display \
-    --header display.hpp \
-    --extra-includes wlcpp.hpp \
     --ignore-events \
-    /usr/share/wayland/wayland.xml
+    $PROTOCOL
 
-patch -p1 < template/display.patch
+echo "generating file display.cpp"
+$WLCPPGEN --src $SRC_CPP --dst $OUTPUT_PATH/display.cpp \
+    --only wl_display \
+    --header %c.hpp \
+    --ignore-events \
+    $PROTOCOL
+
+patch -p1 -d generated < template/display.patch
+
+INTERFACES=$($WLCPPGEN --list-interfaces --exclude wl_display $PROTOCOL)
+for i in $INTERFACES
+do
+    CLASS=$($WLCPPGEN --list-classes --only $i $PROTOCOL)
+    DST_HPP=${CLASS}.hpp
+    DST_CPP=${CLASS}.cpp
+
+    echo "generating file $DST_HPP"
+    $WLCPPGEN --src $SRC_HPP --dst $OUTPUT_PATH/$DST_HPP \
+        --only $i \
+        --include-guard _%C_HPP_ \
+        --qualify-std-namespace \
+        $PROTOCOL
+
+    echo "generating file $DST_CPP"
+    $WLCPPGEN --src $SRC_CPP --dst $OUTPUT_PATH/$DST_CPP \
+        --only $i \
+        --header %c.hpp \
+        $PROTOCOL
+done
 

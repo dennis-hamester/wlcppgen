@@ -1,11 +1,11 @@
 
-#ifndef _WLCPP_DISPLAY_
-#define _WLCPP_DISPLAY_
+#ifndef _DISPLAY_HPP_
+#define _DISPLAY_HPP_
 
 #include <functional>
 #include <string>
 #include <utility>
-#include "proxy.hpp"
+#include "../proxy.hpp"
 
 /* The following code was generated from the "wayland" protocol specification.
  *
@@ -129,5 +129,5 @@ protected:
 
 } // namespace wlcpp
 
-#endif // _WLCPP_DISPLAY_
+#endif // _DISPLAY_HPP_
 

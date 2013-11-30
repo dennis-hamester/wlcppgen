@@ -1,7 +1,7 @@
 diff -Naur a/display.cpp b/display.cpp
---- a/display.cpp	2013-11-29 13:16:21.277448571 +0100
-+++ b/display.cpp	2013-11-29 13:16:21.280781853 +0100
-@@ -58,8 +58,72 @@
+--- a/display.cpp	2013-11-29 19:58:06.206161907 +0100
++++ b/display.cpp	2013-11-29 19:58:06.209495299 +0100
+@@ -59,8 +59,72 @@
      : proxy(obj) {
  }
  
@@ -76,7 +76,7 @@ diff -Naur a/display.cpp b/display.cpp
  }
  
  callback display::sync() {
-@@ -74,3 +138,10 @@
+@@ -75,3 +139,10 @@
      return callback_;
  }
  
@@ -88,8 +88,8 @@ diff -Naur a/display.cpp b/display.cpp
 +}
 +
 diff -Naur a/display.hpp b/display.hpp
---- a/display.hpp	2013-11-29 13:16:21.277448571 +0100
-+++ b/display.hpp	2013-11-29 13:16:21.280781853 +0100
+--- a/display.hpp	2013-11-29 19:58:06.206161907 +0100
++++ b/display.hpp	2013-11-29 19:58:06.209495299 +0100
 @@ -71,20 +71,34 @@
       */
      display(wl_proxy* obj = nullptr);

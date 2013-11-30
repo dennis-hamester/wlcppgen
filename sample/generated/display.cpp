@@ -1,6 +1,10 @@
 
 #include "display.hpp"
-#include "wlcpp.hpp"
+#include "callback.hpp"
+#include "registry.hpp"
+
+using namespace std;
+using namespace wlcpp;
 
 /* The following code was generated from the "wayland" protocol specification.
  *
@@ -28,9 +32,6 @@
  * ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
  * THIS SOFTWARE.
  */
-
-using namespace std;
-using namespace wlcpp;
 
 static const wl_interface* wl_display_request_sync_types[] = { &callback::interface };
 static const wl_interface* wl_display_request_get_registry_types[] = { &registry::interface };

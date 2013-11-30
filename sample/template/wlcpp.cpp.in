@@ -1,11 +1,11 @@
 
 // wlcpp <hook id="include.self"/>
-// wlcpp <hook id="include.extra"/>
-
-// wlcpp <hook id="spec.copyright"/>
+// wlcpp <hook id="include.required_headers"/>
 
 using namespace std;
 // wlcpp <hook id="namespace.using"/>
+
+// wlcpp <hook id="spec.copyright"/>
 
 // wlcpp <hook id="spec.cpp"/>
 
