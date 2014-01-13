@@ -45,8 +45,8 @@ const wl_interface shell::interface = {
     0, nullptr
 };
 
-shell::shell(wl_proxy* obj)
-    : proxy(obj) {
+shell::shell(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
 }
 
 shell::shell(proxy& factory)

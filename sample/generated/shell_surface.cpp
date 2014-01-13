@@ -80,8 +80,8 @@ const shell_surface::listener_t shell_surface::listener = {
     &popup_done_handler,
 };
 
-shell_surface::shell_surface(wl_proxy* obj)
-    : proxy(obj) {
+shell_surface::shell_surface(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
     add_listener(listener);
 }
 

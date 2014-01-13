@@ -8,12 +8,14 @@ namespace wlcpp {
 
 class event_queue {
 public:
-    event_queue(wl_event_queue* queue = nullptr);
+    event_queue(wl_event_queue* queue = nullptr, bool managed = true);
     event_queue(const event_queue&) = delete;
     event_queue(event_queue&& rhs);
     ~event_queue();
 
     bool valid() const;
+    bool managed() const;
+    void invalidate();
     wl_event_queue* wl_obj() const;
 
     event_queue& operator=(const event_queue&) = delete;
@@ -26,6 +28,7 @@ private:
     void destroy();
 
     wl_event_queue* _queue;
+    bool _managed;
 };
 
 } // namespace wlcpp

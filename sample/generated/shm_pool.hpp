@@ -60,8 +60,9 @@ public:
 
     /** \brief Wrap existing wl_shm_pool object
      *  @param obj Existing native object to wrap, can be nullptr
+     *  @param managed true, if the new wrapper object owns the wl_shm_pool object and is responsible for destryoing it
      */
-    shm_pool(wl_proxy* obj = nullptr);
+    shm_pool(wl_proxy* obj = nullptr, bool managed = true);
 
     /** \brief Create new @ref shm_pool from factory
      *  @param factory Object which acts as the factory

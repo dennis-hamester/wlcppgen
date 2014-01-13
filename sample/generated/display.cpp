@@ -55,8 +55,8 @@ const wl_interface display::interface = {
     2, wl_display_events
 };
 
-display::display(wl_proxy* obj)
-    : proxy(obj) {
+display::display(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
 }
 
 display::display(const string& name)
@@ -140,7 +140,7 @@ registry display::get_registry() {
 }
 
 void display::destroy() {
-    if(valid()) {
+    if(valid() && managed()) {
         wl_display_disconnect(wl_obj());
         invalidate();
     }

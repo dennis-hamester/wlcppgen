@@ -48,8 +48,8 @@ const wl_interface shm_pool::interface = {
     0, nullptr
 };
 
-shm_pool::shm_pool(wl_proxy* obj)
-    : proxy(obj) {
+shm_pool::shm_pool(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
 }
 
 shm_pool::shm_pool(proxy& factory)
@@ -71,7 +71,7 @@ void shm_pool::resize(int32_t size_) {
 }
 
 void shm_pool::destroy() {
-    if(valid()) {
+    if(valid() && managed()) {
         marshal(1);
     }
     proxy::destroy();

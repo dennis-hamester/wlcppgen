@@ -71,8 +71,9 @@ public:
 
     /** \brief Wrap existing wl_seat object
      *  @param obj Existing native object to wrap, can be nullptr
+     *  @param managed true, if the new wrapper object owns the wl_seat object and is responsible for destryoing it
      */
-    seat(wl_proxy* obj = nullptr);
+    seat(wl_proxy* obj = nullptr, bool managed = true);
 
     /** \brief Create new @ref seat from factory
      *  @param factory Object which acts as the factory

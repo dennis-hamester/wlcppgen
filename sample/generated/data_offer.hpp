@@ -58,8 +58,9 @@ public:
 
     /** \brief Wrap existing wl_data_offer object
      *  @param obj Existing native object to wrap, can be nullptr
+     *  @param managed true, if the new wrapper object owns the wl_data_offer object and is responsible for destryoing it
      */
-    data_offer(wl_proxy* obj = nullptr);
+    data_offer(wl_proxy* obj = nullptr, bool managed = true);
 
     /** \brief Create new @ref data_offer from factory
      *  @param factory Object which acts as the factory

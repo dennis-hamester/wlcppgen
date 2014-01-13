@@ -66,8 +66,8 @@ const touch::listener_t touch::listener = {
     &cancel_handler,
 };
 
-touch::touch(wl_proxy* obj)
-    : proxy(obj) {
+touch::touch(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
     add_listener(listener);
 }
 
@@ -81,7 +81,7 @@ touch::~touch(){
 }
 
 void touch::destroy() {
-    if(valid()) {
+    if(valid() && managed()) {
         marshal(0);
     }
     proxy::destroy();

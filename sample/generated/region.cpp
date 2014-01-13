@@ -47,8 +47,8 @@ const wl_interface region::interface = {
     0, nullptr
 };
 
-region::region(wl_proxy* obj)
-    : proxy(obj) {
+region::region(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
 }
 
 region::region(proxy& factory)
@@ -68,7 +68,7 @@ void region::subtract(int32_t x_, int32_t y_, int32_t width_, int32_t height_) {
 }
 
 void region::destroy() {
-    if(valid()) {
+    if(valid() && managed()) {
         marshal(0);
     }
     proxy::destroy();

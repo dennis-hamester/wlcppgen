@@ -68,8 +68,8 @@ const pointer::listener_t pointer::listener = {
     &axis_handler,
 };
 
-pointer::pointer(wl_proxy* obj)
-    : proxy(obj) {
+pointer::pointer(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
     add_listener(listener);
 }
 
@@ -87,7 +87,7 @@ void pointer::set_cursor(uint32_t serial_, surface* surface_, int32_t hotspot_x_
 }
 
 void pointer::destroy() {
-    if(valid()) {
+    if(valid() && managed()) {
         marshal(1);
     }
     proxy::destroy();

@@ -73,8 +73,8 @@ const data_device::listener_t data_device::listener = {
     &selection_handler,
 };
 
-data_device::data_device(wl_proxy* obj)
-    : proxy(obj) {
+data_device::data_device(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
     add_listener(listener);
 }
 

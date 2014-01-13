@@ -57,8 +57,8 @@ const data_offer::listener_t data_offer::listener = {
     &offer_handler,
 };
 
-data_offer::data_offer(wl_proxy* obj)
-    : proxy(obj) {
+data_offer::data_offer(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
     add_listener(listener);
 }
 
@@ -80,7 +80,7 @@ void data_offer::receive(const string& mime_type_, int32_t fd_) {
 }
 
 void data_offer::destroy() {
-    if(valid()) {
+    if(valid() && managed()) {
         marshal(2);
     }
     proxy::destroy();

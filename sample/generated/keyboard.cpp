@@ -66,8 +66,8 @@ const keyboard::listener_t keyboard::listener = {
     &modifiers_handler,
 };
 
-keyboard::keyboard(wl_proxy* obj)
-    : proxy(obj) {
+keyboard::keyboard(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
     add_listener(listener);
 }
 
@@ -81,7 +81,7 @@ keyboard::~keyboard(){
 }
 
 void keyboard::destroy() {
-    if(valid()) {
+    if(valid() && managed()) {
         marshal(0);
     }
     proxy::destroy();

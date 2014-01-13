@@ -4,18 +4,21 @@
 using namespace std;
 using namespace wlcpp;
 
-proxy::proxy(wl_proxy* proxy)
-    : _proxy(proxy) {
+proxy::proxy(wl_proxy* proxy, bool managed)
+    : _proxy(proxy),
+      _managed(managed) {
     set_user_data();
 }
 
 proxy::proxy(proxy& factory, const wl_interface& interface)
-    : _proxy(wl_proxy_create(factory.wl_obj(), &interface)) {
+    : _proxy(wl_proxy_create(factory.wl_obj(), &interface)),
+      _managed(true) {
     set_user_data();
 }
 
 proxy::proxy(proxy&& rhs)
-    : _proxy(rhs.wl_obj()) {
+    : _proxy(rhs.wl_obj()),
+      _managed(rhs._managed) {
     set_user_data();
     rhs.invalidate();
 }
@@ -26,6 +29,10 @@ proxy::~proxy() {
 
 bool proxy::valid() const {
     return _proxy != nullptr;
+}
+
+bool proxy::managed() const {
+    return _managed;
 }
 
 void proxy::invalidate() {
@@ -55,6 +62,7 @@ void proxy::reset_queue() {
 proxy& proxy::operator=(proxy&& rhs) {
     destroy();
     _proxy = rhs.wl_obj();
+    _managed = rhs._managed;
     set_user_data();
     rhs.invalidate();
     return *this;
@@ -73,14 +81,14 @@ bool proxy::operator!=(const proxy& rhs) const {
 }
 
 void proxy::destroy() {
-    if(valid()) {
+    if(valid() && _managed) {
         wl_proxy_destroy(_proxy);
         invalidate();
     }
 }
 
 void proxy::set_user_data() {
-    if(valid()) {
+    if(valid() && _managed) {
         wl_proxy_set_user_data(_proxy, this);
     }
 }

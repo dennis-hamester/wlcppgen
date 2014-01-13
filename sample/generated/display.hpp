@@ -68,8 +68,9 @@ public:
 
     /** \brief Wrap existing wl_display object
      *  @param obj Existing native object to wrap, can be nullptr
+     *  @param managed true, if the new wrapper object owns the wl_display object and is responsible for destryoing it
      */
-    display(wl_proxy* obj = nullptr);
+    display(wl_proxy* obj = nullptr, bool managed = true);
 
     explicit display(const std::string& name);
 

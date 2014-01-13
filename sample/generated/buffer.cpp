@@ -53,8 +53,8 @@ const buffer::listener_t buffer::listener = {
     &release_handler,
 };
 
-buffer::buffer(wl_proxy* obj)
-    : proxy(obj) {
+buffer::buffer(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
     add_listener(listener);
 }
 
@@ -68,7 +68,7 @@ buffer::~buffer(){
 }
 
 void buffer::destroy() {
-    if(valid()) {
+    if(valid() && managed()) {
         marshal(0);
     }
     proxy::destroy();

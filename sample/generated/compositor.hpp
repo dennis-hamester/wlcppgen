@@ -57,8 +57,9 @@ public:
 
     /** \brief Wrap existing wl_compositor object
      *  @param obj Existing native object to wrap, can be nullptr
+     *  @param managed true, if the new wrapper object owns the wl_compositor object and is responsible for destryoing it
      */
-    compositor(wl_proxy* obj = nullptr);
+    compositor(wl_proxy* obj = nullptr, bool managed = true);
 
     /** \brief Create new @ref compositor from factory
      *  @param factory Object which acts as the factory

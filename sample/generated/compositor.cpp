@@ -47,8 +47,8 @@ const wl_interface compositor::interface = {
     0, nullptr
 };
 
-compositor::compositor(wl_proxy* obj)
-    : proxy(obj) {
+compositor::compositor(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
 }
 
 compositor::compositor(proxy& factory)

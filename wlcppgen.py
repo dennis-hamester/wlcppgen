@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# Copyright (c) 2013, Dennis Hamester <dennis.hamester@gmail.com>
+# Copyright (c) 2013-2014, Dennis Hamester <dennis.hamester@gmail.com>
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -672,6 +672,9 @@ class Interface:
         result += mangle_interface_name(self.name, options) + '(wl_proxy* obj'
         if not impl:
             result += ' = nullptr'
+        result += ', bool managed'
+        if not impl:
+            result += ' = true'
         result += ')'
         return result
 
@@ -783,6 +786,7 @@ class Interface:
             '',
             '/** \\brief Wrap existing ' + self.name + ' object',
             ' *  @param obj Existing native object to wrap, can be nullptr',
+            ' *  @param managed true, if the new wrapper object owns the ' + self.name + ' object and is responsible for destryoing it',
             ' */',
             self.generate_wl_obj_ctor(options, impl=False) + ';'
         ])
@@ -944,11 +948,11 @@ class Interface:
         wl_obj_ctor = list()
         if not options.ignore_events and have_events:
             wl_obj_ctor.extend([
-                ': ' + options.proxy + '(obj) {',
+                ': ' + options.proxy + '(obj, managed) {',
                 'add_listener(listener);'
             ])
         else:
-            wl_obj_ctor.append(': ' + options.proxy + '(obj) {')
+            wl_obj_ctor.append(': ' + options.proxy + '(obj, managed) {')
         result.append(wl_obj_ctor)
         result.append('}')
 
@@ -983,7 +987,7 @@ class Interface:
             result.append('')
             result.extend([
                 self.generate_destroy_method(options, impl=True) + ' {', [
-                    'if(valid()) {', [
+                    'if(valid() && managed()) {', [
                         'marshal(' + str(self.destructor.opcode) + ');'
                     ],
                     '}',

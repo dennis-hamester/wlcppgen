@@ -11,13 +11,14 @@ namespace wlcpp {
 
 class proxy {
 public:
-    proxy(wl_proxy* proxy = nullptr);
+    proxy(wl_proxy* proxy = nullptr, bool managed = true);
     proxy(proxy& factory, const wl_interface& interface);
     proxy(const proxy&) = delete;
     proxy(proxy&& rhs);
     virtual ~proxy();
 
     bool valid() const;
+    bool managed() const;
     void invalidate();
     wl_proxy* wl_obj() const;
     std::uint32_t get_id() const;
@@ -54,7 +55,7 @@ protected:
 
     template <typename T>
     void add_listener(const T& listener) {
-        if(valid() && !wl_proxy_get_listener(_proxy)) {
+        if(valid() && _managed && !wl_proxy_get_listener(_proxy)) {
             wl_proxy_add_listener(_proxy, reinterpret_cast<void (**)()>(&const_cast<T&>(listener)), this);
         }
 
@@ -70,6 +71,7 @@ private:
     void set_user_data();
 
     wl_proxy* _proxy;
+    bool _managed;
 };
 
 } // namespace wlcpp

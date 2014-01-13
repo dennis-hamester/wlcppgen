@@ -58,8 +58,9 @@ public:
 
     /** \brief Wrap existing wl_buffer object
      *  @param obj Existing native object to wrap, can be nullptr
+     *  @param managed true, if the new wrapper object owns the wl_buffer object and is responsible for destryoing it
      */
-    buffer(wl_proxy* obj = nullptr);
+    buffer(wl_proxy* obj = nullptr, bool managed = true);
 
     /** \brief Create new @ref buffer from factory
      *  @param factory Object which acts as the factory

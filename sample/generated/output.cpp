@@ -56,8 +56,8 @@ const output::listener_t output::listener = {
     &scale_handler,
 };
 
-output::output(wl_proxy* obj)
-    : proxy(obj) {
+output::output(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
     add_listener(listener);
 }
 

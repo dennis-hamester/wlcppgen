@@ -47,8 +47,8 @@ const callback::listener_t callback::listener = {
     &done_handler,
 };
 
-callback::callback(wl_proxy* obj)
-    : proxy(obj) {
+callback::callback(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
     add_listener(listener);
 }
 

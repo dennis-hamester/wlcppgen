@@ -56,8 +56,8 @@ const registry::listener_t registry::listener = {
     &global_remove_handler,
 };
 
-registry::registry(wl_proxy* obj)
-    : proxy(obj) {
+registry::registry(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
     add_listener(listener);
 }
 

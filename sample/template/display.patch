@@ -1,8 +1,8 @@
 diff -Naur a/display.cpp b/display.cpp
---- a/display.cpp	2013-11-29 19:58:06.206161907 +0100
-+++ b/display.cpp	2013-11-29 19:58:06.209495299 +0100
+--- a/display.cpp	2014-01-04 17:25:28.127837783 +0100
++++ b/display.cpp	2014-01-04 17:25:28.127837783 +0100
 @@ -59,8 +59,72 @@
-     : proxy(obj) {
+     : proxy(obj, managed) {
  }
  
 -display::display(proxy& factory)
@@ -81,18 +81,18 @@ diff -Naur a/display.cpp b/display.cpp
  }
  
 +void display::destroy() {
-+    if(valid()) {
++    if(valid() && managed()) {
 +        wl_display_disconnect(wl_obj());
 +        invalidate();
 +    }
 +}
 +
 diff -Naur a/display.hpp b/display.hpp
---- a/display.hpp	2013-11-29 19:58:06.206161907 +0100
-+++ b/display.hpp	2013-11-29 19:58:06.209495299 +0100
-@@ -71,20 +71,34 @@
+--- a/display.hpp	2014-01-04 17:25:28.127837783 +0100
++++ b/display.hpp	2014-01-04 17:25:28.127837783 +0100
+@@ -72,20 +72,34 @@
       */
-     display(wl_proxy* obj = nullptr);
+     display(wl_proxy* obj = nullptr, bool managed = true);
  
 -    /** \brief Create new @ref display from factory
 -     *  @param factory Object which acts as the factory
@@ -131,7 +131,7 @@ diff -Naur a/display.hpp b/display.hpp
      /** \brief asynchronous roundtrip
       *
       *  The sync request asks the server to emit the 'done' event on the returned
-@@ -108,6 +122,9 @@
+@@ -109,6 +123,9 @@
       *  @return
       */
      registry get_registry();

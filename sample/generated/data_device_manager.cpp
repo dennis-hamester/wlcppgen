@@ -48,8 +48,8 @@ const wl_interface data_device_manager::interface = {
     0, nullptr
 };
 
-data_device_manager::data_device_manager(wl_proxy* obj)
-    : proxy(obj) {
+data_device_manager::data_device_manager(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
 }
 
 data_device_manager::data_device_manager(proxy& factory)

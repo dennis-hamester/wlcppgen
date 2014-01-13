@@ -60,8 +60,9 @@ public:
 
     /** \brief Wrap existing wl_data_device_manager object
      *  @param obj Existing native object to wrap, can be nullptr
+     *  @param managed true, if the new wrapper object owns the wl_data_device_manager object and is responsible for destryoing it
      */
-    data_device_manager(wl_proxy* obj = nullptr);
+    data_device_manager(wl_proxy* obj = nullptr, bool managed = true);
 
     /** \brief Create new @ref data_device_manager from factory
      *  @param factory Object which acts as the factory

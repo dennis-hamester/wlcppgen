@@ -78,8 +78,9 @@ public:
 
     /** \brief Wrap existing wl_pointer object
      *  @param obj Existing native object to wrap, can be nullptr
+     *  @param managed true, if the new wrapper object owns the wl_pointer object and is responsible for destryoing it
      */
-    pointer(wl_proxy* obj = nullptr);
+    pointer(wl_proxy* obj = nullptr, bool managed = true);
 
     /** \brief Create new @ref pointer from factory
      *  @param factory Object which acts as the factory

@@ -63,8 +63,8 @@ const seat::listener_t seat::listener = {
     &name_handler,
 };
 
-seat::seat(wl_proxy* obj)
-    : proxy(obj) {
+seat::seat(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
     add_listener(listener);
 }
 

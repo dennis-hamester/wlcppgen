@@ -61,8 +61,8 @@ const data_source::listener_t data_source::listener = {
     &cancelled_handler,
 };
 
-data_source::data_source(wl_proxy* obj)
-    : proxy(obj) {
+data_source::data_source(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
     add_listener(listener);
 }
 
@@ -80,7 +80,7 @@ void data_source::offer(const string& mime_type_) {
 }
 
 void data_source::destroy() {
-    if(valid()) {
+    if(valid() && managed()) {
         marshal(1);
     }
     proxy::destroy();

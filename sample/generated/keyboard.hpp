@@ -75,8 +75,9 @@ public:
 
     /** \brief Wrap existing wl_keyboard object
      *  @param obj Existing native object to wrap, can be nullptr
+     *  @param managed true, if the new wrapper object owns the wl_keyboard object and is responsible for destryoing it
      */
-    keyboard(wl_proxy* obj = nullptr);
+    keyboard(wl_proxy* obj = nullptr, bool managed = true);
 
     /** \brief Create new @ref keyboard from factory
      *  @param factory Object which acts as the factory

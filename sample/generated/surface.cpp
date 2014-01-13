@@ -76,8 +76,8 @@ const surface::listener_t surface::listener = {
     &leave_handler,
 };
 
-surface::surface(wl_proxy* obj)
-    : proxy(obj) {
+surface::surface(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
     add_listener(listener);
 }
 
@@ -125,7 +125,7 @@ void surface::set_buffer_scale(int32_t scale_) {
 }
 
 void surface::destroy() {
-    if(valid()) {
+    if(valid() && managed()) {
         marshal(0);
     }
     proxy::destroy();

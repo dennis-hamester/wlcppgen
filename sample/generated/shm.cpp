@@ -54,8 +54,8 @@ const shm::listener_t shm::listener = {
     &format_handler,
 };
 
-shm::shm(wl_proxy* obj)
-    : proxy(obj) {
+shm::shm(wl_proxy* obj, bool managed)
+    : proxy(obj, managed) {
     add_listener(listener);
 }
 

@@ -139,8 +139,9 @@ public:
 
     /** \brief Wrap existing wl_shm object
      *  @param obj Existing native object to wrap, can be nullptr
+     *  @param managed true, if the new wrapper object owns the wl_shm object and is responsible for destryoing it
      */
-    shm(wl_proxy* obj = nullptr);
+    shm(wl_proxy* obj = nullptr, bool managed = true);
 
     /** \brief Create new @ref shm from factory
      *  @param factory Object which acts as the factory

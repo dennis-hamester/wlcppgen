@@ -66,8 +66,9 @@ public:
 
     /** \brief Wrap existing wl_surface object
      *  @param obj Existing native object to wrap, can be nullptr
+     *  @param managed true, if the new wrapper object owns the wl_surface object and is responsible for destryoing it
      */
-    surface(wl_proxy* obj = nullptr);
+    surface(wl_proxy* obj = nullptr, bool managed = true);
 
     /** \brief Create new @ref surface from factory
      *  @param factory Object which acts as the factory
