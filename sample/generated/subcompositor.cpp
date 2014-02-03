@@ -1,5 +1,7 @@
 
-#include "region.hpp"
+#include "subcompositor.hpp"
+#include "subsurface.hpp"
+#include "surface.hpp"
 
 using namespace std;
 using namespace wlcpp;
@@ -32,43 +34,39 @@ using namespace wlcpp;
  * THIS SOFTWARE.
  */
 
-static const wl_interface* wl_region_request_destroy_types[] = { };
-static const wl_interface* wl_region_request_add_types[] = { nullptr, nullptr, nullptr, nullptr };
-static const wl_interface* wl_region_request_subtract_types[] = { nullptr, nullptr, nullptr, nullptr };
+static const wl_interface* wl_subcompositor_request_destroy_types[] = { };
+static const wl_interface* wl_subcompositor_request_get_subsurface_types[] = { &subsurface::interface, &surface::interface, &surface::interface };
 
-static const wl_message wl_region_requests[] = {
-    { "destroy", "", wl_region_request_destroy_types },
-    { "add", "iiii", wl_region_request_add_types },
-    { "subtract", "iiii", wl_region_request_subtract_types },
+static const wl_message wl_subcompositor_requests[] = {
+    { "destroy", "", wl_subcompositor_request_destroy_types },
+    { "get_subsurface", "noo", wl_subcompositor_request_get_subsurface_types },
 };
 
-const wl_interface region::interface = {
-    "wl_region", 1,
-    3, wl_region_requests,
+const wl_interface subcompositor::interface = {
+    "wl_subcompositor", 1,
+    2, wl_subcompositor_requests,
     0, nullptr
 };
 
-region::region(wl_proxy* obj, bool managed)
+subcompositor::subcompositor(wl_proxy* obj, bool managed)
     : proxy(obj, managed) {
 }
 
-region::region(proxy& factory)
+subcompositor::subcompositor(proxy& factory)
     : proxy(factory, interface) {
 }
 
-region::~region(){
+subcompositor::~subcompositor(){
     destroy();
 }
 
-void region::add(int32_t x_, int32_t y_, int32_t width_, int32_t height_) {
-    marshal(1, x_, y_, width_, height_);
+subsurface subcompositor::get_subsurface(surface& surface_, surface& parent_) {
+    subsurface id_(*this);
+    marshal(1, id_.wl_obj(), surface_.wl_obj(), parent_.wl_obj());
+    return id_;
 }
 
-void region::subtract(int32_t x_, int32_t y_, int32_t width_, int32_t height_) {
-    marshal(2, x_, y_, width_, height_);
-}
-
-void region::destroy() {
+void subcompositor::destroy() {
     if(valid() && managed()) {
         marshal(0);
     }

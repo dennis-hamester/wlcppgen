@@ -11,6 +11,7 @@
  *
  * Copyright © 2008-2011 Kristian Høgsberg
  * Copyright © 2010-2011 Intel Corporation
+ * Copyright © 2012-2013 Collabora, Ltd.
  *
  * Permission to use, copy, modify, distribute, and sell this
  * software and its documentation for any purpose is hereby granted
@@ -104,7 +105,7 @@ public:
      *
      *  The sync request asks the server to emit the 'done' event on the returned
      *  wl_callback object. Since requests are handled in-order and events are
-     *  delivered in-order, this can used as a barrier to ensure all previous
+     *  delivered in-order, this can be used as a barrier to ensure all previous
      *  requests and the resulting events have been handled.
      *
      *  The object returned by this request will be destroyed by the compositor

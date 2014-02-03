@@ -1,5 +1,6 @@
 
-#include "region.hpp"
+#include "subsurface.hpp"
+#include "surface.hpp"
 
 using namespace std;
 using namespace wlcpp;
@@ -32,43 +33,61 @@ using namespace wlcpp;
  * THIS SOFTWARE.
  */
 
-static const wl_interface* wl_region_request_destroy_types[] = { };
-static const wl_interface* wl_region_request_add_types[] = { nullptr, nullptr, nullptr, nullptr };
-static const wl_interface* wl_region_request_subtract_types[] = { nullptr, nullptr, nullptr, nullptr };
+static const wl_interface* wl_subsurface_request_destroy_types[] = { };
+static const wl_interface* wl_subsurface_request_set_position_types[] = { nullptr, nullptr };
+static const wl_interface* wl_subsurface_request_place_above_types[] = { &surface::interface };
+static const wl_interface* wl_subsurface_request_place_below_types[] = { &surface::interface };
+static const wl_interface* wl_subsurface_request_set_sync_types[] = { };
+static const wl_interface* wl_subsurface_request_set_desync_types[] = { };
 
-static const wl_message wl_region_requests[] = {
-    { "destroy", "", wl_region_request_destroy_types },
-    { "add", "iiii", wl_region_request_add_types },
-    { "subtract", "iiii", wl_region_request_subtract_types },
+static const wl_message wl_subsurface_requests[] = {
+    { "destroy", "", wl_subsurface_request_destroy_types },
+    { "set_position", "ii", wl_subsurface_request_set_position_types },
+    { "place_above", "o", wl_subsurface_request_place_above_types },
+    { "place_below", "o", wl_subsurface_request_place_below_types },
+    { "set_sync", "", wl_subsurface_request_set_sync_types },
+    { "set_desync", "", wl_subsurface_request_set_desync_types },
 };
 
-const wl_interface region::interface = {
-    "wl_region", 1,
-    3, wl_region_requests,
+const wl_interface subsurface::interface = {
+    "wl_subsurface", 1,
+    6, wl_subsurface_requests,
     0, nullptr
 };
 
-region::region(wl_proxy* obj, bool managed)
+subsurface::subsurface(wl_proxy* obj, bool managed)
     : proxy(obj, managed) {
 }
 
-region::region(proxy& factory)
+subsurface::subsurface(proxy& factory)
     : proxy(factory, interface) {
 }
 
-region::~region(){
+subsurface::~subsurface(){
     destroy();
 }
 
-void region::add(int32_t x_, int32_t y_, int32_t width_, int32_t height_) {
-    marshal(1, x_, y_, width_, height_);
+void subsurface::set_position(int32_t x_, int32_t y_) {
+    marshal(1, x_, y_);
 }
 
-void region::subtract(int32_t x_, int32_t y_, int32_t width_, int32_t height_) {
-    marshal(2, x_, y_, width_, height_);
+void subsurface::place_above(surface& sibling_) {
+    marshal(2, sibling_.wl_obj());
 }
 
-void region::destroy() {
+void subsurface::place_below(surface& sibling_) {
+    marshal(3, sibling_.wl_obj());
+}
+
+void subsurface::set_sync() {
+    marshal(4);
+}
+
+void subsurface::set_desync() {
+    marshal(5);
+}
+
+void subsurface::destroy() {
     if(valid() && managed()) {
         marshal(0);
     }
